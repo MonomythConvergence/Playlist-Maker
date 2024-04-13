@@ -34,6 +34,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recyclerResultsView: RecyclerView
     private lateinit var recyclerRecentView: RecyclerView
     private lateinit var searchAdapter: SearchAdapter
+    private lateinit var searchBarField : EditText
+    private lateinit var recentSearchFrame : LinearLayout
+    private lateinit var progressBar : ProgressBar
+    private lateinit var noConnectionError : LinearLayout
+    private lateinit var noResultsError : LinearLayout
+
+
 
 
     companion object {
@@ -59,6 +66,7 @@ class SearchActivity : AppCompatActivity() {
         val debounce = Debounce()
         val handler = Handler(Looper.getMainLooper())
 
+
         recyclerResultsView = findViewById(R.id.searchResultsRecycler)
         searchAdapter = SearchAdapter(trackList, this)
         recyclerResultsView.adapter = searchAdapter
@@ -70,51 +78,27 @@ class SearchActivity : AppCompatActivity() {
         recyclerRecentView.layoutManager = LinearLayoutManager(this)
 
 
-        val searchBarField = findViewById<EditText>(R.id.searchBarField)
+        searchBarField = findViewById<EditText>(R.id.searchBarField)
         val searchBarClear = findViewById<ImageButton>(R.id.searchBarClear)
         val searchRefresh = findViewById<Button>(R.id.searchRefresh)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val noConnectionError = findViewById<LinearLayout>(R.id.noConnectionError)
-        val noResultsError = findViewById<LinearLayout>(R.id.noResultsError)
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        noConnectionError = findViewById<LinearLayout>(R.id.noConnectionError)
+        noResultsError = findViewById<LinearLayout>(R.id.noResultsError)
 
 
-        val recentSearchFrame = findViewById<LinearLayout>(R.id.recentSearchFrame)
+        recentSearchFrame = findViewById<LinearLayout>(R.id.recentSearchFrame)
         val clearSearchHistory = findViewById<Button>(R.id.clearSearchHistory)
-
 
 
         if (savedInstanceState != null) {
             searchBarField.setText(userInputReserve)
         }
 
-        fun setLayoutVisibility(
-            recentSearchFrame: View,
-            progressBar: View,
-            searchRecycler: View,
-            noConnectionError: View,
-            noResultsError: View,
-            isSearchHistoryVisible: Boolean,
-            isProgressBarVisible: Boolean,
-            isSearchVisible: Boolean,
-            isNoConnectionErrorVisible: Boolean,
-            isNoResultsErrorVisible: Boolean
-        ) {
-            recentSearchFrame.visibility = if (isSearchHistoryVisible) View.VISIBLE else View.GONE
-            progressBar.visibility = if (isProgressBarVisible) View.VISIBLE else View.GONE
-            searchRecycler.visibility = if (isSearchVisible) View.VISIBLE else View.GONE
-            noConnectionError.visibility =
-                if (isNoConnectionErrorVisible) View.VISIBLE else View.GONE
-            noResultsError.visibility = if (isNoResultsErrorVisible) View.VISIBLE else View.GONE
-        }
+
 
         searchBarField.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && searchBarField.text.isEmpty() && recentTracksList.isNotEmpty()) {
                 setLayoutVisibility(
-                    recentSearchFrame,
-                    progressBar,
-                    recyclerResultsView,
-                    noConnectionError,
-                    noResultsError,
                     true,
                     false,
                     false,
@@ -127,192 +111,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
 
-        fun handleSearch() {
-            if (searchBarField.text.toString()=="") {return}
 
-            setLayoutVisibility(
-                recentSearchFrame,
-                progressBar,
-                recyclerResultsView,
-                noConnectionError,
-                noResultsError,
-                false,
-                true,
-                false,
-                false,
-                true
-            )
-
-            val gson = Gson()
-
-            val rawQuery = searchBarField.text.toString()
-            val entity = "song"
-
-            val apiClient = ApiClient()
-            val call = apiClient.apiService.searchQuery(rawQuery, entity)
-
-            call.enqueue(object : Callback<JsonObject> {
-                override fun onResponse(
-                    call: Call<JsonObject>,
-                    response: Response<JsonObject>
-                ) {
-                    if (response.isSuccessful) {
-                        if (response.code() == 200) {
-
-                            trackList.clear()
-
-                            if (response.body() != null) {
-                                val parsedResponse = gson.fromJson(
-                                    response.body(),
-                                    searchServerResonse::class.java
-                                )
-                                val searchResults = parsedResponse?.results
-                                if (searchResults != null) {
-
-                                    if (parsedResponse.resultCount == 0) {
-                                        Log.d(
-                                            "MyTag",
-                                            "0 results. Display noResultsError"
-                                        )
-                                        setLayoutVisibility(
-                                            recentSearchFrame,
-                                            progressBar,
-                                            recyclerResultsView,
-                                            noConnectionError,
-                                            noResultsError,
-                                            false,
-                                            false,
-                                            false,
-                                            false,
-                                            true
-                                        )
-                                    } else {
-                                        for (result in searchResults) {
-
-                                            trackList.add(
-                                                Track(
-                                                    result.trackName,
-                                                    result.artistName,
-                                                    SimpleDateFormat(
-                                                        "mm:ss",
-                                                        Locale.getDefault()
-                                                    ).format(
-                                                        result.trackTimeMillis
-                                                    ),
-                                                    result.artworkUrl100,
-                                                    result.trackId,
-                                                    result.collectionName,
-                                                    if (result.releaseDate != null && result.releaseDate.length >= 4) {
-                                                        result.releaseDate.substring(0, 4)
-                                                    } else {
-                                                        ""
-                                                    },
-                                                    result.primaryGenreName,
-                                                    result.country,
-                                                result.previewUrl
-                                            ))
-
-                                        }
-                                        Log.d("MyTag", "New tracklist filled. Display results")
-                                        setLayoutVisibility(
-                                            recentSearchFrame,
-                                            progressBar,
-                                            recyclerResultsView,
-                                            noConnectionError,
-                                            noResultsError,
-                                            false,
-                                            false,
-                                            true,
-                                            false,
-                                            false
-                                        )
-                                        searchAdapter.notifyDataSetChanged()
-
-                                    }
-                                } else {
-                                    Log.d(
-                                        "MyTag",
-                                        "IF4 else. Display noResultsError, " +
-                                                "but it's just a safety measure against null"
-                                    )
-                                    setLayoutVisibility(
-                                        recentSearchFrame,
-                                        progressBar,
-                                        recyclerResultsView,
-                                        noConnectionError,
-                                        noResultsError,
-                                        false,
-                                        false,
-                                        false,
-                                        false,
-                                        true
-                                    )
-                                }
-                            } else {
-                                Log.d("MyTag", "IF3 else. Null results. Display noResultsError")
-                                setLayoutVisibility(
-                                    recentSearchFrame,
-                                    progressBar,
-                                    recyclerResultsView,
-                                    noConnectionError,
-                                    noResultsError,
-                                    false,
-                                    false,
-                                    false,
-                                    false,
-                                    true
-                                )
-                            }
-
-                        } else {
-                            Log.d("MyTag", "IF2 else. Code!=200. Display noConnectionError")
-                            setLayoutVisibility(
-                                recentSearchFrame,
-                                progressBar,
-                                recyclerResultsView,
-                                noConnectionError,
-                                noResultsError,
-                                false,
-                                false,
-                                false,
-                                true,
-                                false
-                            )
-                        }
-                    } else {
-                        Log.d("MyTag", "IF1 else. Unsuccessful response. Display noConnectionError")
-                        setLayoutVisibility(
-                            recentSearchFrame,
-                            progressBar,
-                            recyclerResultsView,
-                            noConnectionError,
-                            noResultsError,
-                            false,
-                            false,
-                            false,
-                            true,
-                            false
-                        )
-                    }
-                }
-
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Log.d("MyTag", "onFailure. Display noConnectionError")
-                    setLayoutVisibility(
-                        recentSearchFrame,
-                        progressBar,
-                        recyclerResultsView,
-                        noConnectionError,
-                        noResultsError,
-                        false,
-                        false,
-                        false,
-                        true,
-                        false
-                    )
-                }
-            })
-        }
 
         searchBarField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -336,11 +135,6 @@ class SearchActivity : AppCompatActivity() {
             recentTracksList.clear()
             SearchHistory(App.recentTracksSharedPreferences).encodeAndSave()
             setLayoutVisibility(
-                recentSearchFrame,
-                progressBar,
-                recyclerResultsView,
-                noConnectionError,
-                noResultsError,
                 false,
                 false,
                 false,
@@ -357,11 +151,6 @@ class SearchActivity : AppCompatActivity() {
                 searchBarClear.visibility = View.INVISIBLE
                 if (recentTracksList.isNotEmpty()) {
                     setLayoutVisibility(
-                        recentSearchFrame,
-                        progressBar,
-                        recyclerResultsView,
-                        noConnectionError,
-                        noResultsError,
                         true,
                         false,
                         false,
@@ -371,11 +160,6 @@ class SearchActivity : AppCompatActivity() {
                 }
                 if (recentTracksList.isEmpty()) {
                     setLayoutVisibility(
-                        recentSearchFrame,
-                        progressBar,
-                        recyclerResultsView,
-                        noConnectionError,
-                        noResultsError,
                         false,
                         false,
                         false,
@@ -425,5 +209,164 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    fun setLayoutVisibility(
+        isSearchHistoryVisible: Boolean,
+        isProgressBarVisible: Boolean,
+        isSearchVisible: Boolean,
+        isNoConnectionErrorVisible: Boolean,
+        isNoResultsErrorVisible: Boolean
+    ) {
+        recentSearchFrame.visibility = if (isSearchHistoryVisible) View.VISIBLE else View.GONE
+        progressBar.visibility = if (isProgressBarVisible) View.VISIBLE else View.GONE
+        recyclerResultsView.visibility = if (isSearchVisible) View.VISIBLE else View.GONE
+        noConnectionError.visibility =
+            if (isNoConnectionErrorVisible) View.VISIBLE else View.GONE
+        noResultsError.visibility = if (isNoResultsErrorVisible) View.VISIBLE else View.GONE
+    }
+    fun handleSearch() {
+        if (searchBarField.text.toString()=="") {return}
 
+        setLayoutVisibility(
+            false,
+            true,
+            false,
+            false,
+            true
+        )
+
+        val gson = Gson()
+
+        val rawQuery = searchBarField.text.toString()
+        val entity = "song"
+
+        val apiClient = ApiClient()
+        val call = apiClient.apiService.searchQuery(rawQuery, entity)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onResponse(
+                call: Call<JsonObject>,
+                response: Response<JsonObject>
+            ) {
+                if (response.isSuccessful) {
+                    if (response.code() == 200) {
+
+                        trackList.clear()
+
+                        if (response.body() != null) {
+                            val parsedResponse = gson.fromJson(
+                                response.body(),
+                                searchServerResonse::class.java
+                            )
+                            val searchResults = parsedResponse?.results
+                            if (searchResults != null) {
+
+                                if (parsedResponse.resultCount == 0) {
+                                    Log.d(
+                                        "MyTag",
+                                        "0 results. Display noResultsError"
+                                    )
+                                    setLayoutVisibility(
+                                        false,
+                                        false,
+                                        false,
+                                        false,
+                                        true
+                                    )
+                                } else {
+                                    for (result in searchResults) {
+
+                                        trackList.add(
+                                            Track(
+                                                result.trackName,
+                                                result.artistName,
+                                                SimpleDateFormat(
+                                                    "mm:ss",
+                                                    Locale.getDefault()
+                                                ).format(
+                                                    result.trackTimeMillis
+                                                ),
+                                                result.artworkUrl100,
+                                                result.trackId,
+                                                result.collectionName,
+                                                if (result.releaseDate != null && result.releaseDate.length >= 4) {
+                                                    result.releaseDate.substring(0, 4)
+                                                } else {
+                                                    ""
+                                                },
+                                                result.primaryGenreName,
+                                                result.country,
+                                                result.previewUrl
+                                            ))
+
+                                    }
+                                    Log.d("MyTag", "New tracklist filled. Display results")
+                                    setLayoutVisibility(
+                                        false,
+                                        false,
+                                        true,
+                                        false,
+                                        false
+                                    )
+                                    searchAdapter.notifyDataSetChanged()
+
+                                }
+                            } else {
+                                Log.d(
+                                    "MyTag",
+                                    "IF4 else. Display noResultsError, " +
+                                            "but it's just a safety measure against null"
+                                )
+                                setLayoutVisibility(
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    true
+                                )
+                            }
+                        } else {
+                            Log.d("MyTag", "IF3 else. Null results. Display noResultsError")
+                            setLayoutVisibility(
+                                false,
+                                false,
+                                false,
+                                false,
+                                true
+                            )
+                        }
+
+                    } else {
+                        Log.d("MyTag", "IF2 else. Code!=200. Display noConnectionError")
+                        setLayoutVisibility(
+                            false,
+                            false,
+                            false,
+                            true,
+                            false
+                        )
+                    }
+                } else {
+                    Log.d("MyTag", "IF1 else. Unsuccessful response. Display noConnectionError")
+                    setLayoutVisibility(
+                        false,
+                        false,
+                        false,
+                        true,
+                        false
+                    )
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Log.d("MyTag", "onFailure. Display noConnectionError")
+                setLayoutVisibility(
+                    false,
+                    false,
+                    false,
+                    true,
+                    false
+                )
+            }
+        })
+    }
 }

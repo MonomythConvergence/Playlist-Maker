@@ -25,7 +25,7 @@ class SearchAdapter(diplayedList: ArrayList<Track>, activity: SearchActivity) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.activity_search_result_item, parent, false)
-        val holder = TrackViewHolder(view, activityInstance)
+        val holder = TrackViewHolder(view)
         holder.itemView.setOnClickListener {
             val position = holder.absoluteAdapterPosition
             val playerIntent = Intent(activityInstance, PlayerActivity::class.java)
@@ -48,7 +48,7 @@ class SearchAdapter(diplayedList: ArrayList<Track>, activity: SearchActivity) :
 
     override fun getItemCount(): Int = list.size
 
-    class TrackViewHolder(itemView: View, activity: SearchActivity) :
+    class TrackViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         private val trackName: TextView = itemView.findViewById(R.id.track_name)
         private val artistName: TextView = itemView.findViewById(R.id.artist_name)
