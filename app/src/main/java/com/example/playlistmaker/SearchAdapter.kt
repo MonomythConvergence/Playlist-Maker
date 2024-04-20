@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.presentation.PlayerActivity
 import java.util.ArrayList
 
 class SearchAdapter(diplayedList: ArrayList<Track>, activity: SearchActivity) :
