@@ -20,7 +20,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.MediaPlayer
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.Track
+import com.example.playlistmaker.domain.datamodels.Track
 import java.util.Locale
 
 

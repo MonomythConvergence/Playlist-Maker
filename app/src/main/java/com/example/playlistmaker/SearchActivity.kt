@@ -20,9 +20,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.domain.Track
-import com.example.playlistmaker.domain.recentTracksList
-import com.example.playlistmaker.domain.trackList
+import com.example.playlistmaker.domain.datamodels.Track
+import com.example.playlistmaker.domain.datamodels.recentTracksList
+import com.example.playlistmaker.domain.searchServerResonse
+import com.example.playlistmaker.domain.datamodels.trackList
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 

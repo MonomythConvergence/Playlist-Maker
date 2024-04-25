@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain
+package com.example.playlistmaker.domain.datamodels
 
 class unparsedTrack(
     val trackName: String,
