@@ -20,6 +20,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.domain.Track
+import com.example.playlistmaker.domain.recentTracksList
+import com.example.playlistmaker.domain.trackList
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 
@@ -296,7 +299,8 @@ class SearchActivity : AppCompatActivity() {
                                                 result.primaryGenreName,
                                                 result.country,
                                                 result.previewUrl
-                                            ))
+                                            )
+                                        )
 
                                     }
                                     Log.d("MyTag", "New tracklist filled. Display results")

@@ -2,6 +2,8 @@ package com.example.playlistmaker
 
 import java.util.ArrayList
 import android.content.SharedPreferences
+import com.example.playlistmaker.domain.Track
+import com.example.playlistmaker.domain.recentTracksList
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
