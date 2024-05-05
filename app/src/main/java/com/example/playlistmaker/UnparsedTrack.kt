@@ -1,4 +1,4 @@
-package com.example.playlistmaker.audioplayer.data.dto
+package com.example.playlistmaker
 
 class unparsedTrack(
     val trackName: String,
