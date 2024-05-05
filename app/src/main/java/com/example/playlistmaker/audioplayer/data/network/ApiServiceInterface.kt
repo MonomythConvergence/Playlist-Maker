@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.audioplayer.data.network
 
 import com.google.gson.JsonObject
 import retrofit2.Call

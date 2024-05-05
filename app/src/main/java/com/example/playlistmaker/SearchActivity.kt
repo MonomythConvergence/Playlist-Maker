@@ -20,10 +20,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.domain.datamodels.Track
-import com.example.playlistmaker.domain.datamodels.recentTracksList
-import com.example.playlistmaker.domain.searchServerResonse
-import com.example.playlistmaker.domain.datamodels.trackList
+import com.example.playlistmaker.audioplayer.domain.datamodels.Track
+import com.example.playlistmaker.audioplayer.domain.datamodels.recentTracksList
+import com.example.playlistmaker.audioplayer.data.network.RetrofitApiClient
+import com.example.playlistmaker.audioplayer.domain.datamodels.trackList
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 
@@ -243,7 +243,7 @@ class SearchActivity : AppCompatActivity() {
         val rawQuery = searchBarField.text.toString()
         val entity = "song"
 
-        val apiClient = ApiClient()
+        val apiClient = RetrofitApiClient()
         val call = apiClient.apiService.searchQuery(rawQuery, entity)
 
         call.enqueue(object : Callback<JsonObject> {

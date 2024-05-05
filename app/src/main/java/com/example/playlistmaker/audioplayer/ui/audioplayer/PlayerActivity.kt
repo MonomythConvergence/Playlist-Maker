@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation.audioplayer
+package com.example.playlistmaker.audioplayer.ui.audioplayer
 
 
 import android.annotation.SuppressLint
@@ -18,20 +18,21 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
-import com.example.playlistmaker.MediaPlayer
+import com.example.playlistmaker.audioplayer.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.datamodels.Track
+import com.example.playlistmaker.audioplayer.domain.datamodels.Track
 import java.util.Locale
 
 
 class PlayerActivity : AppCompatActivity() {
 
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var mediaPlayer: MediaPlayerRepositoryImpl
     lateinit var selectedTrack: Track
     var playButtonPressed = false
     lateinit var playAndPauseButton: ImageButton
     private var updatePlayTimeHandler: Handler? = null
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -108,7 +109,7 @@ class PlayerActivity : AppCompatActivity() {
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
 
-        mediaPlayer = MediaPlayer(playAndPauseButton, selectedTrack.previewUrl)
+        mediaPlayer = MediaPlayerRepositoryImpl(playAndPauseButton, selectedTrack.previewUrl)
         mediaPlayer.preparePlayer()
 
         updatePlayTimeHandler = Handler(Looper.getMainLooper())

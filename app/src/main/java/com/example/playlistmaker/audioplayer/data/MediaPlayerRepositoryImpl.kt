@@ -1,26 +1,18 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.audioplayer.data
 
 import android.media.MediaPlayer
 import android.widget.ImageButton
+import com.example.playlistmaker.R
 
-class MediaPlayer(private val button: ImageButton, private val url: String?) {
+class MediaPlayerRepositoryImpl(private val button: ImageButton, private val url: String?):
+    MediaPlayerRepository {
     private val mediaPlayer = MediaPlayer()
 
-    enum class MediaPlayerState {
-        IDLE,
-        INITIALIZED,
-        PREPARED,
-        STARTED,
-        PAUSED,
-        STOPPED,
-        PLAYBACK_COMPLETED,
-        ERROR
-    }
 
     var mediaPlayerState: MediaPlayerState = MediaPlayerState.IDLE
     val validURL = !url.isNullOrEmpty()
 
-    fun preparePlayer() {
+    override fun preparePlayer() {
         if (validURL) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
@@ -35,27 +27,27 @@ class MediaPlayer(private val button: ImageButton, private val url: String?) {
         }
     }
 
-    private fun startPlayer() {
+    override fun startPlayer() {
         if (validURL) {
             mediaPlayer.start()
             mediaPlayerState = MediaPlayerState.STARTED
         }
     }
 
-    fun pausePlayer() {
+    override fun pausePlayer() {
         if (validURL) {
             mediaPlayer.pause()
             mediaPlayerState = MediaPlayerState.PAUSED
         }
     }
 
-    fun releasePlayer() {
+    override fun releasePlayer() {
         if (validURL) {
             mediaPlayer.release()
         }
     }
 
-    fun playbackControl() {
+    override fun playbackControl() {
         if (validURL) {
             when (mediaPlayerState) {
                 MediaPlayerState.STARTED, MediaPlayerState.PLAYBACK_COMPLETED -> {
@@ -70,14 +62,14 @@ class MediaPlayer(private val button: ImageButton, private val url: String?) {
             }
         }
     }
-    fun getCurrentPosition() : Int {
+    override fun getCurrentPosition() : Int {
         return mediaPlayer.currentPosition
     }
-    fun getDuration() : Int {
+    override fun getDuration() : Int {
         return mediaPlayer.duration
     }
 
-    fun getIsPlaying() : Boolean{
+    override fun getIsPlaying() : Boolean{
         return mediaPlayer.isPlaying()
     }
 }

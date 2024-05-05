@@ -16,7 +16,7 @@ class App : Application() {
         super.onCreate()
 
         themeSharedPreferences = getSharedPreferences(Constants.THEME_PREF_KEY, MODE_PRIVATE)
-        darkTheme=themeSharedPreferences.getBoolean(Constants.THEME_PREF_KEY, false)
+        darkTheme =themeSharedPreferences.getBoolean(Constants.THEME_PREF_KEY, false)
         switchTheme(darkTheme)
 
         recentTracksSharedPreferences = getSharedPreferences(Constants.RECENT_TRACKS_KEY, MODE_PRIVATE)
@@ -25,7 +25,7 @@ class App : Application() {
     }
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
-        themeSharedPreferences.edit().putBoolean(Constants.THEME_PREF_KEY,darkTheme).apply()
+        themeSharedPreferences.edit().putBoolean(Constants.THEME_PREF_KEY, darkTheme).apply()
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES
