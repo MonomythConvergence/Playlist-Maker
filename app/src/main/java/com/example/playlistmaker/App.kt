@@ -11,7 +11,11 @@ class App : Application() {
         lateinit var recentTracksSharedPreferences: SharedPreferences
     }
     private lateinit var themeSharedPreferences: SharedPreferences
-
+    fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
+        val editor = edit()
+        editor.func()
+        editor.apply()
+    }
     override fun onCreate() {
         super.onCreate()
 
@@ -25,7 +29,9 @@ class App : Application() {
     }
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
-        themeSharedPreferences.edit().putBoolean(Constants.THEME_PREF_KEY, darkTheme).apply()
+        themeSharedPreferences.edit {
+            putBoolean(Constants.THEME_PREF_KEY, darkTheme)
+        }
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
                 AppCompatDelegate.MODE_NIGHT_YES

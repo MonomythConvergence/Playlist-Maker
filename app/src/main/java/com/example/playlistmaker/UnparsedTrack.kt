@@ -1,6 +1,6 @@
 package com.example.playlistmaker
 
-class unparsedTrack(
+class UnparsedTrack(
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,

@@ -20,28 +20,25 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.audioplayer.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.R
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerListener
 import com.example.playlistmaker.audioplayer.domain.datamodels.Track
 import java.util.Locale
 
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
 
 
     private lateinit var mediaPlayer: MediaPlayerRepositoryImpl
     lateinit var selectedTrack: Track
-    var playButtonPressed = false
+    private var playButtonPressed = false
     lateinit var playAndPauseButton: ImageButton
     private var updatePlayTimeHandler: Handler? = null
 
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
+    //override fun onSaveInstanceState(outState: Bundle) {
+    //    super.onSaveInstanceState(outState)}
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-    }
+    //override fun onRestoreInstanceState(savedInstanceState: Bundle) {}
 
     override fun onPause() {
         super.onPause()
@@ -96,7 +93,7 @@ class PlayerActivity : AppCompatActivity() {
         artistName.text = selectedTrack.artistName
 
         val playlistAddButton = findViewById<ImageButton>(R.id.playlistAddButton)
-        playlistAddButton.setOnClickListener() {
+        playlistAddButton.setOnClickListener {
             //TODO
         }
 
@@ -109,7 +106,7 @@ class PlayerActivity : AppCompatActivity() {
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
 
-        mediaPlayer = MediaPlayerRepositoryImpl(playAndPauseButton, selectedTrack.previewUrl)
+        mediaPlayer = MediaPlayerRepositoryImpl(selectedTrack.previewUrl)
         mediaPlayer.preparePlayer()
 
         updatePlayTimeHandler = Handler(Looper.getMainLooper())
@@ -168,7 +165,7 @@ class PlayerActivity : AppCompatActivity() {
 
 
         val favoriteButton = findViewById<ImageButton>(R.id.favoriteButton)
-        favoriteButton.setOnClickListener() {
+        favoriteButton.setOnClickListener {
             //TODO
         }
 
@@ -201,6 +198,19 @@ class PlayerActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onPlayerPrepared() {
+        playAndPauseButton.isEnabled = true
+        //mediaPlayerState = MediaPlayerState.PREPARED
+
+    }
+
+    override fun onPlayerCompleted() {
+        //mediaPlayerState = MediaPlayerState.PREPARED
+        playAndPauseButton.setImageResource(R.drawable.play_button)
+
+    }
+
 
 }
 

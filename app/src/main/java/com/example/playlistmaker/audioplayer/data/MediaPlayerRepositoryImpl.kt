@@ -3,8 +3,10 @@ package com.example.playlistmaker.audioplayer.data
 import android.media.MediaPlayer
 import android.widget.ImageButton
 import com.example.playlistmaker.R
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerListener
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerRepository
 
-class MediaPlayerRepositoryImpl(private val button: ImageButton, private val url: String?):
+class MediaPlayerRepositoryImpl(private val url: String?):
     MediaPlayerRepository {
     private val mediaPlayer = MediaPlayer()
 
@@ -16,16 +18,9 @@ class MediaPlayerRepositoryImpl(private val button: ImageButton, private val url
         if (validURL) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
-            mediaPlayer.setOnPreparedListener {
-                button.isEnabled = true
-                mediaPlayerState = MediaPlayerState.PREPARED
-            }
-            mediaPlayer.setOnCompletionListener {
-                mediaPlayerState = MediaPlayerState.PREPARED
-                button.setImageResource(R.drawable.play_button)
-            }
         }
     }
+
 
     override fun startPlayer() {
         if (validURL) {
@@ -70,6 +65,6 @@ class MediaPlayerRepositoryImpl(private val button: ImageButton, private val url
     }
 
     override fun getIsPlaying() : Boolean{
-        return mediaPlayer.isPlaying()
+        return mediaPlayer.isPlaying
     }
 }
