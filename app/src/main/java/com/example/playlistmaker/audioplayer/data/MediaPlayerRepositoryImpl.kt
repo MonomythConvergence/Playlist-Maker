@@ -70,7 +70,7 @@ class MediaPlayerRepositoryImpl(private val url: String?):
         return mediaPlayer.isPlaying
     }
 
-    override fun setPlayerState(newMediaPlayerState : MediaPlayerState){
-        mediaPlayerState=newMediaPlayerState
+    override fun setPlayerState(mediaPlayerState : MediaPlayerState){
+        this.mediaPlayerState =mediaPlayerState
     }
 }

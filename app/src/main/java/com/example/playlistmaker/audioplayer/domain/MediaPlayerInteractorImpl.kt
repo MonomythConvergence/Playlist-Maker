@@ -1,6 +1,4 @@
 package com.example.playlistmaker.audioplayer.domain
-
-import android.util.Log
 import com.example.playlistmaker.audioplayer.data.MediaPlayerState
 
 class MediaPlayerInteractorImpl(
