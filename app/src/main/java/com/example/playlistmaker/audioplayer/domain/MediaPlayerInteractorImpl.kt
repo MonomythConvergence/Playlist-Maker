@@ -1,17 +1,26 @@
 package com.example.playlistmaker.audioplayer.domain
 
+import android.util.Log
+import com.example.playlistmaker.audioplayer.data.MediaPlayerState
+
 class MediaPlayerInteractorImpl(
     private val mediaPlayerRepository: MediaPlayerRepository
 ) : MediaPlayerInteractor {
-    private var mediaPlayerListener: MediaPlayerListener? = null
+    private lateinit var mediaPlayerListener: MediaPlayerListener
+
+
+
     override fun setListener(mediaPlayerListener: MediaPlayerListener) {
-        this.mediaPlayerListener = mediaPlayerListener
+        if (mediaPlayerListener != null) {
+            this.mediaPlayerListener = mediaPlayerListener
+         } else {
+            return
+        }
     }
 
     override fun preparePlayer() {
         mediaPlayerRepository.preparePlayer()
-        mediaPlayerListener?.onPlayerPrepared()
-    }
+        mediaPlayerListener.onPlayerPrepared() }
 
     override fun startPlayer() {
         mediaPlayerRepository.startPlayer()
@@ -41,5 +50,12 @@ class MediaPlayerInteractorImpl(
         return mediaPlayerRepository.getIsPlaying()
     }
 
+    override fun getPlayerState(): MediaPlayerState {
+        return mediaPlayerRepository.mediaPlayerState
+    }
+
+    override fun setPlayerState(mediaPlayerState : MediaPlayerState) {
+        mediaPlayerRepository.setPlayerState(mediaPlayerState)
+    }
 
 }

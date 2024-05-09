@@ -3,6 +3,10 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.audioplayer.data.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractor
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractorImpl
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerRepository
 
 
 class App : Application() {
@@ -11,6 +15,15 @@ class App : Application() {
         lateinit var recentTracksSharedPreferences: SharedPreferences
     }
     private lateinit var themeSharedPreferences: SharedPreferences
+
+    private lateinit var mediaPlayerRepository: MediaPlayerRepository
+    lateinit var mediaPlayerInteractor: MediaPlayerInteractor
+
+    fun initializeMediaPlayerinstances(url : String) {
+        mediaPlayerRepository = MediaPlayerRepositoryImpl(url)
+        mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
+    }
+
     fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
         val editor = edit()
         editor.func()

@@ -18,17 +18,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
-import com.example.playlistmaker.audioplayer.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.R
+import com.example.playlistmaker.audioplayer.data.MediaPlayerState
 import com.example.playlistmaker.audioplayer.domain.MediaPlayerListener
 import com.example.playlistmaker.audioplayer.domain.datamodels.Track
 import java.util.Locale
+import com.example.playlistmaker.App
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractor
 
 
+@Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
 
 
-    private lateinit var mediaPlayer: MediaPlayerRepositoryImpl
+    private lateinit var mediaPlayer: MediaPlayerInteractor
     lateinit var selectedTrack: Track
     private var playButtonPressed = false
     lateinit var playAndPauseButton: ImageButton
@@ -68,8 +71,13 @@ class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
+        val app = applicationContext as App
         if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
             selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
+            if (!selectedTrack.previewUrl.isNullOrEmpty()){
+                app.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)}
+            else{finish()}
+            mediaPlayer = app.mediaPlayerInteractor
         } else {
             finish()
         }
@@ -106,7 +114,7 @@ class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
 
-        mediaPlayer = MediaPlayerRepositoryImpl(selectedTrack.previewUrl)
+        mediaPlayer.setListener(this)
         mediaPlayer.preparePlayer()
 
         updatePlayTimeHandler = Handler(Looper.getMainLooper())
@@ -118,15 +126,14 @@ class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
                     "mm:ss",
                     Locale.getDefault()
                 ).format(mediaPlayer.getCurrentPosition())
+
+
                 val playtimeDurationDiscrepancyAllowance = 5L
                 if (!mediaPlayer.getIsPlaying() && mediaPlayer.getCurrentPosition() >= (mediaPlayer.getDuration() - playtimeDurationDiscrepancyAllowance)) { //У некоторых песен обман с объявленной
                     //длительностью и ей же по-факту. Playback идёт до конца, для юзера разница при смене иконки с опережением 5мс глазу не заметна
                     playButtonPressed = false
                     playTimer.text = "00:00"
-                    Log.d(
-                        "MyTag",
-                        "Debugging Playtime/Duration: ${mediaPlayer.getCurrentPosition()}/${mediaPlayer.getDuration()}"
-                    )
+                    onPlayerCompleted()
                     return
                 }
                 updatePlayTimeHandler?.postDelayed(this, 350)
@@ -196,19 +203,17 @@ class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
             finish()
         }
 
-
     }
 
     override fun onPlayerPrepared() {
         playAndPauseButton.isEnabled = true
-        //mediaPlayerState = MediaPlayerState.PREPARED
+        mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
 
     }
 
     override fun onPlayerCompleted() {
-        //mediaPlayerState = MediaPlayerState.PREPARED
+        mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
         playAndPauseButton.setImageResource(R.drawable.play_button)
-
     }
 
 
