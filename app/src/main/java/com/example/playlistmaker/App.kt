@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import com.example.playlistmaker.audioplayer.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractor
 import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractorImpl
@@ -24,11 +25,6 @@ class App : Application() {
         mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
     }
 
-    fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
-        val editor = edit()
-        editor.func()
-        editor.apply()
-    }
     override fun onCreate() {
         super.onCreate()
 

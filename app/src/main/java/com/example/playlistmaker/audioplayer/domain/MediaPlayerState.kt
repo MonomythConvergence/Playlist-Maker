@@ -1,4 +1,4 @@
-package com.example.playlistmaker.audioplayer.data
+package com.example.playlistmaker.audioplayer.domain
 
 enum class MediaPlayerState {
     IDLE,

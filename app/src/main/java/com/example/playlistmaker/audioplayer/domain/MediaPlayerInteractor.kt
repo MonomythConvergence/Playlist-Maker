@@ -1,7 +1,5 @@
 package com.example.playlistmaker.audioplayer.domain
 
-import com.example.playlistmaker.audioplayer.data.MediaPlayerState
-
 interface MediaPlayerInteractor {
     fun setListener(mediaPlayerListener: MediaPlayerListener)
     fun preparePlayer()

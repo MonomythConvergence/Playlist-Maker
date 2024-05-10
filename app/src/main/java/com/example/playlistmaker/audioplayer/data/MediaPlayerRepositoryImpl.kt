@@ -1,8 +1,8 @@
 package com.example.playlistmaker.audioplayer.data
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.example.playlistmaker.audioplayer.domain.MediaPlayerRepository
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerState
 
 class MediaPlayerRepositoryImpl(private val url: String?):
     MediaPlayerRepository {
@@ -18,7 +18,6 @@ class MediaPlayerRepositoryImpl(private val url: String?):
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
         }
-        Log.d("MediaPlayerState", "preparePlayer successful on the RepoIMPL")
     }
 
 

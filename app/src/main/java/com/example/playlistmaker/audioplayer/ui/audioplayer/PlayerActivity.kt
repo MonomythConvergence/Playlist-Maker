@@ -18,7 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-import com.example.playlistmaker.audioplayer.data.MediaPlayerState
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerState
 import com.example.playlistmaker.audioplayer.domain.MediaPlayerListener
 import com.example.playlistmaker.audioplayer.domain.datamodels.Track
 import java.util.Locale

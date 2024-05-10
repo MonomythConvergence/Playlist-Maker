@@ -1,5 +1,4 @@
 package com.example.playlistmaker.audioplayer.domain
-import com.example.playlistmaker.audioplayer.data.MediaPlayerState
 
 class MediaPlayerInteractorImpl(
     private val mediaPlayerRepository: MediaPlayerRepository
