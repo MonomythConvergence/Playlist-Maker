@@ -1,11 +1,6 @@
 package com.example.playlistmaker
 
-data class searchServerResonse(
-    val resultCount:Int,
-    val results: List<unparsedTrack>
-)
-
-class unparsedTrack(
+class UnparsedTrack(
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,

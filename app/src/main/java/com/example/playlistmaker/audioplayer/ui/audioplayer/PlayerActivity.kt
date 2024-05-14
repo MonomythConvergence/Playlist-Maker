@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.audioplayer.ui.audioplayer
 
 
 import android.annotation.SuppressLint
@@ -6,7 +6,6 @@ import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
@@ -17,26 +16,31 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Constants
+import com.example.playlistmaker.R
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerState
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerListener
+import com.example.playlistmaker.audioplayer.domain.datamodels.Track
 import java.util.Locale
+import com.example.playlistmaker.App
+import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractor
 
 
-class PlayerActivity : AppCompatActivity() {
+@Suppress("DEPRECATION")
+class PlayerActivity : AppCompatActivity(), MediaPlayerListener {
 
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var mediaPlayer: MediaPlayerInteractor
     lateinit var selectedTrack: Track
-    var playButtonPressed = false
+    private var playButtonPressed = false
     lateinit var playAndPauseButton: ImageButton
     private var updatePlayTimeHandler: Handler? = null
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
+    //override fun onSaveInstanceState(outState: Bundle) {
+    //    super.onSaveInstanceState(outState)}
 
-    }
+    //override fun onRestoreInstanceState(savedInstanceState: Bundle) {}
 
     override fun onPause() {
         super.onPause()
@@ -66,8 +70,13 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
 
+        val app = applicationContext as App
         if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
             selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
+            if (!selectedTrack.previewUrl.isNullOrEmpty()){
+                app.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)}
+            else{finish()}
+            mediaPlayer = app.mediaPlayerInteractor
         } else {
             finish()
         }
@@ -91,7 +100,7 @@ class PlayerActivity : AppCompatActivity() {
         artistName.text = selectedTrack.artistName
 
         val playlistAddButton = findViewById<ImageButton>(R.id.playlistAddButton)
-        playlistAddButton.setOnClickListener() {
+        playlistAddButton.setOnClickListener {
             //TODO
         }
 
@@ -104,7 +113,7 @@ class PlayerActivity : AppCompatActivity() {
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
 
-        mediaPlayer = MediaPlayer(playAndPauseButton, selectedTrack.previewUrl)
+        mediaPlayer.setListener(this)
         mediaPlayer.preparePlayer()
 
         updatePlayTimeHandler = Handler(Looper.getMainLooper())
@@ -116,15 +125,14 @@ class PlayerActivity : AppCompatActivity() {
                     "mm:ss",
                     Locale.getDefault()
                 ).format(mediaPlayer.getCurrentPosition())
+
+
                 val playtimeDurationDiscrepancyAllowance = 5L
                 if (!mediaPlayer.getIsPlaying() && mediaPlayer.getCurrentPosition() >= (mediaPlayer.getDuration() - playtimeDurationDiscrepancyAllowance)) { //У некоторых песен обман с объявленной
                     //длительностью и ей же по-факту. Playback идёт до конца, для юзера разница при смене иконки с опережением 5мс глазу не заметна
                     playButtonPressed = false
                     playTimer.text = "00:00"
-                    Log.d(
-                        "MyTag",
-                        "Debugging Playtime/Duration: ${mediaPlayer.getCurrentPosition()}/${mediaPlayer.getDuration()}"
-                    )
+                    onPlayerCompleted()
                     return
                 }
                 updatePlayTimeHandler?.postDelayed(this, 350)
@@ -163,7 +171,7 @@ class PlayerActivity : AppCompatActivity() {
 
 
         val favoriteButton = findViewById<ImageButton>(R.id.favoriteButton)
-        favoriteButton.setOnClickListener() {
+        favoriteButton.setOnClickListener {
             //TODO
         }
 
@@ -194,8 +202,19 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    override fun onPlayerPrepared() {
+        playAndPauseButton.isEnabled = true
+        mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
 
     }
+
+    override fun onPlayerCompleted() {
+        mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
+        playAndPauseButton.setImageResource(R.drawable.play_button)
+    }
+
 
 }
 
