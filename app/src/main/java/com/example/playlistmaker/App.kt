@@ -4,10 +4,13 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.example.playlistmaker.audioplayer.data.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractor
-import com.example.playlistmaker.audioplayer.domain.MediaPlayerInteractorImpl
-import com.example.playlistmaker.audioplayer.domain.MediaPlayerRepository
+import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.MediaPlayerInteractor
+import com.example.playlistmaker.player.domain.MediaPlayerInteractorImpl
+import com.example.playlistmaker.player.domain.MediaPlayerRepository
+import com.example.playlistmaker.search.ui.SearchHistory
+import com.example.playlistmaker.settings.data.ThemeSwitchRepositoryImpl
+import com.example.playlistmaker.settings.ui.ThemeViewModel
 
 
 class App : Application() {
@@ -15,27 +18,35 @@ class App : Application() {
         var darkTheme: Boolean = false
         lateinit var recentTracksSharedPreferences: SharedPreferences
     }
+
     private lateinit var themeSharedPreferences: SharedPreferences
-
+    private lateinit var themeViewModel: ThemeViewModel
     private lateinit var mediaPlayerRepository: MediaPlayerRepository
-    lateinit var mediaPlayerInteractor: MediaPlayerInteractor
+    private lateinit var mediaPlayerInteractor: MediaPlayerInteractor
 
-    fun initializeMediaPlayerinstances(url : String) {
+    fun initializeMediaPlayerinstances(url: String) {
         mediaPlayerRepository = MediaPlayerRepositoryImpl(url)
-        mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
+       mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
+    }
+
+    fun giveMediaPlayerInteractor(): MediaPlayerInteractor {
+        return mediaPlayerInteractor
     }
 
     override fun onCreate() {
         super.onCreate()
 
         themeSharedPreferences = getSharedPreferences(Constants.THEME_PREF_KEY, MODE_PRIVATE)
-        darkTheme =themeSharedPreferences.getBoolean(Constants.THEME_PREF_KEY, false)
+        themeViewModel = ThemeViewModel(ThemeSwitchRepositoryImpl(this))
+        darkTheme = themeSharedPreferences.getBoolean(Constants.THEME_PREF_KEY, false)
         switchTheme(darkTheme)
 
-        recentTracksSharedPreferences = getSharedPreferences(Constants.RECENT_TRACKS_KEY, MODE_PRIVATE)
+        recentTracksSharedPreferences =
+            getSharedPreferences(Constants.RECENT_TRACKS_KEY, MODE_PRIVATE)
         SearchHistory(recentTracksSharedPreferences).decodeAndLoad()
 
     }
+
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
         themeSharedPreferences.edit {
@@ -46,7 +57,8 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
-            })
+            }
+        )
 
     }
 }
