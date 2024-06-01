@@ -39,19 +39,10 @@ class PlayerActivity : AppCompatActivity() {
     private var updatePlayTimeHandler: Handler? = null
     private var updatePlayTimeRunnable: Runnable? = null
     private lateinit var app: App
-    private val themeViewModel: ThemeViewModel by lazy {
-        ViewModelProvider(this).get(
-            ThemeViewModel::class.java
-        )
-    }
     private val playerViewModel: PlayerViewModel by lazy {
         ViewModelProvider(this).get(
             PlayerViewModel::class.java
         )
-    }
-
-    init {
-        Log.d("mydebug", "initialized") //TODO delete
     }
 
     override fun onPause() {
@@ -146,22 +137,18 @@ class PlayerActivity : AppCompatActivity() {
                 Locale.getDefault()
             ).format(mediaPlayer.getCurrentPosition())
 
-            Log.d(
-                "mydebug", "runnable triggered, timer at ${
-                    SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.getCurrentPosition())
-                }"
-            ) //TODO delete
-
             if (playButtonPressed && !mediaPlayer.getIsPlaying()) {
+
                 playTimer.text = "00:00"
-                Log.d("mydebug", "playback is over") //TODO delete
+
                 mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
+
                 playerViewModel.updateState(mediaPlayer.getPlayerState())
+
                 updateUi()
+
                 updatePlayTimeHandler?.removeCallbacksAndMessages(null)
+
                 return@Runnable
             }
 
@@ -172,6 +159,7 @@ class PlayerActivity : AppCompatActivity() {
 
         playAndPauseButton.setOnClickListener {
             if (!selectedTrack.previewUrl.isNullOrEmpty()) {
+
                 playButtonPressed = !playButtonPressed
                 if (playButtonPressed) {
                     updatePlayTimeHandler?.removeCallbacksAndMessages(null)
@@ -179,14 +167,13 @@ class PlayerActivity : AppCompatActivity() {
                 } else {
                     updatePlayTimeHandler?.removeCallbacksAndMessages(null)
                 }
-                Log.d("mydebug", "runnable started?") //TODO delete
+
                 mediaPlayer.playbackControl()
                 playerViewModel.updateState(mediaPlayer.getPlayerState())
             } else {
                 Toast.makeText(this, "Для трека нет превью...", Toast.LENGTH_SHORT).show()
             }//В задании/макете про этот случай ни слова
         }
-        Log.d("mydebug", "p&p listener completed") //TODO delete
 
 
         val favoriteButton = findViewById<ImageButton>(R.id.favoriteButton)
@@ -248,10 +235,5 @@ class PlayerActivity : AppCompatActivity() {
 
             else -> {}
         }
-        Log.d(
-            "mydebug", "updateUI completed, activity=${
-                mediaPlayer.getPlayerState()
-            }, livedata=${playerViewModel.stateLiveData.value.toString()}"
-        ) //TODO delete
     }
 }
