@@ -2,12 +2,12 @@ package com.example.playlistmaker.search.ui
 
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App
 import com.example.playlistmaker.Constants
-import com.example.playlistmaker.Debounce
 import com.example.playlistmaker.R
 
 import com.example.playlistmaker.search.data.datamodels.Track
@@ -20,7 +20,6 @@ class SearchAdapter(diplayedList: ArrayList<Track>, activity: SearchActivity) :
     RecyclerView.Adapter<TrackViewHolder>() {
     val list = diplayedList
     val activityInstance = activity
-    val debounce = Debounce()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -29,14 +28,14 @@ class SearchAdapter(diplayedList: ArrayList<Track>, activity: SearchActivity) :
         holder.itemView.setOnClickListener {
             val position = holder.absoluteAdapterPosition
             val playerIntent = Intent(activityInstance, PlayerActivity::class.java)
-            if (debounce.clickDebounce()) {
-                playerIntent.putExtra(Constants.PARCELABLE_TO_PLAYER_KEY, list[position])
-                if (position != RecyclerView.NO_POSITION) {
-                    val track = list[position]
-                    SearchHistory(App.recentTracksSharedPreferences).addTrackToRecent(track)
-                    activityInstance.startActivity(playerIntent)
-                }
+            playerIntent.putExtra(Constants.PARCELABLE_TO_PLAYER_KEY, list[position])
+            if (position != RecyclerView.NO_POSITION) {
+                val track = list[position]
+                SearchHistory(App.recentTracksSharedPreferences).addTrackToRecent(track)
+                Log.d("mydebug", "player intent is gonna start")
+                activityInstance.startActivity(playerIntent)
             }
+
         }
         return holder
     }

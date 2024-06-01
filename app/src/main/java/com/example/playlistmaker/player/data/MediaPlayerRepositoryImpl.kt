@@ -17,6 +17,7 @@ class MediaPlayerRepositoryImpl(private val url: String?):
         if (validURL) {
             mediaPlayer.setDataSource(url)
             mediaPlayer.prepareAsync()
+            mediaPlayerState=MediaPlayerState.PREPARED
         }
     }
 

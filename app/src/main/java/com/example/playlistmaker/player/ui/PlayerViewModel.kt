@@ -3,44 +3,24 @@ package com.example.playlistmaker.player.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.player.domain.MediaPlayerInteractor
-import com.example.playlistmaker.player.domain.MediaPlayerListener
 import com.example.playlistmaker.player.domain.MediaPlayerState
 
-class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel(),
-    MediaPlayerListener {
+class PlayerViewModel() : ViewModel() {
+
+
+    private val _stateLiveData = MutableLiveData<MediaPlayerState>()
+    val stateLiveData: LiveData<MediaPlayerState> = _stateLiveData
+
     init {
-        mediaPlayerInteractor.setListener(this)
-        mediaPlayerInteractor.preparePlayer()
+        _stateLiveData.value = MediaPlayerState.PREPARED
     }
 
-    private var _playerPreparedEvent = MutableLiveData<Boolean>()
-    val playerPreparedEvent: LiveData<Boolean> = _playerPreparedEvent
 
-    private var _playerCompletedEvent = MutableLiveData<Boolean>()
-    val playerCompletedEvent: LiveData<Boolean> = _playerCompletedEvent
-
-    val isPlaying: Boolean
-        get() = mediaPlayerInteractor.getIsPlaying()
-
-    val currentPosition: Int
-        get() = mediaPlayerInteractor.getCurrentPosition()
-
-    val duration: Int
-        get() = mediaPlayerInteractor.getDuration()
-
-    fun playbackControl() {
-        mediaPlayerInteractor.playbackControl()
+    fun updateState(newState : MediaPlayerState) {
+        _stateLiveData.value = newState
     }
 
-    override fun onPlayerPrepared() {
-        _playerPreparedEvent.value = true
-        mediaPlayerInteractor.setPlayerState(MediaPlayerState.PREPARED)
 
-    }
 
-    override fun onPlayerCompleted() {
-        mediaPlayerInteractor.setPlayerState(MediaPlayerState.PREPARED)
-       _playerCompletedEvent.value = true
-    }
+
 }

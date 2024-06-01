@@ -1,11 +1,11 @@
 package com.example.playlistmaker.player.ui
 
 
-import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -23,28 +24,50 @@ import com.example.playlistmaker.search.data.datamodels.Track
 import java.util.Locale
 import com.example.playlistmaker.App
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
+import com.example.playlistmaker.player.domain.MediaPlayerState
+import com.example.playlistmaker.settings.ui.ThemeViewModel
 
 
 @Suppress("DEPRECATION")
-class PlayerActivity() : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity() {
 
 
     private lateinit var mediaPlayer: MediaPlayerInteractor
     lateinit var selectedTrack: Track
-    private var playButtonPressed = false
+    var playButtonPressed = false
     lateinit var playAndPauseButton: ImageButton
     private var updatePlayTimeHandler: Handler? = null
-    private lateinit var app : App
+    private var updatePlayTimeRunnable: Runnable? = null
+    private lateinit var app: App
+    private val themeViewModel: ThemeViewModel by lazy {
+        ViewModelProvider(this).get(
+            ThemeViewModel::class.java
+        )
+    }
+    private val playerViewModel: PlayerViewModel by lazy {
+        ViewModelProvider(this).get(
+            PlayerViewModel::class.java
+        )
+    }
 
-
+    init {
+        Log.d("mydebug", "initialized") //TODO delete
+    }
 
     override fun onPause() {
         super.onPause()
+    }
+
+
+    override fun onStop() {
+        super.onStop()
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
             mediaPlayer.pausePlayer()
+            playButtonPressed = false
+            playAndPauseButton.setImageResource(R.drawable.play_button)
         }
-
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -52,24 +75,24 @@ class PlayerActivity() : AppCompatActivity() {
             mediaPlayer.releasePlayer()
             updatePlayTimeHandler?.removeCallbacksAndMessages(null)
         }
+        playerViewModel.stateLiveData.removeObserver(Observer {
+            updateUi()
+        })
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (playButtonPressed) {
-            playButtonPressed = false
-            playAndPauseButton.setImageResource(R.drawable.play_button)
-        }
-    }
+    //override fun onResume() {super.onResume()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        app= application as App
-        val playerViewModel: PlayerViewModel by lazy {
-            val factory = PlayerViewModelFactory(app.giveMediaPlayerInteractor())
-            ViewModelProvider(this, factory).get(PlayerViewModel::class.java)
-        }
+
+        playerViewModel.stateLiveData.observe(this, Observer {
+            updateUi()
+        })
+
+
+        app = application as App
+
         if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
             selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
             if (!selectedTrack.previewUrl.isNullOrEmpty()) {
@@ -81,9 +104,6 @@ class PlayerActivity() : AppCompatActivity() {
         } else {
             finish()
         }
-
-
-
 
         val artwork = findViewById<ImageView>(R.id.artwork)
         val roundingRadius = artwork.resources.getDimension(R.dimen.Artwork_rounding)
@@ -97,6 +117,7 @@ class PlayerActivity() : AppCompatActivity() {
             .placeholder(R.drawable.placeholder)
             .transform(CenterCrop(), RoundedCorners(pixelsForRoundedCorners.toInt()))
             .into(artwork)
+
         val trackName = findViewById<TextView>(R.id.trackName)
         trackName.text = selectedTrack.trackName
 
@@ -111,116 +132,126 @@ class PlayerActivity() : AppCompatActivity() {
         playAndPauseButton = findViewById(R.id.playAndPauseButton)
         val playTimer = findViewById<TextView>(R.id.playTimer)
 
-        playerViewModel.playerPreparedEvent.observe(this) { isPrepared ->
-            if (isPrepared) {
-                playAndPauseButton.isEnabled = true
-            }
-        }
+        mediaPlayer.preparePlayer()
 
-        playerViewModel.playerCompletedEvent.observe(this) { isCompleted ->
-            if (isCompleted) {
-                playAndPauseButton.setImageResource(R.drawable.play_button)
-            }
+        playerViewModel.updateState(mediaPlayer.getPlayerState())
 
-            if (playButtonPressed) {
-                playAndPauseButton.setImageResource(R.drawable.pause_button)
-            } else {
-                playAndPauseButton.setImageResource(R.drawable.play_button)
-            }
+        updatePlayTimeHandler = Handler(Looper.getMainLooper())
 
-            mediaPlayer.setListener(playerViewModel)
-            mediaPlayer.preparePlayer()
 
-            updatePlayTimeHandler = Handler(Looper.getMainLooper())
+        updatePlayTimeRunnable = Runnable {
 
-            val updatePlayTimeRunnable = object : Runnable {
-                @SuppressLint("SetTextI18n")
-                override fun run() {
-                    playTimer.text = SimpleDateFormat(
+            playTimer.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(mediaPlayer.getCurrentPosition())
+
+            Log.d(
+                "mydebug", "runnable triggered, timer at ${
+                    SimpleDateFormat(
                         "mm:ss",
                         Locale.getDefault()
                     ).format(mediaPlayer.getCurrentPosition())
+                }"
+            ) //TODO delete
 
-
-                    val playtimeDurationDiscrepancyAllowance = 5L
-                    if (!mediaPlayer.getIsPlaying() && mediaPlayer.getCurrentPosition() >= (mediaPlayer.getDuration() - playtimeDurationDiscrepancyAllowance)) { //У некоторых песен обман с объявленной
-                        //длительностью и ей же по-факту. Playback идёт до конца, для юзера разница при смене иконки с опережением 5мс глазу не заметна
-                        playButtonPressed = false
-                        playTimer.text = "00:00"
-                        playerViewModel.onPlayerCompleted()
-                        return
-                    }
-                    updatePlayTimeHandler?.postDelayed(this, 350)
-                }
+            if (playButtonPressed && !mediaPlayer.getIsPlaying()) {
+                playTimer.text = "00:00"
+                Log.d("mydebug", "playback is over") //TODO delete
+                mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
+                playerViewModel.updateState(mediaPlayer.getPlayerState())
+                updateUi()
+                updatePlayTimeHandler?.removeCallbacksAndMessages(null)
+                return@Runnable
             }
 
+            updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable!!, 350)
 
-            if (selectedTrack.previewUrl.isNullOrEmpty()) {
-                Toast.makeText(this, "Для трека нет превью...", Toast.LENGTH_SHORT).show()
-            }
-
-
-
-
-            playAndPauseButton.setOnClickListener() {
-                if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-                    mediaPlayer.playbackControl()
-                    if (!playButtonPressed) {
-                        playButtonPressed = true
-                        playAndPauseButton.setImageResource(R.drawable.pause_button)
-                        updatePlayTimeHandler?.removeCallbacksAndMessages(null)
-                        updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable, 350)
-
-
-                    } else {
-                        playButtonPressed = false
-                        playAndPauseButton.setImageResource(R.drawable.play_button)
-                        updatePlayTimeHandler?.removeCallbacksAndMessages(null)
-                    }
-                } else {
-                    Toast.makeText(this, "Для трека нет превью...", Toast.LENGTH_SHORT).show()
-                }
-                //В задании/макете про этот случай ни слова
-
-            }
-
-
-            val favoriteButton = findViewById<ImageButton>(R.id.favoriteButton)
-            favoriteButton.setOnClickListener {
-                //TODO
-            }
-
-
-            val trackTime = findViewById<TextView>(R.id.trackTime)
-            trackTime.text = selectedTrack.trackTime
-
-            val collectionName = findViewById<TextView>(R.id.collectionName)
-            collectionName.text = selectedTrack.collectionName
-            val collectionNameField = findViewById<TextView>(R.id.collectionNameField)
-            if (selectedTrack.collectionName == "" || selectedTrack.collectionName == null) {
-                collectionName.visibility = View.GONE
-                collectionNameField.visibility = View.GONE
-            }
-
-            val releaseDate = findViewById<TextView>(R.id.releaseDate)
-            releaseDate.text = selectedTrack.releaseDate
-            val primaryGenreName = findViewById<TextView>(R.id.primaryGenreName)
-            primaryGenreName.text = selectedTrack.primaryGenreName
-
-            val country = findViewById<TextView>(R.id.country)
-            country.text = selectedTrack.country
-
-
-            val backButton = findViewById<View>(R.id.backButton)
-
-            backButton.setOnClickListener {
-                finish()
-            }
-
+            return@Runnable
         }
+
+        playAndPauseButton.setOnClickListener {
+            if (!selectedTrack.previewUrl.isNullOrEmpty()) {
+                playButtonPressed = !playButtonPressed
+                if (playButtonPressed) {
+                    updatePlayTimeHandler?.removeCallbacksAndMessages(null)
+                    updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable!!, 350)
+                } else {
+                    updatePlayTimeHandler?.removeCallbacksAndMessages(null)
+                }
+                Log.d("mydebug", "runnable started?") //TODO delete
+                mediaPlayer.playbackControl()
+                playerViewModel.updateState(mediaPlayer.getPlayerState())
+            } else {
+                Toast.makeText(this, "Для трека нет превью...", Toast.LENGTH_SHORT).show()
+            }//В задании/макете про этот случай ни слова
+        }
+        Log.d("mydebug", "p&p listener completed") //TODO delete
+
+
+        val favoriteButton = findViewById<ImageButton>(R.id.favoriteButton)
+        favoriteButton.setOnClickListener {
+            //TODO
+        }
+
+
+        val trackTime = findViewById<TextView>(R.id.trackTime)
+        trackTime.text = selectedTrack.trackTime
+
+        val collectionName = findViewById<TextView>(R.id.collectionName)
+        collectionName.text = selectedTrack.collectionName
+        val collectionNameField = findViewById<TextView>(R.id.collectionNameField)
+        if (selectedTrack.collectionName == "" || selectedTrack.collectionName == null) {
+            collectionName.visibility = View.GONE
+            collectionNameField.visibility = View.GONE
+        }
+
+        val releaseDate = findViewById<TextView>(R.id.releaseDate)
+        releaseDate.text = selectedTrack.releaseDate
+        val primaryGenreName = findViewById<TextView>(R.id.primaryGenreName)
+        primaryGenreName.text = selectedTrack.primaryGenreName
+
+        val country = findViewById<TextView>(R.id.country)
+        country.text = selectedTrack.country
+
+
+        val backButton = findViewById<View>(R.id.backButton)
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
+
+    }
+
+    private fun updateUi() {
+
+        when (playerViewModel.stateLiveData.value) {
+            MediaPlayerState.PREPARED -> {
+                playAndPauseButton.setImageResource(R.drawable.play_button)
+                playButtonPressed = false
+            }
+
+            MediaPlayerState.STARTED -> {
+                playAndPauseButton.setImageResource(R.drawable.pause_button)
+                playButtonPressed = true
+            }
+
+            MediaPlayerState.PAUSED -> {
+                playAndPauseButton.setImageResource(R.drawable.play_button)
+                playButtonPressed = false
+            }
+
+            MediaPlayerState.ERROR -> {
+                //TODO?
+            }
+
+            else -> {}
+        }
+        Log.d(
+            "mydebug", "updateUI completed, activity=${
+                mediaPlayer.getPlayerState()
+            }, livedata=${playerViewModel.stateLiveData.value.toString()}"
+        ) //TODO delete
     }
 }
-
-
-
-

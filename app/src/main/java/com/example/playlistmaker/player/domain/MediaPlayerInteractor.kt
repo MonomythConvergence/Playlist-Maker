@@ -1,7 +1,6 @@
 package com.example.playlistmaker.player.domain
 
 interface MediaPlayerInteractor {
-    fun setListener(mediaPlayerListener: MediaPlayerListener)
     fun preparePlayer()
     fun startPlayer()
     fun pausePlayer()

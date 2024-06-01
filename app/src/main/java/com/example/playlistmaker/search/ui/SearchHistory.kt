@@ -53,11 +53,3 @@ class SearchHistory(private val preferences: SharedPreferences) {
 
     }
 }
-
-
-
-
-
-
-
-

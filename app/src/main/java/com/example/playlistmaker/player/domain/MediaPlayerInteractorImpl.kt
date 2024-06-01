@@ -3,21 +3,15 @@ package com.example.playlistmaker.player.domain
 class MediaPlayerInteractorImpl(
     private val mediaPlayerRepository: MediaPlayerRepository
 ) : MediaPlayerInteractor {
-    private lateinit var mediaPlayerListener: MediaPlayerListener
 
 
 
-    override fun setListener(mediaPlayerListener: MediaPlayerListener) {
-        if (mediaPlayerListener != null) {
-            this.mediaPlayerListener = mediaPlayerListener
-         } else {
-            return
-        }
-    }
+
+
 
     override fun preparePlayer() {
         mediaPlayerRepository.preparePlayer()
-        mediaPlayerListener.onPlayerPrepared() }
+    }
 
     override fun startPlayer() {
         mediaPlayerRepository.startPlayer()

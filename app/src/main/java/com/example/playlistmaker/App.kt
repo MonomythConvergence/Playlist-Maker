@@ -12,7 +12,6 @@ import com.example.playlistmaker.search.ui.SearchHistory
 import com.example.playlistmaker.settings.data.ThemeSwitchRepositoryImpl
 import com.example.playlistmaker.settings.ui.ThemeViewModel
 
-
 class App : Application() {
     companion object {
         var darkTheme: Boolean = false
