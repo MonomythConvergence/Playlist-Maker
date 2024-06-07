@@ -3,6 +3,7 @@ package com.example.playlistmaker.search.data.datamodels
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+
 var trackList = arrayListOf<Track>()
 var recentTracksList = arrayListOf<Track>()
 @Parcelize

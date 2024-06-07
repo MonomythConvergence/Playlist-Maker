@@ -5,7 +5,6 @@ import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageButton
@@ -25,8 +24,6 @@ import java.util.Locale
 import com.example.playlistmaker.App
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerState
-import com.example.playlistmaker.settings.ui.ThemeViewModel
-
 
 @Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity() {
@@ -48,6 +45,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
     }
+
 
 
     override fun onStop() {

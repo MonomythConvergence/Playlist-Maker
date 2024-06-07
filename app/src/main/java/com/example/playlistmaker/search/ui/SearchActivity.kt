@@ -16,18 +16,24 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App
 import com.example.playlistmaker.Debounce
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.datamodels.Track
-import com.example.playlistmaker.search.data.datamodels.recentTracksList
-import com.example.playlistmaker.search.data.network.RetrofitApiClient
+
 import com.example.playlistmaker.search.data.datamodels.searchServerResonse
-import com.example.playlistmaker.search.data.datamodels.trackList
+
+import com.example.playlistmaker.search.data.network.RetrofitApiClient
+import com.example.playlistmaker.search.domain.SearchRepository
+import com.example.playlistmaker.search.domain.SearchRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -38,16 +44,28 @@ import java.util.Locale
 class SearchActivity : AppCompatActivity() {
 
     private var userInputReserve = ""
+
+    private val apiClient: RetrofitApiClient = RetrofitApiClient()
+    private val searchRepository: SearchRepository = SearchRepositoryImpl()
+
+    private val viewModel: SearchViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return SearchViewModel(searchRepository) as T
+            }
+        }
+    }
+
     private lateinit var recyclerResultsView: RecyclerView
     private lateinit var recyclerRecentView: RecyclerView
     private lateinit var searchAdapter: SearchAdapter
-    private lateinit var searchBarField : EditText
-    private lateinit var recentSearchFrame : LinearLayout
-    private lateinit var progressBar : ProgressBar
-    private lateinit var noConnectionError : LinearLayout
-    private lateinit var noResultsError : LinearLayout
+    private lateinit var searchBarField: EditText
+    private lateinit var recentSearchFrame: LinearLayout
+    private lateinit var progressBar: ProgressBar
+    private lateinit var noConnectionError: LinearLayout
+    private lateinit var noResultsError: LinearLayout
 
-
+    lateinit var trackList : ArrayList<Track>
 
 
     companion object {
@@ -65,6 +83,13 @@ class SearchActivity : AppCompatActivity() {
         userInputReserve = savedInstanceState.getString(USER_INPUT, "")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.state.removeObserver(Observer {
+            updateUI()
+        })
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,15 +97,18 @@ class SearchActivity : AppCompatActivity() {
 
         val debounce = Debounce()
         val handler = Handler(Looper.getMainLooper())
-
+        viewModel.state.observe(this, Observer {
+            updateUI()
+        })
 
         recyclerResultsView = findViewById(R.id.searchResultsRecycler)
+        trackList=viewModel.provideTrackList()
         searchAdapter = SearchAdapter(trackList, this)
         recyclerResultsView.adapter = searchAdapter
         recyclerResultsView.layoutManager = LinearLayoutManager(this)
 
         recyclerRecentView = findViewById(R.id.recentRecycler)
-        recentAdapter = SearchAdapter(recentTracksList, this)
+        recentAdapter = SearchAdapter(viewModel.provideRecentTrackList(), this)
         recyclerRecentView.adapter = recentAdapter
         recyclerRecentView.layoutManager = LinearLayoutManager(this)
 
@@ -104,15 +132,10 @@ class SearchActivity : AppCompatActivity() {
 
 
         searchBarField.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus && searchBarField.text.isEmpty() && recentTracksList.isNotEmpty()) {
-                setLayoutVisibility(
-                    true,
-                    false,
-                    false,
-                    false,
-                    false
-                )
-
+            if (hasFocus && searchBarField.text.isEmpty()) {
+                if (viewModel.isRecentListEmpty())
+                {viewModel.state.value = SearchState.NO_HISTORY}
+                else {viewModel.state.value = SearchState.SHOW_HISTORY}
             }
 
         }
@@ -125,7 +148,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (debounce.clickDebounce() && searchBarField.text.length>1) {
+                if (debounce.clickDebounce() && searchBarField.text.length > 1) {
                     handleSearch()
                 } else {
                     handler.removeCallbacksAndMessages(null)
@@ -139,15 +162,9 @@ class SearchActivity : AppCompatActivity() {
         })
 
         clearSearchHistory.setOnClickListener {
-            recentTracksList.clear()
+            viewModel.clearRecentList()
             SearchHistory(App.recentTracksSharedPreferences).encodeAndSave()
-            setLayoutVisibility(
-                false,
-                false,
-                false,
-                false,
-                false
-            )
+            viewModel.state.value = SearchState.NO_HISTORY
             recentAdapter.notifyDataSetChanged()
         }
 
@@ -156,25 +173,13 @@ class SearchActivity : AppCompatActivity() {
                 searchBarClear.visibility = View.VISIBLE
             } else {
                 searchBarClear.visibility = View.INVISIBLE
-                if (recentTracksList.isNotEmpty()) {
-                    setLayoutVisibility(
-                        true,
-                        false,
-                        false,
-                        false,
-                        false
-                    )
+                if (!viewModel.isRecentListEmpty()) {
+                    Log.d("MyTag", "Text changed to 0 chars and there's history")
+                    viewModel.state.value = SearchState.SHOW_HISTORY
+                } else {
+                    Log.d("MyTag", "Text changed to 0 chars and there's no history")
+                    viewModel.state.value = SearchState.NO_HISTORY
                 }
-                if (recentTracksList.isEmpty()) {
-                    setLayoutVisibility(
-                        false,
-                        false,
-                        false,
-                        false,
-                        false
-                    )
-                }
-
             }
             userInputReserve = text.toString()
         }
@@ -216,48 +221,24 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
-    fun setLayoutVisibility(
-        isSearchHistoryVisible: Boolean,
-        isProgressBarVisible: Boolean,
-        isSearchVisible: Boolean,
-        isNoConnectionErrorVisible: Boolean,
-        isNoResultsErrorVisible: Boolean
-    ) {
-        recentSearchFrame.visibility = if (isSearchHistoryVisible) View.VISIBLE else View.GONE
-        progressBar.visibility = if (isProgressBarVisible) View.VISIBLE else View.GONE
-        recyclerResultsView.visibility = if (isSearchVisible) View.VISIBLE else View.GONE
-        noConnectionError.visibility =
-            if (isNoConnectionErrorVisible) View.VISIBLE else View.GONE
-        noResultsError.visibility = if (isNoResultsErrorVisible) View.VISIBLE else View.GONE
-    }
+
     fun handleSearch() {
-        if (searchBarField.text.toString()=="") {return}
-
-        setLayoutVisibility(
-            false,
-            true,
-            false,
-            false,
-            true
-        )
-
+        if (searchBarField.text.toString() == "") {
+            return
+        }
+        viewModel.state.value = SearchState.LOADING
+        val query = searchBarField.text.toString()
         val gson = Gson()
-
-        val rawQuery = searchBarField.text.toString()
         val entity = "song"
-
-        val apiClient = RetrofitApiClient()
-        val call = apiClient.apiService.searchQuery(rawQuery, entity)
-
+        val call = apiClient.apiService.searchQuery(query, entity)
         call.enqueue(object : Callback<JsonObject> {
             override fun onResponse(
                 call: Call<JsonObject>,
                 response: Response<JsonObject>
             ) {
                 if (response.isSuccessful) {
+                    trackList.clear()
                     if (response.code() == 200) {
-
-                        trackList.clear()
 
                         if (response.body() != null) {
                             val parsedResponse = gson.fromJson(
@@ -268,21 +249,12 @@ class SearchActivity : AppCompatActivity() {
                             if (searchResults != null) {
 
                                 if (parsedResponse.resultCount == 0) {
-                                    Log.d(
-                                        "MyTag",
-                                        "0 results. Display noResultsError"
-                                    )
-                                    setLayoutVisibility(
-                                        false,
-                                        false,
-                                        false,
-                                        false,
-                                        true
-                                    )
+                                    viewModel.state.value = SearchState.NO_RESULTS
+
                                 } else {
                                     for (result in searchResults) {
-
                                         trackList.add(
+
                                             Track(
                                                 result.trackName,
                                                 result.artistName,
@@ -307,74 +279,72 @@ class SearchActivity : AppCompatActivity() {
                                         )
 
                                     }
-                                    Log.d("MyTag", "New tracklist filled. Display results")
-                                    setLayoutVisibility(
-                                        false,
-                                        false,
-                                        true,
-                                        false,
-                                        false
-                                    )
                                     searchAdapter.notifyDataSetChanged()
-
+                                    viewModel.state.value = SearchState.SHOW_RESULTS
                                 }
                             } else {
-                                Log.d(
-                                    "MyTag",
-                                    "IF4 else. Display noResultsError, " +
-                                            "but it's just a safety measure against null"
-                                )
-                                setLayoutVisibility(
-                                    false,
-                                    false,
-                                    false,
-                                    false,
-                                    true
-                                )
+                                viewModel.state.value = SearchState.NO_RESULTS
                             }
                         } else {
-                            Log.d("MyTag", "IF3 else. Null results. Display noResultsError")
-                            setLayoutVisibility(
-                                false,
-                                false,
-                                false,
-                                false,
-                                true
-                            )
+                            viewModel.state.value = SearchState.NO_RESULTS
                         }
 
                     } else {
-                        Log.d("MyTag", "IF2 else. Code!=200. Display noConnectionError")
-                        setLayoutVisibility(
-                            false,
-                            false,
-                            false,
-                            true,
-                            false
-                        )
+                        viewModel.state.value = SearchState.NETWORK_ERROR
                     }
                 } else {
-                    Log.d("MyTag", "IF1 else. Unsuccessful response. Display noConnectionError")
-                    setLayoutVisibility(
-                        false,
-                        false,
-                        false,
-                        true,
-                        false
-                    )
+                    viewModel.state.value = SearchState.NETWORK_ERROR
                 }
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Log.d("MyTag", "onFailure. Display noConnectionError")
-                setLayoutVisibility(
-                    false,
-                    false,
-                    false,
-                    true,
-                    false
-                )
+                viewModel.state.value = SearchState.NETWORK_ERROR
+
             }
         })
+
+    }
+
+    private fun updateUI() {
+        Log.d("MyTag", "State: ${viewModel.state.value}")
+        recentSearchFrame.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        recyclerResultsView.visibility = View.GONE
+        noConnectionError.visibility = View.GONE
+        noResultsError.visibility = View.GONE
+
+        when (viewModel.state.value) {
+
+            SearchState.LOADING -> {
+                Log.d("MyTag", "LOADING state, progress bar should be visible")
+                progressBar.visibility = View.VISIBLE
+            }
+
+            SearchState.NO_RESULTS -> {
+                Log.d("MyTag", "NO_RESULTS state, error should be visible")
+                noResultsError.visibility = View.VISIBLE
+                searchAdapter.notifyDataSetChanged()
+            }
+
+            SearchState.SHOW_HISTORY -> {
+                recentSearchFrame.visibility = View.VISIBLE
+            }
+
+            SearchState.SHOW_RESULTS -> {
+                Log.d("MyTag", "SHOW_RESULTS state, results should be visible")
+                recyclerResultsView.visibility = View.VISIBLE
+            }
+
+            SearchState.NETWORK_ERROR -> {
+                noConnectionError.visibility = View.VISIBLE
+            }
+
+            else -> {
+                Log.d("MyTag", "else in updateUI is ran. Btw History.visible = ${recentSearchFrame.visibility==View.VISIBLE}")
+            }
+        }
+
+
     }
 }
+
