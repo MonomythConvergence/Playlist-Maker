@@ -26,16 +26,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.App
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.Debounce
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.datamodels.Track
-
 import com.example.playlistmaker.search.data.datamodels.searchServerResonse
-
 import com.example.playlistmaker.search.data.network.RetrofitApiClient
-import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.domain.SearchRepositoryImpl
 import com.google.gson.Gson
 import com.google.gson.JsonObject

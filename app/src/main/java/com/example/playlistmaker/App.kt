@@ -18,17 +18,7 @@ class App : Application() {
 
     private lateinit var themeSharedPreferences: SharedPreferences
     private lateinit var themeViewModel: ThemeViewModel
-    private lateinit var mediaPlayerRepository: MediaPlayerRepository
-    private lateinit var mediaPlayerInteractor: MediaPlayerInteractor
 
-    fun initializeMediaPlayerinstances(url: String) {
-        mediaPlayerRepository = MediaPlayerRepositoryImpl(url)
-       mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
-    } //TODO move to player vm
-
-    fun giveMediaPlayerInteractor(): MediaPlayerInteractor {
-        return mediaPlayerInteractor
-    } //TODO move to player vm
 
     override fun onCreate() {
         super.onCreate()

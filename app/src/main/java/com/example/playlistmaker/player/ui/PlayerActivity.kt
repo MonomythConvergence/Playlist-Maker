@@ -159,11 +159,11 @@ class PlayerActivity : AppCompatActivity() {
         if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
             selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-            app.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)
+            playerViewModel.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)
         } else {
             finish()
         }
-        mediaPlayer = app.giveMediaPlayerInteractor()
+        mediaPlayer = playerViewModel.giveMediaPlayerInteractor()
         mediaPlayer.preparePlayer()
         playerViewModel.updateState(mediaPlayer.getPlayerState())
     }}
