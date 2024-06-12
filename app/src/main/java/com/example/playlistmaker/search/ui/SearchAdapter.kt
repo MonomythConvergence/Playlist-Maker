@@ -2,14 +2,11 @@ package com.example.playlistmaker.search.ui
 
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.App
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-
 import com.example.playlistmaker.search.data.datamodels.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
 import java.util.ArrayList

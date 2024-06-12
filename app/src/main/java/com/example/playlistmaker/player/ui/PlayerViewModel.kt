@@ -31,7 +31,7 @@ class PlayerViewModel() : ViewModel() {
 
     fun giveMediaPlayerInteractor(): MediaPlayerInteractor {
         return mediaPlayerInteractor
-    } //TODO move to player vm
+    }
 
 
 

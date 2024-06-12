@@ -3,10 +3,6 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.player.domain.MediaPlayerInteractor
-import com.example.playlistmaker.player.domain.MediaPlayerInteractorImpl
-import com.example.playlistmaker.player.domain.MediaPlayerRepository
 import com.example.playlistmaker.settings.data.ThemeSwitchRepositoryImpl
 import com.example.playlistmaker.settings.ui.ThemeViewModel
 
