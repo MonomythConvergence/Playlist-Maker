@@ -1,5 +1,4 @@
 package com.example.playlistmaker
-
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
@@ -8,7 +7,6 @@ import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.MediaPlayerRepository
-import com.example.playlistmaker.search.ui.SearchHistory
 import com.example.playlistmaker.settings.data.ThemeSwitchRepositoryImpl
 import com.example.playlistmaker.settings.ui.ThemeViewModel
 
@@ -26,11 +24,11 @@ class App : Application() {
     fun initializeMediaPlayerinstances(url: String) {
         mediaPlayerRepository = MediaPlayerRepositoryImpl(url)
        mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
-    }
+    } //TODO move to player vm
 
     fun giveMediaPlayerInteractor(): MediaPlayerInteractor {
         return mediaPlayerInteractor
-    }
+    } //TODO move to player vm
 
     override fun onCreate() {
         super.onCreate()
@@ -42,7 +40,6 @@ class App : Application() {
 
         recentTracksSharedPreferences =
             getSharedPreferences(Constants.RECENT_TRACKS_KEY, MODE_PRIVATE)
-        SearchHistory(recentTracksSharedPreferences).decodeAndLoad()
 
     }
 

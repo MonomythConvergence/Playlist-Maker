@@ -8,4 +8,8 @@ interface SearchRepository {
     fun clearTrackList()
     fun provideTrackList(): ArrayList<Track>
     fun provideRecentTrackList(): ArrayList<Track>
+    fun addTrackToResults(newTrack: Track)
+    fun addTrackToRecent(newTrack: Track)
+    fun encodeRecentTrackList()
+    fun decodeRecentTrackList()
 }

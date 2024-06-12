@@ -31,20 +31,19 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var mediaPlayer: MediaPlayerInteractor
     lateinit var selectedTrack: Track
-    var playButtonPressed = false
+    private var playButtonPressed = false
     lateinit var playAndPauseButton: ImageButton
+    private lateinit var app: App
+    private lateinit var playTimer : TextView
     private var updatePlayTimeHandler: Handler? = null
     private var updatePlayTimeRunnable: Runnable? = null
-    private lateinit var app: App
     private val playerViewModel: PlayerViewModel by lazy {
         ViewModelProvider(this).get(
             PlayerViewModel::class.java
         )
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
+    //override fun onPause() {super.onPause() }
 
 
 
@@ -79,33 +78,11 @@ class PlayerActivity : AppCompatActivity() {
             updateUi()
         })
 
-
         app = application as App
 
-        if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
-            selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
-            if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-                app.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)
-            } else {
-                finish()
-            }
-            mediaPlayer = app.giveMediaPlayerInteractor()
-        } else {
-            finish()
-        }
+        initializeMediaPlayer()
 
-        val artwork = findViewById<ImageView>(R.id.artwork)
-        val roundingRadius = artwork.resources.getDimension(R.dimen.Artwork_rounding)
-        val pixelsForRoundedCorners = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_PX,
-            roundingRadius,
-            artwork.resources.displayMetrics
-        )
-        Glide.with(artwork)
-            .load(selectedTrack.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
-            .placeholder(R.drawable.placeholder)
-            .transform(CenterCrop(), RoundedCorners(pixelsForRoundedCorners.toInt()))
-            .into(artwork)
+        setArtworkThruGlide()
 
         val trackName = findViewById<TextView>(R.id.trackName)
         trackName.text = selectedTrack.trackName
@@ -119,41 +96,9 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         playAndPauseButton = findViewById(R.id.playAndPauseButton)
-        val playTimer = findViewById<TextView>(R.id.playTimer)
+        playTimer = findViewById<TextView>(R.id.playTimer)
 
-        mediaPlayer.preparePlayer()
-
-        playerViewModel.updateState(mediaPlayer.getPlayerState())
-
-        updatePlayTimeHandler = Handler(Looper.getMainLooper())
-
-
-        updatePlayTimeRunnable = Runnable {
-
-            playTimer.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(mediaPlayer.getCurrentPosition())
-
-            if (playButtonPressed && !mediaPlayer.getIsPlaying()) {
-
-                playTimer.text = "00:00"
-
-                mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
-
-                playerViewModel.updateState(mediaPlayer.getPlayerState())
-
-                updateUi()
-
-                updatePlayTimeHandler?.removeCallbacksAndMessages(null)
-
-                return@Runnable
-            }
-
-            updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable!!, 350)
-
-            return@Runnable
-        }
+        setupPlayTimeHandler()
 
         playAndPauseButton.setOnClickListener {
             if (!selectedTrack.previewUrl.isNullOrEmpty()) {
@@ -185,6 +130,7 @@ class PlayerActivity : AppCompatActivity() {
 
         val collectionName = findViewById<TextView>(R.id.collectionName)
         collectionName.text = selectedTrack.collectionName
+
         val collectionNameField = findViewById<TextView>(R.id.collectionNameField)
         if (selectedTrack.collectionName == "" || selectedTrack.collectionName == null) {
             collectionName.visibility = View.GONE
@@ -193,12 +139,12 @@ class PlayerActivity : AppCompatActivity() {
 
         val releaseDate = findViewById<TextView>(R.id.releaseDate)
         releaseDate.text = selectedTrack.releaseDate
+
         val primaryGenreName = findViewById<TextView>(R.id.primaryGenreName)
         primaryGenreName.text = selectedTrack.primaryGenreName
 
         val country = findViewById<TextView>(R.id.country)
         country.text = selectedTrack.country
-
 
         val backButton = findViewById<View>(R.id.backButton)
 
@@ -209,7 +155,67 @@ class PlayerActivity : AppCompatActivity() {
 
     }
 
-    private fun updateUi() {
+    private fun initializeMediaPlayer() {
+        if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
+            selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
+        if (!selectedTrack.previewUrl.isNullOrEmpty()) {
+            app.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)
+        } else {
+            finish()
+        }
+        mediaPlayer = app.giveMediaPlayerInteractor()
+        mediaPlayer.preparePlayer()
+        playerViewModel.updateState(mediaPlayer.getPlayerState())
+    }}
+
+    private fun setArtworkThruGlide() : ImageView {
+        val artworkView = findViewById<ImageView>(R.id.artwork)
+        val roundingRadius = artworkView.resources.getDimension(R.dimen.Artwork_rounding)
+        val pixelsForRoundedCorners = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_PX,
+            roundingRadius,
+            artworkView.resources.displayMetrics
+        )
+        Glide.with(artworkView)
+            .load(selectedTrack.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+            .placeholder(R.drawable.placeholder)
+            .transform(CenterCrop(), RoundedCorners(pixelsForRoundedCorners.toInt()))
+            .into(artworkView)
+        return artworkView
+    }
+
+    private fun setupPlayTimeHandler(){
+        updatePlayTimeHandler = Handler(Looper.getMainLooper())
+
+        updatePlayTimeRunnable = Runnable {
+
+            playTimer.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(mediaPlayer.getCurrentPosition())
+
+            if (playButtonPressed && !mediaPlayer.getIsPlaying()) {
+
+                playTimer.text = "00:00"
+
+                mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
+
+                playerViewModel.updateState(mediaPlayer.getPlayerState())
+
+                updateUi()
+
+                updatePlayTimeHandler?.removeCallbacksAndMessages(null)
+
+                return@Runnable
+            }
+
+            updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable!!, 350)
+
+            return@Runnable
+        }
+    }
+
+        private fun updateUi() {
 
         when (playerViewModel.stateLiveData.value) {
             MediaPlayerState.PREPARED -> {
@@ -234,4 +240,6 @@ class PlayerActivity : AppCompatActivity() {
             else -> {}
         }
     }
+
+
 }
