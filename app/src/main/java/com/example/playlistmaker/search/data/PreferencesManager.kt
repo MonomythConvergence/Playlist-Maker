@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.data
 
-import android.content.Context
 import android.content.SharedPreferences
 import com.example.playlistmaker.search.data.datamodels.Track
 
