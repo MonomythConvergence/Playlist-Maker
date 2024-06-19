@@ -9,7 +9,6 @@ import com.example.playlistmaker.settings.ui.ThemeViewModel
 class App : Application() {
     companion object {
         var darkTheme: Boolean = false
-        lateinit var recentTracksSharedPreferences: SharedPreferences
     }
 
     private lateinit var themeSharedPreferences: SharedPreferences
@@ -24,12 +23,9 @@ class App : Application() {
         darkTheme = themeSharedPreferences.getBoolean(Constants.THEME_PREF_KEY, false)
         switchTheme(darkTheme)
 
-        recentTracksSharedPreferences =
-            getSharedPreferences(Constants.RECENT_TRACKS_KEY, MODE_PRIVATE)
-
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
+    private fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
         themeSharedPreferences.edit {
             putBoolean(Constants.THEME_PREF_KEY, darkTheme)

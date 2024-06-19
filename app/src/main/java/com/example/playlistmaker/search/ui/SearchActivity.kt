@@ -1,8 +1,6 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,32 +23,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.Constants
 import com.example.playlistmaker.Debounce
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.datamodels.Track
-import com.example.playlistmaker.search.data.datamodels.searchServerResonse
-import com.example.playlistmaker.search.data.network.RetrofitApiClient
-import com.example.playlistmaker.search.domain.SearchRepositoryImpl
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.Locale
+import com.example.playlistmaker.search.data.APICLientProvider
+import com.example.playlistmaker.search.data.PreferencesManagerImpl
+import com.example.playlistmaker.search.data.SearchRepositoryImpl
+
 
 class SearchActivity : AppCompatActivity() {
 
     private var userInputReserve = ""
-    private val preferences: SharedPreferences by lazy {
-        getSharedPreferences(Constants.RECENT_TRACKS_KEY, Context.MODE_PRIVATE)
-    }
-    private val apiClient: RetrofitApiClient = RetrofitApiClient()
 
-    private val viewModel: SearchViewModel by viewModels {
+    val viewModel: SearchViewModel by viewModels {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return SearchViewModel(SearchRepositoryImpl(preferences)) as T
+                val searchRepository = SearchRepositoryImpl(PreferencesManagerImpl(applicationContext),  APICLientProvider.provideApiClient())
+                return SearchViewModel(searchRepository) as T
             }
         }
     }
@@ -98,7 +86,6 @@ class SearchActivity : AppCompatActivity() {
         viewModel.state.observe(this, Observer {
             updateUI()
         })
-
         recyclerSetup(this)
 
         viewModel.recentTrackListLiveData.observe(this, Observer {
@@ -211,87 +198,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    fun handleSearch() {
+    private fun handleSearch() {
         if (searchBarField.text.toString() == "") {
             return
         }
         viewModel.setState(SearchState.LOADING)
-        val query = searchBarField.text.toString()
-        val gson = Gson()
-        val entity = "song"
-        val call = apiClient.apiService.searchQuery(query, entity)
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(
-                call: Call<JsonObject>,
-                response: Response<JsonObject>
-            ) {
-                if (response.isSuccessful) {
-                    viewModel.clearTrackList()
-                    if (response.code() == 200) {
-
-                        if (response.body() != null) {
-                            val parsedResponse = gson.fromJson(
-                                response.body(),
-                                searchServerResonse::class.java
-                            )
-                            val searchResults = parsedResponse?.results
-                            if (searchResults != null) {
-
-                                if (parsedResponse.resultCount == 0) {
-                                    viewModel.setState(SearchState.NO_RESULTS)
-
-                                } else {
-                                    for (result in searchResults) {
-                                        viewModel.addTrackToResults(
-
-                                            Track(
-                                                result.trackName,
-                                                result.artistName,
-                                                SimpleDateFormat(
-                                                    "mm:ss",
-                                                    Locale.getDefault()
-                                                ).format(
-                                                    result.trackTimeMillis
-                                                ),
-                                                result.artworkUrl100,
-                                                result.trackId,
-                                                result.collectionName,
-                                                if (result.releaseDate != null && result.releaseDate.length >= 4) {
-                                                    result.releaseDate.substring(0, 4)
-                                                } else {
-                                                    ""
-                                                },
-                                                result.primaryGenreName,
-                                                result.country,
-                                                result.previewUrl
-                                            )
-                                        )
-
-                                    }
-                                    searchAdapter.notifyDataSetChanged()
-                                    viewModel.setState(SearchState.SHOW_RESULTS)
-                                }
-                            } else {
-                                viewModel.setState(SearchState.NO_RESULTS)
-                            }
-                        } else {
-                            viewModel.setState(SearchState.NO_RESULTS)
-                        }
-
-                    } else {
-                        viewModel.setState(SearchState.NETWORK_ERROR)
-                    }
-                } else {
-                    viewModel.setState(SearchState.NETWORK_ERROR)
-                }
-            }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                viewModel.setState(SearchState.NETWORK_ERROR)
-
-            }
-        })
-
+        viewModel.handleSearch(searchBarField.text.toString())
+        searchAdapter.notifyDataSetChanged()
     }
 
     private fun updateUI() {

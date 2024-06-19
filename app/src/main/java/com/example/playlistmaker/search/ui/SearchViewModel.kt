@@ -1,21 +1,21 @@
 package com.example.playlistmaker.search.ui
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
 import com.example.playlistmaker.search.domain.SearchRepository
 
 class SearchViewModel(private val searchRepository: SearchRepository) : ViewModel() {
 
-    val trackListLiveData = MutableLiveData<ArrayList<Track>>()
     val recentTrackListLiveData = MutableLiveData<ArrayList<Track>>()
 
     private val _state = MutableLiveData<SearchState>()
     val state: LiveData<SearchState> = _state
 
     init {
-        trackListLiveData.value = provideTrackList()
         recentTrackListLiveData.value = provideRecentTrackList()
 
         if (searchRepository.isRecentListEmpty()) {
@@ -24,6 +24,14 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
             _state.value = SearchState.SHOW_HISTORY
         }
 
+    }
+
+    fun handleSearch(query: String){
+        (searchRepository.searchITunes (query,object : SearchCallback {
+            override fun onSearchCompleted(searchState: SearchState) {
+                setState(searchState)
+            }
+        }))
     }
     fun setState(newState: SearchState) {
         _state.value=newState
@@ -38,10 +46,6 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
         updateRecentList()
     }
 
-    fun clearTrackList() {
-        searchRepository.clearTrackList()
-        updateResultsList()
-    }
 
     fun provideTrackList(): ArrayList<Track> {
         return searchRepository.provideTrackList()
@@ -51,10 +55,6 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
         return searchRepository.provideRecentTrackList()
     }
 
-    fun addTrackToResults(newTrack: Track) {
-        searchRepository.addTrackToResults(newTrack)
-        updateResultsList()
-    }
 
     fun addTrackToRecent(newTrack: Track) {
         searchRepository.addTrackToRecent(newTrack)
@@ -68,8 +68,6 @@ class SearchViewModel(private val searchRepository: SearchRepository) : ViewMode
     private fun updateRecentList(){
         recentTrackListLiveData.value= searchRepository.provideRecentTrackList()
     }
-    private fun updateResultsList(){
-        trackListLiveData.value= searchRepository.provideTrackList()
-    }
+
 
 }
