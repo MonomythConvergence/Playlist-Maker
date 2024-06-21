@@ -45,7 +45,7 @@ android {
 dependencies {
 
     //noinspection GradleDependency
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.activity:activity-ktx:1.6.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     //noinspection GradleDependency
     implementation("com.google.android.material:material:1.8.0")
@@ -53,6 +53,7 @@ dependencies {
     implementation("androidx.contentpager:contentpager:1.0.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
+    implementation("androidx.databinding:databinding-runtime:8.4.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -65,4 +66,6 @@ dependencies {
     implementation ("com.google.android.material:material:1.6.1")
     implementation ("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation ("io.insert-koin:koin-android:3.3.0")
 }
