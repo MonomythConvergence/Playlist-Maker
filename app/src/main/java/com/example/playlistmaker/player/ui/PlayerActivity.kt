@@ -21,7 +21,7 @@ import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.datamodels.Track
 import java.util.Locale
-import com.example.playlistmaker.App
+
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerState
 
@@ -30,21 +30,18 @@ class PlayerActivity : AppCompatActivity() {
 
 
     private lateinit var mediaPlayer: MediaPlayerInteractor
-    lateinit var selectedTrack: Track
+    private lateinit var selectedTrack: Track
     private var playButtonPressed = false
-    lateinit var playAndPauseButton: ImageButton
-    private lateinit var app: App
+    private lateinit var playAndPauseButton: ImageButton
     private lateinit var playTimer : TextView
     private var updatePlayTimeHandler: Handler? = null
     private var updatePlayTimeRunnable: Runnable? = null
     private val playerViewModel: PlayerViewModel by lazy {
-        ViewModelProvider(this).get(
-            PlayerViewModel::class.java
-        )
+        ViewModelProvider(this)[PlayerViewModel::class.java]
     }
 
     //override fun onPause() {super.onPause() }
-
+    //override fun onResume() {super.onResume()}
 
 
     override fun onStop() {
@@ -68,7 +65,7 @@ class PlayerActivity : AppCompatActivity() {
         })
     }
 
-    //override fun onResume() {super.onResume()}
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +75,6 @@ class PlayerActivity : AppCompatActivity() {
             updateUi()
         })
 
-        app = application as App
 
         initializeMediaPlayer()
 
