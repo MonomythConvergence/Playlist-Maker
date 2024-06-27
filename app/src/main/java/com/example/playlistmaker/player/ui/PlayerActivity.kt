@@ -13,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -21,33 +20,32 @@ import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.datamodels.Track
 import java.util.Locale
-
-import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity() {
 
 
-    private lateinit var mediaPlayer: MediaPlayerInteractor
-    private lateinit var selectedTrack: Track
     private var playButtonPressed = false
     private lateinit var playAndPauseButton: ImageButton
     private lateinit var playTimer : TextView
     private var updatePlayTimeHandler: Handler? = null
     private var updatePlayTimeRunnable: Runnable? = null
-    private val playerViewModel: PlayerViewModel by lazy {
-        ViewModelProvider(this)[PlayerViewModel::class.java]
-    }
+    private lateinit var selectedTrack: Track
+    val playerViewModel: PlayerViewModel by viewModel()
 
-    //override fun onPause() {super.onPause() }
+    //override fun onPause() {super.onPause()}
+
     //override fun onResume() {super.onResume()}
 
 
     override fun onStop() {
         super.onStop()
+
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-            mediaPlayer.pausePlayer()
+
+            playerViewModel.pausePlayer()
             playButtonPressed = false
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
@@ -56,8 +54,9 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-            mediaPlayer.releasePlayer()
+            playerViewModel.releasePlayer()
             updatePlayTimeHandler?.removeCallbacksAndMessages(null)
         }
         playerViewModel.stateLiveData.removeObserver(Observer {
@@ -69,7 +68,10 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_player)
+
+        selectedTrack=intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)!!
 
         playerViewModel.stateLiveData.observe(this, Observer {
             updateUi()
@@ -107,8 +109,8 @@ class PlayerActivity : AppCompatActivity() {
                     updatePlayTimeHandler?.removeCallbacksAndMessages(null)
                 }
 
-                mediaPlayer.playbackControl()
-                playerViewModel.updateState(mediaPlayer.getPlayerState())
+                playerViewModel.playbackControl()
+                playerViewModel.updateState()
             } else {
                 Toast.makeText(this, "Для трека нет превью...", Toast.LENGTH_SHORT).show()
             }//В задании/макете про этот случай ни слова
@@ -152,17 +154,9 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initializeMediaPlayer() {
-        if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
-            selectedTrack = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)!!
-        if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-            playerViewModel.initializeMediaPlayerinstances(selectedTrack.previewUrl!!)
-        } else {
-            finish()
-        }
-        mediaPlayer = playerViewModel.giveMediaPlayerInteractor()
-        mediaPlayer.preparePlayer()
-        playerViewModel.updateState(mediaPlayer.getPlayerState())
-    }}
+        playerViewModel.preparePlayer(selectedTrack.previewUrl ?: "")
+        playerViewModel.updateState()
+    }
 
     private fun setArtworkThruGlide() : ImageView {
         val artworkView = findViewById<ImageView>(R.id.artwork)
@@ -188,15 +182,15 @@ class PlayerActivity : AppCompatActivity() {
             playTimer.text = SimpleDateFormat(
                 "mm:ss",
                 Locale.getDefault()
-            ).format(mediaPlayer.getCurrentPosition())
+            ).format(playerViewModel.getCurrentPosition())
 
-            if (playButtonPressed && !mediaPlayer.getIsPlaying()) {
+            if (playButtonPressed && !playerViewModel.getIsPlaying()) {
 
                 playTimer.text = "00:00"
 
-                mediaPlayer.setPlayerState(MediaPlayerState.PREPARED)
+                playerViewModel.setPlayerState(MediaPlayerState.PREPARED)
 
-                playerViewModel.updateState(mediaPlayer.getPlayerState())
+                playerViewModel.updateState()
 
                 updateUi()
 

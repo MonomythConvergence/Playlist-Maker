@@ -1,7 +1,7 @@
 package com.example.playlistmaker.player.domain
 
 interface MediaPlayerRepository {
-    fun preparePlayer()
+    fun preparePlayer(url: String)
     fun startPlayer()
     fun pausePlayer()
     fun releasePlayer()
@@ -10,6 +10,7 @@ interface MediaPlayerRepository {
     fun getDuration(): Int
     fun getIsPlaying(): Boolean
     fun setPlayerState(mediaPlayerState : MediaPlayerState)
+    fun resetPlayer()
 
     var mediaPlayerState : MediaPlayerState
 

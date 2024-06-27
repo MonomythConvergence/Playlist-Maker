@@ -3,14 +3,10 @@ package com.example.playlistmaker.player.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
-import com.example.playlistmaker.player.domain.MediaPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.MediaPlayerState
 
-class PlayerViewModel() : ViewModel() {
-
-    lateinit var mediaPlayerInteractor : MediaPlayerInteractor
+class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
 
     private val _stateLiveData = MutableLiveData<MediaPlayerState>()
@@ -20,19 +16,40 @@ class PlayerViewModel() : ViewModel() {
         _stateLiveData.value = MediaPlayerState.PREPARED
     }
 
-
-    fun updateState(newState : MediaPlayerState) {
-        _stateLiveData.value = newState
-    }
-    fun initializeMediaPlayerinstances(url: String) {
-        val mediaPlayerRepository = MediaPlayerRepositoryImpl(url)
-        mediaPlayerInteractor = MediaPlayerInteractorImpl(mediaPlayerRepository)
+    fun updateState() {
+        _stateLiveData.value = mediaPlayerInteractor.getPlayerState()
     }
 
-    fun giveMediaPlayerInteractor(): MediaPlayerInteractor {
-        return mediaPlayerInteractor
+
+    fun playbackControl(){
+        mediaPlayerInteractor.playbackControl()
     }
 
+    fun getIsPlaying(): Boolean {
+        return mediaPlayerInteractor.getIsPlaying()
+    }
+
+    fun preparePlayer(url : String) {
+        mediaPlayerInteractor.preparePlayer(url)
+    }
+
+    fun releasePlayer() {
+        mediaPlayerInteractor.releasePlayer()
+    }
+
+    fun getCurrentPosition(): Int {
+        return mediaPlayerInteractor.getCurrentPosition()
+    }
+
+    fun setPlayerState(state : MediaPlayerState) {
+        mediaPlayerInteractor.setPlayerState(state)
+    }
+
+    fun pausePlayer() {
+        mediaPlayerInteractor.pausePlayer()
+    }
+
+    //fun resetPlayer() {mediaPlayerInteractor.resetPlayer()}
 
 
 }

@@ -14,34 +14,22 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Debounce
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.APICLientProvider
-import com.example.playlistmaker.search.data.PreferencesManagerImpl
-import com.example.playlistmaker.search.data.SearchRepositoryImpl
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchActivity : AppCompatActivity() {
 
     private var userInputReserve = ""
 
-    val viewModel: SearchViewModel by viewModels {
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                val searchRepository = SearchRepositoryImpl(PreferencesManagerImpl(applicationContext),  APICLientProvider.provideApiClient())
-                return SearchViewModel(searchRepository) as T
-            }
-        }
-    }
+    private val searchViewModel: SearchViewModel by viewModel()
 
     private lateinit var recyclerResultsView: RecyclerView
     private lateinit var recyclerRecentView: RecyclerView
@@ -71,7 +59,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.state.removeObserver(Observer {
+        searchViewModel.state.removeObserver(Observer {
             updateUI()
         })
     }
@@ -83,12 +71,12 @@ class SearchActivity : AppCompatActivity() {
 
         val debounce = Debounce()
         val handler = Handler(Looper.getMainLooper())
-        viewModel.state.observe(this, Observer {
+        searchViewModel.state.observe(this, Observer {
             updateUI()
         })
         recyclerSetup(this)
 
-        viewModel.recentTrackListLiveData.observe(this, Observer {
+        searchViewModel.recentTrackListLiveData.observe(this, Observer {
             recentAdapter.notifyDataSetChanged()
         })
 
@@ -112,9 +100,9 @@ class SearchActivity : AppCompatActivity() {
 
         searchBarField.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus && searchBarField.text.isEmpty()) {
-                if (viewModel.isRecentListEmpty())
-                {viewModel.setState(SearchState.NO_HISTORY)}
-                else {viewModel.setState(SearchState.SHOW_HISTORY)}
+                if (searchViewModel.isRecentListEmpty())
+                {searchViewModel.setState(SearchState.NO_HISTORY)}
+                else {searchViewModel.setState(SearchState.SHOW_HISTORY)}
             }
 
         }
@@ -141,9 +129,9 @@ class SearchActivity : AppCompatActivity() {
         })
 
         clearSearchHistory.setOnClickListener {
-            viewModel.clearRecentList()
-            viewModel.encodeRecentTrackList()
-            viewModel.setState(SearchState.NO_HISTORY)
+            searchViewModel.clearRecentList()
+            searchViewModel.encodeRecentTrackList()
+            searchViewModel.setState(SearchState.NO_HISTORY)
         }
 
         searchBarField.doOnTextChanged { text, start, before, count ->
@@ -151,10 +139,10 @@ class SearchActivity : AppCompatActivity() {
                 searchBarClear.isVisible = true
             } else {
                 searchBarClear.visibility = View.INVISIBLE
-                if (!viewModel.isRecentListEmpty()) {
-                    viewModel.setState(SearchState.SHOW_HISTORY)
+                if (!searchViewModel.isRecentListEmpty()) {
+                    searchViewModel.setState(SearchState.SHOW_HISTORY)
                 } else {
-                    viewModel.setState(SearchState.NO_HISTORY)
+                    searchViewModel.setState(SearchState.NO_HISTORY)
                 }
             }
             userInputReserve = text.toString()
@@ -202,8 +190,8 @@ class SearchActivity : AppCompatActivity() {
         if (searchBarField.text.toString() == "") {
             return
         }
-        viewModel.setState(SearchState.LOADING)
-        viewModel.handleSearch(searchBarField.text.toString())
+        searchViewModel.setState(SearchState.LOADING)
+        searchViewModel.handleSearch(searchBarField.text.toString())
         searchAdapter.notifyDataSetChanged()
     }
 
@@ -214,7 +202,7 @@ class SearchActivity : AppCompatActivity() {
         noConnectionError.isVisible = false
         noResultsError.isVisible = false
 
-        when (viewModel.state.value) {
+        when (searchViewModel.state.value) {
 
             SearchState.LOADING -> {
                 progressBar.isVisible = true
@@ -243,12 +231,12 @@ class SearchActivity : AppCompatActivity() {
     }
     private fun recyclerSetup(activity : SearchActivity) {
         recyclerResultsView = findViewById(R.id.searchResultsRecycler)
-        searchAdapter = SearchAdapter(viewModel.provideTrackList(), viewModel)
+        searchAdapter = SearchAdapter(searchViewModel.provideTrackList(), searchViewModel)
         recyclerResultsView.adapter = searchAdapter
         recyclerResultsView.layoutManager = LinearLayoutManager(activity)
 
         recyclerRecentView = findViewById(R.id.recentRecycler)
-        recentAdapter = SearchAdapter(viewModel.provideRecentTrackList(), viewModel)
+        recentAdapter = SearchAdapter(searchViewModel.provideRecentTrackList(), searchViewModel)
         recyclerRecentView.adapter = recentAdapter
         recyclerRecentView.layoutManager = LinearLayoutManager(activity)
     }
