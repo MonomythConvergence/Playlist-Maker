@@ -3,16 +3,12 @@ package com.example.playlistmaker.search.domain
 import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
 
-interface SearchRepository {
+interface SearchInteractor {
     fun isRecentListEmpty():Boolean
     fun clearRecentList()
-    fun clearTrackList()
     fun provideTrackList(): ArrayList<Track>
     fun provideRecentTrackList(): ArrayList<Track>
-    fun addTrackToResults(newTrack: Track)
     fun addTrackToRecent(newTrack: Track)
     fun encodeRecentTrackList()
-    fun decodeRecentTrackList()
-    fun searchITunes(query : String,callback: SearchCallback)
-
+    fun searchITunes(query : String, callback : SearchCallback)
 }

@@ -1,10 +1,10 @@
 package com.example.playlistmaker.settings.ui
 
 import androidx.lifecycle.ViewModel
-import com.example.playlistmaker.settings.domain.ThemeSwitchRepository
+import com.example.playlistmaker.settings.domain.ThemeSwitchInteractor
 import com.example.playlistmaker.sharing.domain.ExternalInteractionHandler
 
-class SettingsViewModel (private val themeSwitchRepository: ThemeSwitchRepository, private val externalInteractionHandler : ExternalInteractionHandler) : ViewModel() {
+class SettingsViewModel (private val themeSwitchInteractor: ThemeSwitchInteractor, private val externalInteractionHandler : ExternalInteractionHandler) : ViewModel() {
 
     fun openURL(url : String){
         externalInteractionHandler.openURL(url)
@@ -17,11 +17,10 @@ class SettingsViewModel (private val themeSwitchRepository: ThemeSwitchRepositor
     }
 
     fun switchTheme(switchStateOn: Boolean) {
-        themeSwitchRepository.switchTheme(switchStateOn)
+        themeSwitchInteractor.switchTheme(switchStateOn)
     }
 
     fun checkOnState(): Boolean{
-
-        return themeSwitchRepository.checkOnState()
+        return themeSwitchInteractor.checkOnState()
     }
 }

@@ -5,7 +5,6 @@ import android.icu.text.SimpleDateFormat
 import com.example.playlistmaker.search.data.datamodels.Track
 import com.example.playlistmaker.search.data.datamodels.searchServerResonse
 import com.example.playlistmaker.search.data.network.RetrofitApiClient
-import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.ui.SearchState
 import com.google.gson.Gson
 import com.google.gson.JsonObject
