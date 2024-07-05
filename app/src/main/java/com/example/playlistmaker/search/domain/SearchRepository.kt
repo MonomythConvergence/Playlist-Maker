@@ -1,5 +1,6 @@
-package com.example.playlistmaker.search.data
+package com.example.playlistmaker.search.domain
 
+import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
 
 interface SearchRepository {

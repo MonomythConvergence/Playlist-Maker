@@ -71,10 +71,9 @@ class PlayerActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_player)
 
-        if (intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY) != null) {
-                selectedTrack= intent.getParcelableExtra<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)!!
-            }
-        else {finish()}
+        val trackFromExtra: Track? = intent.getParcelableExtra(Constants.PARCELABLE_TO_PLAYER_KEY)
+        if (trackFromExtra != null) selectedTrack = trackFromExtra
+        else finish()
 
 
         playerViewModel.stateLiveData.observe(this, Observer {

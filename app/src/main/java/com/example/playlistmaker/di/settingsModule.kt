@@ -1,7 +1,7 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.settings.data.ThemeSwitchRepositoryImpl
-import com.example.playlistmaker.settings.data.ThemeSwitchRepository
+import com.example.playlistmaker.settings.domain.ThemeSwitchRepository
 import com.example.playlistmaker.settings.domain.ThemeSwitchInteractor
 import com.example.playlistmaker.settings.domain.ThemeSwitchInteractorImpl
 import com.example.playlistmaker.settings.ui.SettingsViewModel
