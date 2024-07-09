@@ -3,8 +3,11 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.example.playlistmaker.settings.data.ThemeSwitchRepositoryImpl
-import com.example.playlistmaker.settings.ui.ThemeViewModel
+import com.example.playlistmaker.di.playerModule
+import com.example.playlistmaker.di.searchModule
+import com.example.playlistmaker.di.settingsModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class App : Application() {
     companion object {
@@ -12,14 +15,17 @@ class App : Application() {
     }
 
     private lateinit var themeSharedPreferences: SharedPreferences
-    private lateinit var themeViewModel: ThemeViewModel
-
 
     override fun onCreate() {
         super.onCreate()
 
+        startKoin {
+            androidContext(this@App)
+            modules(settingsModule,searchModule, playerModule)
+        }
+
         themeSharedPreferences = getSharedPreferences(Constants.THEME_PREF_KEY, MODE_PRIVATE)
-        themeViewModel = ThemeViewModel(ThemeSwitchRepositoryImpl(this))
+
         darkTheme = themeSharedPreferences.getBoolean(Constants.THEME_PREF_KEY, false)
         switchTheme(darkTheme)
 

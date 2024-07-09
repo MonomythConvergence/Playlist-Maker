@@ -9,7 +9,6 @@ import com.example.playlistmaker.Constants
 import com.example.playlistmaker.settings.domain.ThemeSwitchRepository
 
 
-
 class ThemeSwitchRepositoryImpl(context: Context) :
     ThemeSwitchRepository {
 

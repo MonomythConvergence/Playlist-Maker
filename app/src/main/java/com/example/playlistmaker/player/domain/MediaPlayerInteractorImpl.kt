@@ -1,16 +1,13 @@
 package com.example.playlistmaker.player.domain
 
+
 class MediaPlayerInteractorImpl(
     private val mediaPlayerRepository: MediaPlayerRepository
 ) : MediaPlayerInteractor {
 
 
-
-
-
-
-    override fun preparePlayer() {
-        mediaPlayerRepository.preparePlayer()
+    override  fun preparePlayer(url: String){
+        mediaPlayerRepository.preparePlayer(url)
     }
 
     override fun startPlayer() {
@@ -47,6 +44,10 @@ class MediaPlayerInteractorImpl(
 
     override fun setPlayerState(mediaPlayerState : MediaPlayerState) {
         mediaPlayerRepository.setPlayerState(mediaPlayerState)
+    }
+
+    override fun resetPlayer() {
+        mediaPlayerRepository.resetPlayer()
     }
 
 }

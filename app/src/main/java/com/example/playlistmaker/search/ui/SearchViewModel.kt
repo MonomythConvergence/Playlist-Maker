@@ -5,67 +5,70 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
-import com.example.playlistmaker.search.domain.SearchRepository
+import com.example.playlistmaker.search.domain.SearchInteractor
 
-class SearchViewModel(private val searchRepository: SearchRepository) : ViewModel() {
+class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
 
     val recentTrackListLiveData = MutableLiveData<ArrayList<Track>>()
 
     private val _state = MutableLiveData<SearchState>()
     val state: LiveData<SearchState> = _state
 
+    val searchCallback = object : SearchCallback {
+        override fun onSearchCompleted(searchState: SearchState) {
+            setState(searchState)
+        }}
+
     init {
         recentTrackListLiveData.value = provideRecentTrackList()
 
-        if (searchRepository.isRecentListEmpty()) {
+        if (searchInteractor.isRecentListEmpty()) {
             _state.value = SearchState.NO_HISTORY
         } else {
             _state.value = SearchState.SHOW_HISTORY
         }
-
     }
 
+
+
+
     fun handleSearch(query: String){
-        (searchRepository.searchITunes (query,object : SearchCallback {
-            override fun onSearchCompleted(searchState: SearchState) {
-                setState(searchState)
-            }
-        }))
+        searchInteractor.searchITunes(query,searchCallback)
     }
     fun setState(newState: SearchState) {
         _state.value=newState
     }
 
     fun isRecentListEmpty(): Boolean {
-        return searchRepository.isRecentListEmpty()
+        return searchInteractor.isRecentListEmpty()
     }
 
     fun clearRecentList() {
-        searchRepository.clearRecentList()
+        searchInteractor.clearRecentList()
         updateRecentList()
     }
 
 
     fun provideTrackList(): ArrayList<Track> {
-        return searchRepository.provideTrackList()
+        return searchInteractor.provideTrackList()
     }
 
     fun provideRecentTrackList(): ArrayList<Track> {
-        return searchRepository.provideRecentTrackList()
+        return searchInteractor.provideRecentTrackList()
     }
 
 
     fun addTrackToRecent(newTrack: Track) {
-        searchRepository.addTrackToRecent(newTrack)
+        searchInteractor.addTrackToRecent(newTrack)
         updateRecentList()
     }
 
     fun encodeRecentTrackList() {
-        searchRepository.encodeRecentTrackList()
+        searchInteractor.encodeRecentTrackList()
     }
 
     private fun updateRecentList(){
-        recentTrackListLiveData.value= searchRepository.provideRecentTrackList()
+        recentTrackListLiveData.value= searchInteractor.provideRecentTrackList()
     }
 
 
