@@ -174,7 +174,7 @@
 
         app:layout_constraintBottom_toTopOf="@+id/releaseDateField"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
-        android:text="@string/collectionName"/>
+        android:text="@string/collection_title"/>
 
     <TextView
         android:id="@+id/releaseDateField"
@@ -182,7 +182,7 @@
 
         app:layout_constraintBottom_toTopOf="@+id/primaryGenreNameField"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
-        android:text="@string/releaseDate"/>
+        android:text="@string/release_date"/>
 
     <TextView
         android:id="@+id/primaryGenreNameField"
@@ -190,7 +190,7 @@
 
         app:layout_constraintBottom_toTopOf="@id/countryField"
         app:layout_constraintStart_toStartOf="@id/leftGuideline"
-        android:text="@string/primaryGenreName"/>
+        android:text="@string/primary_genre"/>
 
     <TextView
         android:id="@+id/countryField"

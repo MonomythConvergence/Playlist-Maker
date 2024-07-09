@@ -3,6 +3,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import com.example.playlistmaker.di.libraryModule
 import com.example.playlistmaker.di.playerModule
 import com.example.playlistmaker.di.searchModule
 import com.example.playlistmaker.di.settingsModule
@@ -21,7 +22,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(settingsModule,searchModule, playerModule)
+            modules(settingsModule,searchModule, playerModule,libraryModule)
         }
 
         themeSharedPreferences = getSharedPreferences(Constants.THEME_PREF_KEY, MODE_PRIVATE)

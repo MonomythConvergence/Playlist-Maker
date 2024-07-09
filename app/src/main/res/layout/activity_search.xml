@@ -135,7 +135,7 @@
             android:text="@string/clear_recent"
             android:textColor="@color/search_inverted_button_text"
             android:textSize="14sp"
-            app:cornerRadius="@dimen/Search_inverted_button_rounding"
+            app:cornerRadius="@dimen/Inverted_button_rounding"
             tools:ignore="SpeakableTextPresentCheck" />
 
     </LinearLayout>
@@ -203,7 +203,7 @@
             android:text="@string/search_refresh"
             android:textColor="@color/search_inverted_button_text"
             android:textSize="14sp"
-            app:cornerRadius="@dimen/Search_inverted_button_rounding"
+            app:cornerRadius="@dimen/Inverted_button_rounding"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
 
