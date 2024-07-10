@@ -77,6 +77,19 @@
         <item name="android:textColor">@color/search_item_etc</item>
     </style>
 
+    <style name="SearchLibraryInvertedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:backgroundTint">@color/search_inverted_button_bg</item>
+        <item name="android:fontFamily">@font/ys_text_medium</item>
+        <item name="android:paddingVertical">10dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:textColor">@color/search_inverted_button_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <style name="PlayerDataFields">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -85,6 +98,7 @@
         <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">@font/ys_text_regular</item>
     </style>
+
     <style name="PlayerTrackData">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
