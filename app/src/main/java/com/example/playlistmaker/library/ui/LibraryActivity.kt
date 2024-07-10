@@ -21,22 +21,13 @@ class LibraryActivity : AppCompatActivity() {
         val tabLayout = findViewById<TabLayout>(R.id.libraryTabLayout)
         val viewPager = findViewById<ViewPager2>(R.id.libraryViewPager)
         val adapter = FragmentPagerAdapter(
-            supportFragmentManager,
-            lifecycle
+            supportFragmentManager, lifecycle
         )
         setUpUI(tabLayout, viewPager, adapter)
-
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     private fun setUpUI(
-        tabLayout: TabLayout,
-        viewPager: ViewPager2,
-        adapter: FragmentStateAdapter
+        tabLayout: TabLayout, viewPager: ViewPager2, adapter: FragmentStateAdapter
     ) {
         viewPager.adapter = adapter
 
