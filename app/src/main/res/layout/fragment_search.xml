@@ -70,7 +70,7 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/search_bar_elements"
-            android:textCursorDrawable="@color/blue"
+            android:textCursorDrawable="@drawable/blue_text_cursor_drawable"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"

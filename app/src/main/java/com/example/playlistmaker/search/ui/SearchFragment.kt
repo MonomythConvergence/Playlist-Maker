@@ -133,17 +133,15 @@ class SearchFragment : Fragment() {
 
         }
 
-
+        val searchRunnable = Runnable { handleSearch() }
         searchBarField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (debounce.clickDebounce() && searchBarField.text.length > 1) {
-                    handleSearch()
-                } else {
-                    handler.removeCallbacksAndMessages(null)
-                    handler.postDelayed({ handleSearch() }, Debounce.CLICK_DEBOUNCE_DELAY)
+                handler.removeCallbacks(searchRunnable)
+                if (searchBarField.text.length > 1) {
+                    handler.postDelayed(searchRunnable, Debounce.CLICK_DEBOUNCE_DELAY)
                 }
             }
 
