@@ -20,7 +20,10 @@ class LibraryFragment: Fragment() {
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            findNavController().popBackStack()
+            if (findNavController().previousBackStackEntry == null) {
+                requireActivity().finish()}
+            else{findNavController().popBackStack()}
+
             true
         }
     }

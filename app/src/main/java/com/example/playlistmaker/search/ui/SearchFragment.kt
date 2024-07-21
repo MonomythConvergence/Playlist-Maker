@@ -49,9 +49,7 @@ class SearchFragment : Fragment() {
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (findNavController().previousBackStackEntry == null) {
-                requireActivity().finish()}
-            else{findNavController().popBackStack()}
+            findNavController().popBackStack()
 
             true
         }
