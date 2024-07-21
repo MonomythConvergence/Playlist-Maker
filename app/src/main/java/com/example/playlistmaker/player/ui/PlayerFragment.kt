@@ -23,8 +23,6 @@ import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.MediaPlayerState
 import com.example.playlistmaker.search.data.datamodels.Track
-import com.example.playlistmaker.search.ui.SearchFragment
-import com.google.android.material.switchmaterial.SwitchMaterial
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
