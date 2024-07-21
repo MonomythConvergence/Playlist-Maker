@@ -22,6 +22,9 @@
     <color name="player_main_button">#FFFFFF</color>
     <color name="player_secondary_button">#FFFFFF</color>
 
-
+    <color name="library_bg">#1A1B22</color>
+    <color name="library_main_text">#FFFFFF</color>
+    <color name="library_ui_main">#FFFFFF</color>
+    <color name="library_ui_inverted">#1A1B22</color>
 
 </resources>

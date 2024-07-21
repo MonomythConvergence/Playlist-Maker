@@ -31,11 +31,18 @@
 
     <!--Player -->
     <string name="duration">Длительность</string>
-    <string name="collectionName">Альбом</string>
-    <string name="releaseDate">Год</string>
-    <string name="primaryGenreName">Жанр</string>
+    <string name="collection_title">Альбом</string>
+    <string name="release_date">Год</string>
+    <string name="primary_genre">Жанр</string>
     <string name="country">Страна</string>
 
+    <!--Player -->
+    <string name="tab_description">Избранные треки, плейлисты</string>
+    <string name="favorite_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
+    <string name="new_playlist_button">Новый плейлист</string>
+    <string name="empty_library">Ваша медиатека пуста</string>
+    <string name="no_playlists">Вы не создали\nни одного плейлиста</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

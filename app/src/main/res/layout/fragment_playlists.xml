@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/newPlaylist"
+            style="@style/SearchLibraryInvertedButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"
+            android:text="@string/new_playlist_button"
+            app:cornerRadius="@dimen/Inverted_button_rounding" />
+
+        <ImageView
+            android:id="@+id/noResultsError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="106dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/compound_no_results" />
+
+        <TextView
+            style="@style/LibraryFragmentsNoResultText"
+            app:layout_constraintTop_toBottomOf="@+id/noResultsError"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/no_playlists"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
