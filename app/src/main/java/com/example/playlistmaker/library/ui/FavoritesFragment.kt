@@ -21,7 +21,7 @@ class FavoritesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val view: View = inflater.inflate(R.layout.fragment_favorites, container)
+        val view: View = inflater.inflate(R.layout.fragment_library_favorites, container)
 
         return view
     }

@@ -1,10 +1,10 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/topBarGuideline"
         android:layout_width="wrap_content"
@@ -13,24 +13,11 @@
         app:layout_constraintGuide_begin="56dp"
         />
 
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_margin="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/topBarGuideline"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/arrow_back"
-        tools:ignore="ContentDescription"
-        app:tint="@color/library_ui_main"/>
-
     <TextView
         android:id="@+id/libraryTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/backButton"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/topBarGuideline"
         app:layout_constrainedWidth="true"
@@ -56,7 +43,7 @@
         app:tabIndicatorColor="@color/library_ui_main"
         app:tabTextAppearance="@style/LibraryTabTitle"
         app:tabTextColor="@color/library_ui_main"
-        tools:text="Tabs" />
+        />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/libraryViewPager"
@@ -66,6 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="ViewPager" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

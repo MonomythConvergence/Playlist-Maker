@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="MainButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:backgroundTint">@color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">0.03</item>
+    <style name="NavigationText" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="SettingsDarkThemeText">
@@ -51,7 +42,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:background">@color/icon_bg</item>
+        <item name="android:background">@color/main_bg</item>
         <item name="android:importantForAccessibility">no</item>
         <item name="android:tint">@color/settings_button</item>
     </style>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="main_screen_bg">#1A1B22</color>
-    <color name="icon_bg">#1A1B22</color>
+    <color name="main_bg">#1A1B22</color>
+    <color name="navigation">#FFFFFFFF</color>
+    <color name="navigation_selected">#3772E7</color>
 
     <color name="settings_font">#FFFFFFFF</color>
     <color name="settings_button">#FFFFFF</color>
