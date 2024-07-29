@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/navigation_library">
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.playlistmaker.search.ui.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_navigation_search_to_player"
+            app:destination="@id/navigation_player"
+            app:popUpTo="@id/navigation_search"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="track"
+                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_library"
+        android:name="com.example.playlistmaker.library.ui.LibraryFragment"
+        android:label="LibraryFragment"
+        tools:layout="@layout/fragment_library" />
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings" >
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_player"
+        android:name="com.example.playlistmaker.player.ui.PlayerFragment"
+        android:label="PlayerFragment"
+        tools:layout="@layout/fragment_player">
+        <argument
+            android:name="track"
+            app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+        <action
+            android:id="@+id/action_navigation_player_back_to_search"
+            app:destination="@id/navigation_search" />
+    </fragment>
+
+</navigation>

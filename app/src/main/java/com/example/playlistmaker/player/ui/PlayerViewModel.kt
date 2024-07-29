@@ -49,7 +49,6 @@ class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewMo
         mediaPlayerInteractor.pausePlayer()
     }
 
-    //fun resetPlayer() {mediaPlayerInteractor.resetPlayer()}
 
 
 }

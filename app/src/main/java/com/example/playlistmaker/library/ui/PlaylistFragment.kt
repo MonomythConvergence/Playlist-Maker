@@ -19,7 +19,7 @@ class PlaylistFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
-        val view : View = inflater.inflate(R.layout.fragment_playlists, container)
+        val view : View = inflater.inflate(R.layout.fragment_library_playlists, container)
 
         return view
     }

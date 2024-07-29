@@ -26,6 +26,7 @@ class ThemeSwitchRepositoryImpl(context: Context) :
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+
     }
 
     override fun checkOnState(): Boolean {
