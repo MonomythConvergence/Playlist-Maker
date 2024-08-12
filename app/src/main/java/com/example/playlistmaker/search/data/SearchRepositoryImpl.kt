@@ -8,13 +8,9 @@ import com.example.playlistmaker.search.data.network.RetrofitApiClient
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.ui.SearchState
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 import java.util.Locale
 
