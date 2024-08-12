@@ -2,8 +2,6 @@ package com.example.playlistmaker.player.ui
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -31,15 +29,13 @@ class PlayerFragment : Fragment() {
     private var playButtonPressed = false
     private lateinit var playAndPauseButton: ImageButton
     private lateinit var playTimer: TextView
-    private var updatePlayTimeHandler: Handler? = null
-    private var updatePlayTimeRunnable: Runnable? = null
     private lateinit var selectedTrack: Track
-    val playerViewModel: PlayerViewModel by viewModel()
+    private val playerViewModel: PlayerViewModel by viewModel()
     private lateinit var view: View
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            findNavController().popBackStack()
+            returnToSearch()
             true
         }
     }
@@ -53,8 +49,10 @@ class PlayerFragment : Fragment() {
         super.onStop()
 
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
+            if (playerViewModel.isTimerRunning){
+                playerViewModel.pausePlayer()
+            }
 
-            playerViewModel.pausePlayer()
             playButtonPressed = false
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
@@ -67,7 +65,6 @@ class PlayerFragment : Fragment() {
 
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
             playerViewModel.releasePlayer()
-            updatePlayTimeHandler?.removeCallbacksAndMessages(null)
         }
         playerViewModel.stateLiveData.removeObserver(Observer {
             updateUi()
@@ -93,6 +90,7 @@ class PlayerFragment : Fragment() {
         })
 
 
+
         initializeMediaPlayer()
 
         setArtworkThruGlide()
@@ -111,19 +109,18 @@ class PlayerFragment : Fragment() {
         playAndPauseButton = view.findViewById(R.id.playAndPauseButton)
         playTimer = view.findViewById<TextView>(R.id.playTimer)
 
-        setupPlayTimeHandler()
+        playerViewModel.timerLiveData.observe(viewLifecycleOwner,Observer{
+            playTimer.text = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(playerViewModel.timerLiveData.value)
+        })
 
         playAndPauseButton.setOnClickListener {
             if (!selectedTrack.previewUrl.isNullOrEmpty()) {
 
                 playButtonPressed = !playButtonPressed
-                if (playButtonPressed) {
-                    updatePlayTimeHandler?.removeCallbacksAndMessages(null)
-                    updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable!!, 350)
-                } else {
-                    updatePlayTimeHandler?.removeCallbacksAndMessages(null)
-                }
-
+                //todo removed handler, check if it still works
                 playerViewModel.playbackControl()
                 playerViewModel.updateState()
             } else {
@@ -189,37 +186,6 @@ class PlayerFragment : Fragment() {
         return artworkView
     }
 
-    private fun setupPlayTimeHandler() {
-        updatePlayTimeHandler = Handler(Looper.getMainLooper())
-
-        updatePlayTimeRunnable = Runnable {
-
-            playTimer.text = SimpleDateFormat(
-                "mm:ss",
-                Locale.getDefault()
-            ).format(playerViewModel.getCurrentPosition())
-
-            if (playButtonPressed && !playerViewModel.getIsPlaying()) {
-
-                playTimer.text = "00:00"
-
-                playerViewModel.setPlayerState(MediaPlayerState.PREPARED)
-
-                playerViewModel.updateState()
-
-                updateUi()
-
-                updatePlayTimeHandler?.removeCallbacksAndMessages(null)
-
-                return@Runnable
-            }
-
-            updatePlayTimeHandler?.postDelayed(updatePlayTimeRunnable!!, 350)
-
-            return@Runnable
-        }
-    }
-
     private fun updateUi() {
 
         when (playerViewModel.stateLiveData.value) {
@@ -247,8 +213,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun returnToSearch(){
-        findNavController().navigate(R.id.action_navigation_player_back_to_search,
-            )
+        findNavController().navigate(R.id.action_navigation_player_back_to_search)
     }
 
 }

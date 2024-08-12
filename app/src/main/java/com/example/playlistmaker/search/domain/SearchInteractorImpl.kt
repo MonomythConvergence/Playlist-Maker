@@ -2,12 +2,14 @@ package com.example.playlistmaker.search.domain
 
 import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.ui.SearchState
+import kotlinx.coroutines.flow.Flow
 
 
 class SearchInteractorImpl (private val searchRepository: SearchRepository): SearchInteractor {
 
-    override fun searchITunes(query: String, callback: SearchCallback) {
-        searchRepository.searchITunes(query, callback)
+    override fun searchITunes(query: String): Flow<SearchState> {
+        return searchRepository.searchITunesFlow(query)
     }
 
     override fun isRecentListEmpty(): Boolean {
