@@ -49,10 +49,9 @@ class PlayerFragment : Fragment() {
         super.onStop()
 
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-            if (playerViewModel.isTimerRunning){
+            if (playerViewModel.getIsPlaying()) {
                 playerViewModel.pausePlayer()
             }
-
             playButtonPressed = false
             playAndPauseButton.setImageResource(R.drawable.play_button)
         }
@@ -78,9 +77,13 @@ class PlayerFragment : Fragment() {
 
         view = inflater.inflate(R.layout.fragment_player, container, false)
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            backPressedCallback
+        )
 
-        val trackFromExtra: Track? = arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
+        val trackFromExtra: Track? =
+            arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
         if (trackFromExtra != null) selectedTrack = trackFromExtra
         else returnToSearch()
 
@@ -88,8 +91,6 @@ class PlayerFragment : Fragment() {
         playerViewModel.stateLiveData.observe(viewLifecycleOwner, Observer {
             updateUi()
         })
-
-
 
         initializeMediaPlayer()
 
@@ -109,7 +110,7 @@ class PlayerFragment : Fragment() {
         playAndPauseButton = view.findViewById(R.id.playAndPauseButton)
         playTimer = view.findViewById<TextView>(R.id.playTimer)
 
-        playerViewModel.timerLiveData.observe(viewLifecycleOwner,Observer{
+        playerViewModel.timerLiveData.observe(viewLifecycleOwner, Observer {
             playTimer.text = SimpleDateFormat(
                 "mm:ss",
                 Locale.getDefault()
@@ -118,13 +119,12 @@ class PlayerFragment : Fragment() {
 
         playAndPauseButton.setOnClickListener {
             if (!selectedTrack.previewUrl.isNullOrEmpty()) {
-
                 playButtonPressed = !playButtonPressed
-                //todo removed handler, check if it still works
                 playerViewModel.playbackControl()
                 playerViewModel.updateState()
             } else {
-                Toast.makeText(requireContext(), "Для трека нет превью...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Для трека нет превью...", Toast.LENGTH_SHORT)
+                    .show()
             }//В задании/макете про этот случай ни слова
         }
 
@@ -212,7 +212,7 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun returnToSearch(){
+    private fun returnToSearch() {
         findNavController().navigate(R.id.action_navigation_player_back_to_search)
     }
 

@@ -1,11 +1,9 @@
 package com.example.playlistmaker.search.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
 import com.example.playlistmaker.search.domain.SearchInteractor
 import kotlinx.coroutines.Dispatchers
@@ -18,12 +16,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private val _state = MutableLiveData<SearchState>()
     val state: LiveData<SearchState> = _state
 
-    //private val searchCallback = object : SearchCallback {
-    //    override fun onSearchCompleted(searchState: SearchState) {
-    //        setState(searchState)
-    //    }} //todo delete after review
-
-    private var clickDebounceState : Boolean = false
+    private var clickDebounceState: Boolean = false
 
 
     init {
@@ -37,29 +30,35 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     }
 
 
+    fun handleSearch(query: String) {
 
-    fun handleSearch(query: String){
         viewModelScope.launch(Dispatchers.IO) {
-        searchInteractor.searchITunes(query).collect{state ->
-            when (state) {
-                is SearchState.LOADING -> {
-                    _state.postValue(SearchState.LOADING)
-                }
-                is SearchState.NO_RESULTS -> {
-                    _state.postValue(SearchState.NO_RESULTS)
-                }
-                is SearchState.SHOW_RESULTS -> {
-                    _state.postValue(SearchState.SHOW_RESULTS)
-                }
-                is SearchState.NETWORK_ERROR -> {
-                    _state.postValue(SearchState.NETWORK_ERROR)
-                }
+            searchInteractor.searchITunes(query).collect { state ->
+                when (state) {
+                    is SearchState.LOADING -> {
+                        _state.postValue(SearchState.LOADING)
+                    }
 
-                else -> {}
-            }}}}
+                    is SearchState.NO_RESULTS -> {
+                        _state.postValue(SearchState.NO_RESULTS)
+                    }
+
+                    is SearchState.SHOW_RESULTS -> {
+                        _state.postValue(SearchState.SHOW_RESULTS)
+                    }
+
+                    is SearchState.NETWORK_ERROR -> {
+                        _state.postValue(SearchState.NETWORK_ERROR)
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
 
     fun setState(newState: SearchState) {
-        _state.value=newState
+        _state.value = newState
     }
 
     fun isRecentListEmpty(): Boolean {
@@ -90,15 +89,15 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         searchInteractor.encodeRecentTrackList()
     }
 
-    private fun updateRecentList(){
-        recentTrackListLiveData.value= searchInteractor.provideRecentTrackList()
+    private fun updateRecentList() {
+        recentTrackListLiveData.value = searchInteractor.provideRecentTrackList()
     }
 
-    fun setClickDebounce(state : Boolean){
-        clickDebounceState=state
+    fun setClickDebounce(state: Boolean) {
+        clickDebounceState = state
     }
 
-    fun getClickDebounceState(): Boolean{
+    fun getClickDebounceState(): Boolean {
         return clickDebounceState
     }
 

@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.data.datamodels
 
-data class searchServerResonse(
+data class SearchServerResonse(
     val resultCount:Int,
     val results: List<UnparsedTrack>
 )

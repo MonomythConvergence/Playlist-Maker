@@ -1,19 +1,17 @@
 package com.example.playlistmaker.player.ui
 
-import android.icu.text.SimpleDateFormat
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.Constants
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
 
-class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
+class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
 
     private val _stateLiveData = MutableLiveData<MediaPlayerState>()
@@ -21,7 +19,7 @@ class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewMo
 
     private val _timerLiveData = MutableLiveData<Int>()
     val timerLiveData: LiveData<Int> = _timerLiveData
-    var isTimerRunning = false
+    private var isTimerRunning = false
 
     init {
         _stateLiveData.value = MediaPlayerState.PREPARED
@@ -33,8 +31,10 @@ class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewMo
     }
 
     fun playbackControl() {
+        updateState()
         mediaPlayerInteractor.playbackControl()
         timerControl()
+
     }
 
     private fun timerControl() {
@@ -43,24 +43,21 @@ class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewMo
             viewModelScope.launch(Dispatchers.Main) {
                 while (isTimerRunning) {
                     getCurrentPosition()
-                    Log.d("MyTag", "position updated")
-                    if (!getIsPlaying() && isPlaybackFinished()) {
-                        Log.d("MyTag", "should stop")
+                    if (!getIsPlaying()) {
                         _stateLiveData.value = MediaPlayerState.PREPARED
+                        mediaPlayerInteractor.setPlayerState(MediaPlayerState.PREPARED)
                         _timerLiveData.value = 0
                         isTimerRunning = false
+
                     } else {
-                        delay(300)
+                        delay(Constants.TIMER_REFRESH)
                     }
-
                 }
-
-
             }
         }
     }
 
-    private fun getIsPlaying(): Boolean {
+    fun getIsPlaying(): Boolean {
         return mediaPlayerInteractor.getIsPlaying()
     }
 
@@ -76,17 +73,8 @@ class PlayerViewModel(val mediaPlayerInteractor: MediaPlayerInteractor) : ViewMo
         _timerLiveData.value = mediaPlayerInteractor.getCurrentPosition()
     }
 
-    fun setPlayerState(state: MediaPlayerState) {
-        mediaPlayerInteractor.setPlayerState(state)
-    }
-
-
     fun pausePlayer() {
         mediaPlayerInteractor.pausePlayer()
         timerControl()
-    }
-
-    fun isPlaybackFinished() : Boolean{
-        return (mediaPlayerInteractor.getCurrentPosition()>=mediaPlayerInteractor.getDuration())
     }
 }

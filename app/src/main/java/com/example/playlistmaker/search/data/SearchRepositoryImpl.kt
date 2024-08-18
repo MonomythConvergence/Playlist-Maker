@@ -1,9 +1,8 @@
 package com.example.playlistmaker.search.data
 
-
 import android.icu.text.SimpleDateFormat
 import com.example.playlistmaker.search.data.datamodels.Track
-import com.example.playlistmaker.search.data.datamodels.searchServerResonse
+import com.example.playlistmaker.search.data.datamodels.SearchServerResonse
 import com.example.playlistmaker.search.data.network.RetrofitApiClient
 import com.example.playlistmaker.search.domain.SearchRepository
 import com.example.playlistmaker.search.ui.SearchState
@@ -17,7 +16,8 @@ import java.util.Locale
 
 class SearchRepositoryImpl(
     val preferenceManger: PreferencesManager,
-    var apiClient: RetrofitApiClient
+    var apiClient: RetrofitApiClient,
+    private val gson: Gson
 ) : SearchRepository {
 
     var trackList = ArrayList<Track>()
@@ -72,15 +72,14 @@ class SearchRepositoryImpl(
             recentTrackList.add(0, newTrack)
         }
 
-        preferenceManger.encodeRecentTrackList(recentTrackList)
+        encodeRecentTrackList()
     }
 
     override fun searchITunesFlow(query: String): Flow<SearchState> = flow {
 
-        val gson = Gson()
         val entity = "song"
 
-
+        clearTrackList()
         try {
             emit(SearchState.LOADING)
             val response = apiClient.apiService.searchQuery(query, entity)
@@ -88,7 +87,7 @@ class SearchRepositoryImpl(
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
-                    val parsedResponse = gson.fromJson(body, searchServerResonse::class.java)
+                    val parsedResponse = gson.fromJson(body, SearchServerResonse::class.java)
                     val searchResults = parsedResponse?.results
                     if (searchResults != null) {
                         if (parsedResponse.resultCount == 0) {
@@ -104,10 +103,10 @@ class SearchRepositoryImpl(
                                         result.trackId,
                                         result.collectionName,
                                         if (result.releaseDate != null && result.releaseDate.length >= 4) {
-                                            result.releaseDate.substring(0, 4)
-                                        } else {
-                                            ""
-                                        },
+                                            result.releaseDate.substring(0, 4) //Если это магическое
+                                        } else { // число, то я немного без понятия как его назвать
+                                            "" //numberOfDigitsForMeasuringYearsEverSince1000ADAnd-
+                                        },  //-ForTheNext~8000Years : Int?)
                                         result.primaryGenreName,
                                         result.country,
                                         result.previewUrl
