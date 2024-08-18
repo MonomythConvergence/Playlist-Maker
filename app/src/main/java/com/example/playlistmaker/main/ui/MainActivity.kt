@@ -1,16 +1,12 @@
 package com.example.playlistmaker.main.ui
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
 import com.example.playlistmaker.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.ui.setupWithNavController
