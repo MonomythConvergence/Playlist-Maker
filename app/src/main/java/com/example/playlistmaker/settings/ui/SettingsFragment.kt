@@ -1,6 +1,5 @@
 package com.example.playlistmaker.settings.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +8,10 @@ import android.widget.ImageButton
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-
 import com.google.android.material.switchmaterial.SwitchMaterial
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class SettingsFragment : Fragment() {
 
@@ -51,9 +49,6 @@ class SettingsFragment : Fragment() {
         themeSwitcher.isChecked = settingsViewModel.checkOnState()
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             settingsViewModel.switchTheme(checked)
-            val switchPreferences = requireContext().getSharedPreferences(Constants.THEME_CHANGE_KEY, Context.MODE_PRIVATE)
-            val editor = switchPreferences.edit()
-            editor.putBoolean(Constants.THEME_CHANGE_KEY, true).commit()
         }
 
         val shareButton = view.findViewById<ImageButton>(R.id.settings_share_button)

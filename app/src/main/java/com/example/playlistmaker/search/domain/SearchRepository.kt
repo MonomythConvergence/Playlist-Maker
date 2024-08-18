@@ -1,7 +1,8 @@
 package com.example.playlistmaker.search.domain
 
-import com.example.playlistmaker.search.data.SearchCallback
 import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.ui.SearchState
+import kotlinx.coroutines.flow.Flow
 
 interface SearchRepository {
     fun isRecentListEmpty():Boolean
@@ -13,6 +14,6 @@ interface SearchRepository {
     fun addTrackToRecent(newTrack: Track)
     fun encodeRecentTrackList()
     fun decodeRecentTrackList()
-    fun searchITunes(query : String,callback: SearchCallback)
+    fun searchITunesFlow(query : String) : Flow<SearchState>
 
 }

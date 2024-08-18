@@ -2,6 +2,8 @@ package com.example.playlistmaker.main.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
@@ -14,41 +16,45 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val navControllerState = navController.saveState()
+        outState.putBundle(Constants.BACKSTACK_KEY, navControllerState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
+        setContentView(R.layout.activity_main)
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
-
-
         bottomNavigationView.setupWithNavController(navController)
-        if (checkForThemeChange()) {
-            val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
-            navGraph.setStartDestination(R.id.navigation_settings)
-            navController.graph = navGraph
-        } else {
-            navController.setGraph(R.navigation.nav_graph)
-        }
 
         Navigation.setViewNavController(bottomNavigationView, navController)
-    }
 
-    private fun checkForThemeChange(): Boolean {
-        val changingThemeSharedPreferences =
-            getSharedPreferences(Constants.THEME_CHANGE_KEY, MODE_PRIVATE)
-
-        if (changingThemeSharedPreferences.getBoolean(Constants.THEME_CHANGE_KEY, false)) {
-            changingThemeSharedPreferences.edit().putBoolean(Constants.THEME_CHANGE_KEY, false)
-                .apply()
-            return true
+        if (savedInstanceState != null) {
+            val navControllerState = savedInstanceState.getBundle(Constants.BACKSTACK_KEY)
+            navController.restoreState(navControllerState)
         } else {
-            return false
+            navController.setGraph(R.navigation.nav_graph)
+
         }
 
+        val separatorDivider: View = findViewById(R.id.panelSeparatorDivider)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.navigation_player) {
+                bottomNavigationView.isVisible = false
+                separatorDivider.isVisible = false
+            } else {
+                bottomNavigationView.isVisible = true
+                separatorDivider.isVisible = true
+            }
+        }
     }
+
 }
+

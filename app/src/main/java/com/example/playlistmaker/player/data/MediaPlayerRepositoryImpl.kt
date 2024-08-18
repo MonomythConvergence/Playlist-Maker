@@ -4,23 +4,23 @@ import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.MediaPlayerRepository
 import com.example.playlistmaker.player.domain.MediaPlayerState
 
-class MediaPlayerRepositoryImpl():
+class MediaPlayerRepositoryImpl() :
     MediaPlayerRepository {
-    private lateinit var  mediaPlayer : MediaPlayer
-    private lateinit var previewUrl :String
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var previewUrl: String
 
     override var mediaPlayerState: MediaPlayerState = MediaPlayerState.IDLE
 
 
     override fun preparePlayer(url: String) {
-        previewUrl=url
+        previewUrl = url
         if (previewUrl.isNotEmpty()) {
             mediaPlayer = MediaPlayer()
             mediaPlayer.setDataSource(previewUrl)
             mediaPlayer.prepareAsync()
-            mediaPlayerState=MediaPlayerState.PREPARED
-    }}
-
+            mediaPlayerState = MediaPlayerState.PREPARED
+        }
+    }
 
 
     override fun startPlayer() {
@@ -45,8 +45,9 @@ class MediaPlayerRepositoryImpl():
 
     override fun playbackControl() {
         if (previewUrl.isNotEmpty()) {
+
             when (mediaPlayerState) {
-                MediaPlayerState.STARTED, MediaPlayerState.PLAYBACK_COMPLETED -> {
+                MediaPlayerState.STARTED -> {
                     pausePlayer()
                 }
 
@@ -71,11 +72,14 @@ class MediaPlayerRepositoryImpl():
         return mediaPlayer.isPlaying
     }
 
-    override fun setPlayerState(mediaPlayerState : MediaPlayerState){
-        this.mediaPlayerState =mediaPlayerState
+    override fun setPlayerState(mediaPlayerState: MediaPlayerState) {
+        this.mediaPlayerState = mediaPlayerState
     }
 
     override fun resetPlayer() {
         mediaPlayer.reset()
+        this.mediaPlayerState = MediaPlayerState.PREPARED
     }
+
+
 }

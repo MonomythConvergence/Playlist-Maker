@@ -12,8 +12,7 @@
         <action
             android:id="@+id/action_navigation_search_to_player"
             app:destination="@id/navigation_player"
-            app:popUpTo="@id/navigation_search"
-            app:popUpToInclusive="true">
+            app:popUpTo="@id/navigation_search">
             <argument
                 android:name="track"
                 app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
@@ -40,7 +39,10 @@
             app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
         <action
             android:id="@+id/action_navigation_player_back_to_search"
-            app:destination="@id/navigation_search" />
+            app:destination="@id/navigation_search"
+            app:popUpTo="@id/navigation_search"
+            app:popUpToInclusive="true"
+            />
     </fragment>
 
 </navigation>

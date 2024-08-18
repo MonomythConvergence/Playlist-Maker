@@ -4,15 +4,20 @@ import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.settings.domain.ThemeSwitchInteractor
 import com.example.playlistmaker.sharing.domain.ExternalInteractionHandler
 
-class SettingsViewModel (private val themeSwitchInteractor: ThemeSwitchInteractor, private val externalInteractionHandler : ExternalInteractionHandler) : ViewModel() {
+class SettingsViewModel(
+    private val themeSwitchInteractor: ThemeSwitchInteractor,
+    private val externalInteractionHandler: ExternalInteractionHandler
+) : ViewModel() {
 
-    fun openURL(url : String){
+    fun openURL(url: String) {
         externalInteractionHandler.openURL(url)
     }
-    fun sendEmail(address : String, subject: String, content : String){
+
+    fun sendEmail(address: String, subject: String, content: String) {
         externalInteractionHandler.sendEmail(address, subject, content)
     }
-    fun openShareMenu(shareLink : String){
+
+    fun openShareMenu(shareLink: String) {
         externalInteractionHandler.openShareMenu(shareLink)
     }
 
@@ -20,7 +25,7 @@ class SettingsViewModel (private val themeSwitchInteractor: ThemeSwitchInteracto
         themeSwitchInteractor.switchTheme(switchStateOn)
     }
 
-    fun checkOnState(): Boolean{
+    fun checkOnState(): Boolean {
         return themeSwitchInteractor.checkOnState()
     }
 }

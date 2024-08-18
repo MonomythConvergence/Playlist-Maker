@@ -158,21 +158,6 @@
             tools:ignore="SpeakableTextPresentCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- Progress bar -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_gravity="center"
-        android:layout_marginHorizontal="158dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginBottom="508dp"
-        android:indeterminateTint="@color/search_progress_bar"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/underBarGuideline" />
 
     <!-- Results -->
     <androidx.recyclerview.widget.RecyclerView
@@ -278,5 +263,22 @@
             app:layout_constraintTop_toBottomOf="@id/noResultsErrorIcon"
 
             />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Progress bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="44dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="158dp"
+        android:layout_marginTop="140dp"
+        android:layout_marginBottom="508dp"
+        android:indeterminateTint="@color/search_progress_bar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/underBarGuideline" />
 </androidx.constraintlayout.widget.ConstraintLayout>

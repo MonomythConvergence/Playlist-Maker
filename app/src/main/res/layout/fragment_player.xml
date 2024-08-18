@@ -202,6 +202,13 @@
         android:layout_marginBottom="28dp" />
 
     <!-- Right text column/chain -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/textFieldsLeftCutoffGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_begin="109dp"
+        android:orientation="vertical"/>
+
     <TextView
         android:id="@+id/trackTime"
         style="@style/PlayerTrackData"
@@ -212,6 +219,9 @@
         android:id="@+id/collectionName"
         style="@style/PlayerTrackData"
         android:visibility="visible"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/textFieldsLeftCutoffGuideline"
         app:layout_constraintBaseline_toBaselineOf="@+id/collectionNameField"
         app:layout_constraintEnd_toStartOf="@id/rightGuideline"
 />
@@ -219,18 +229,27 @@
     <TextView
         android:id="@+id/releaseDate"
         style="@style/PlayerTrackData"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/textFieldsLeftCutoffGuideline"
         app:layout_constraintBaseline_toBaselineOf="@+id/releaseDateField"
         app:layout_constraintEnd_toStartOf="@id/rightGuideline"/>
 
     <TextView
         android:id="@+id/primaryGenreName"
         style="@style/PlayerTrackData"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/textFieldsLeftCutoffGuideline"
         app:layout_constraintBaseline_toBaselineOf="@+id/primaryGenreNameField"
         app:layout_constraintEnd_toStartOf="@id/rightGuideline"/>
 
     <TextView
         android:id="@+id/country"
         style="@style/PlayerTrackData"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@+id/textFieldsLeftCutoffGuideline"
         app:layout_constraintBaseline_toBaselineOf="@+id/countryField"
         app:layout_constraintEnd_toStartOf="@id/rightGuideline"
         />
