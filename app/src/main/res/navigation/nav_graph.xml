@@ -22,13 +22,21 @@
         android:id="@+id/navigation_library"
         android:name="com.example.playlistmaker.library.ui.LibraryFragment"
         android:label="LibraryFragment"
-        tools:layout="@layout/fragment_library" />
+        tools:layout="@layout/fragment_library">
+        <action
+            android:id="@+id/action_navigation_library_to_player"
+            app:destination="@id/navigation_player"
+            app:popUpTo="@id/navigation_library">
+            <argument
+                android:name="track"
+                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings" >
-    </fragment>
+        tools:layout="@layout/fragment_settings"/>
     <fragment
         android:id="@+id/navigation_player"
         android:name="com.example.playlistmaker.player.ui.PlayerFragment"
@@ -37,12 +45,19 @@
         <argument
             android:name="track"
             app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+        <argument
+            android:name="source"
+            app:argType="string" />
         <action
             android:id="@+id/action_navigation_player_back_to_search"
             app:destination="@id/navigation_search"
             app:popUpTo="@id/navigation_search"
-            app:popUpToInclusive="true"
-            />
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_navigation_player_back_to_library"
+            app:destination="@id/navigation_library"
+            app:popUpTo="@id/navigation_library"
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>
