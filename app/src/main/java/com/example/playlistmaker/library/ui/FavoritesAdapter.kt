@@ -8,7 +8,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.datamodels.Track
 import com.example.playlistmaker.search.data.ItemClickCallback
 import com.example.playlistmaker.search.ui.TrackViewHolder
-import java.util.ArrayList
 
 class FavoritesAdapter(
     val diplayedList: List<Track>, private val callback: ItemClickCallback

@@ -20,9 +20,9 @@ class FavoritesFragmentViewModel(private val repository: FavoritesRepository) : 
         loadFavorites()
     }
 
-    private fun loadFavorites(){
+    private fun loadFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getFavorites().collect{ list -> _favoritesList.postValue(list)}
+            repository.getFavorites().collect { list -> _favoritesList.postValue(list) }
         }
     }
 

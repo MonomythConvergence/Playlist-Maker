@@ -14,15 +14,17 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LibraryFragment: Fragment() {
+class LibraryFragment : Fragment() {
 
     private val libraryFragmentViewModel: LibraryViewModel by viewModel()
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             if (findNavController().previousBackStackEntry == null) {
-                requireActivity().finish()}
-            else{findNavController().popBackStack()}
+                requireActivity().finish()
+            } else {
+                findNavController().popBackStack()
+            }
 
             true
         }
@@ -39,12 +41,17 @@ class LibraryFragment: Fragment() {
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
-        val view : View = inflater.inflate(R.layout.fragment_library, container, false)
+        val view: View = inflater.inflate(R.layout.fragment_library, container, false)
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            backPressedCallback
+        )
 
         val tabLayout = view.findViewById<TabLayout>(R.id.libraryTabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.libraryViewPager)

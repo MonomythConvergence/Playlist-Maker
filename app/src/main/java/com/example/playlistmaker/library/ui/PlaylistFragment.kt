@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlaylistFragment: Fragment() {
+class PlaylistFragment : Fragment() {
 
     private val playlistsFragmentViewModel: PlaylistsFragmentViewModel by viewModel()
 
@@ -16,10 +16,12 @@ class PlaylistFragment: Fragment() {
         fun newInstance() = PlaylistFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
-        val view : View = inflater.inflate(R.layout.fragment_library_playlists, container)
+        val view: View = inflater.inflate(R.layout.fragment_library_playlists, container)
 
         return view
     }

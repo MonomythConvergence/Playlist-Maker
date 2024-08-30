@@ -20,7 +20,7 @@ class FavoritesRepositoryImpl(
 
 
     override fun getFavorites(): Flow<List<Track>> {
-        return songDao.getFavorites().map { songList : List<SongEntity> ->
+        return songDao.getFavorites().map { songList: List<SongEntity> ->
             songList.map { favoritesDBConverter.map(it) }
         }
     }

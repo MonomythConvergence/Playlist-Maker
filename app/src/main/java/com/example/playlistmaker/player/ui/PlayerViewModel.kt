@@ -11,7 +11,6 @@ import com.example.playlistmaker.player.domain.MediaPlayerState
 import com.example.playlistmaker.search.data.datamodels.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
