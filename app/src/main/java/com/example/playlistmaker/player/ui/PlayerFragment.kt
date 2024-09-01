@@ -68,8 +68,12 @@ class PlayerFragment : Fragment() {
             playerViewModel.releasePlayer()
         }
 
+        playerViewModel.isFavoriteLiveData.removeObserver( Observer {
+            favoritedTrack = playerViewModel.provideFavoriteStatus()
+            setFavoriteIndicator()
+        })
         playerViewModel.stateLiveData.removeObserver(Observer {
-            updateUi()
+            updateUi(playerViewModel.providePlayerStatus())
         })
     }
 
@@ -91,7 +95,11 @@ class PlayerFragment : Fragment() {
 
 
         playerViewModel.stateLiveData.observe(viewLifecycleOwner, Observer {
-            updateUi()
+            updateUi(playerViewModel.providePlayerStatus())
+        })
+        playerViewModel.isFavoriteLiveData.observe(viewLifecycleOwner, Observer {
+            favoritedTrack = playerViewModel.provideFavoriteStatus()
+            setFavoriteIndicator()
         })
 
         initializeMediaPlayer()
@@ -106,17 +114,16 @@ class PlayerFragment : Fragment() {
 
         favoriteButton = view.findViewById<ImageButton>(R.id.favoriteButton)
 
-        if (favoritedTrack) {
-            favoriteButton.setImageResource(R.drawable.active_like_button)
-        } else {
-            favoriteButton.setImageResource(R.drawable.inactive_like_button)
-        }
-
         favoriteButton.setOnClickListener {
-            favoritedTrack = !favoritedTrack
-            setFavoriteIndicator()
+            if (favoritedTrack) {
+                playerViewModel.removeFromFavorites(selectedTrack)
+                playerViewModel.updateFavoriteStatus(selectedTrack)
+            } else {
+                playerViewModel.addToFavorites(selectedTrack)
+                playerViewModel.updateFavoriteStatus(selectedTrack)
+            }
         }
-        checkFavouriteStatus()
+        playerViewModel.updateFavoriteStatus(selectedTrack)
 
         val playlistAddButton = view.findViewById<ImageButton>(R.id.playlistAddButton)
         playlistAddButton.setOnClickListener {
@@ -196,9 +203,9 @@ class PlayerFragment : Fragment() {
         return artworkView
     }
 
-    private fun updateUi() {
+    private fun updateUi(state: MediaPlayerState) {
 
-        when (playerViewModel.stateLiveData.value) {
+        when (state) {
             MediaPlayerState.PREPARED -> {
                 playAndPauseButton.setImageResource(R.drawable.play_button)
                 playButtonPressed = false
@@ -230,24 +237,14 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun checkFavouriteStatus() {
-        playerViewModel.checkIfFavorited(
-            selectedTrack
-        ) { isFavorited ->
-            favoritedTrack = isFavorited
-            setFavoriteIndicator()
-        }
-    }
-
 
     private fun setFavoriteIndicator() {
         if (favoritedTrack) {
             favoriteButton.setImageResource(R.drawable.active_like_button)
-            playerViewModel.addToFavorites(selectedTrack)
         } else {
             favoriteButton.setImageResource(R.drawable.inactive_like_button)
-            playerViewModel.removeFromFavorites(selectedTrack)
+
         }
-    }
-}
+    }}
+
 

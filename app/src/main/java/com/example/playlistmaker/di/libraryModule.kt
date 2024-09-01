@@ -5,6 +5,8 @@ import com.example.playlistmaker.db.FavoritesDBConverter
 import com.example.playlistmaker.db.FavoritesDatabase
 import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.domain.FavoritesInteractor
+import com.example.playlistmaker.library.domain.FavoritesInteractorImpl
 import com.example.playlistmaker.library.ui.FavoritesFragmentViewModel
 import com.example.playlistmaker.library.ui.PlaylistsFragmentViewModel
 import org.koin.android.ext.koin.androidContext
@@ -14,6 +16,7 @@ import org.koin.dsl.module
 val libraryModule = module {
     viewModel { FavoritesFragmentViewModel(get()) }
     viewModel { PlaylistsFragmentViewModel() }
+    single<FavoritesInteractor> { FavoritesInteractorImpl(get()) }
     single<FavoritesRepository> { FavoritesRepositoryImpl(get(), get()) }
     single<FavoritesDBConverter> { FavoritesDBConverter() }
 

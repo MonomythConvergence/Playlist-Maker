@@ -47,8 +47,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var recyclerResultsView: RecyclerView
     private lateinit var recyclerRecentView: RecyclerView
-    private lateinit var searchAdapter: SearchAdapter
-    private lateinit var recentAdapter: SearchAdapter
+    private lateinit var searchAdapter: RecyclerAdapter
+    private lateinit var recentAdapter: RecyclerAdapter
     private lateinit var searchBarField: EditText
     private lateinit var recentSearchFrame: ConstraintLayout
     private lateinit var progressBar: ProgressBar
@@ -281,12 +281,12 @@ class SearchFragment : Fragment() {
 
         recyclerResultsView = fragmentView.findViewById(R.id.searchResultsRecycler)
         searchAdapter =
-            SearchAdapter(searchViewModel.provideTrackList(), searchViewModel, itemClickCallback)
+            RecyclerAdapter(searchViewModel.provideTrackList(), searchViewModel, itemClickCallback)
         recyclerResultsView.adapter = searchAdapter
         recyclerResultsView.layoutManager = GridLayoutManager(requireContext(), 1)
 
         recyclerRecentView = fragmentView.findViewById(R.id.recentRecycler)
-        recentAdapter = SearchAdapter(
+        recentAdapter = RecyclerAdapter(
             searchViewModel.provideRecentTrackList(),
             searchViewModel,
             itemClickCallback

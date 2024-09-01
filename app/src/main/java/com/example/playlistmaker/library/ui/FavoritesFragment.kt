@@ -8,7 +8,6 @@ import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +15,7 @@ import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.ItemClickCallback
 import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.ui.RecyclerAdapter
 import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlinx.coroutines.CoroutineScope
@@ -49,19 +49,19 @@ class FavoritesFragment : Fragment() {
         recycler = fragmentView.findViewById<RecyclerView>(R.id.libraryFavoritesRecycler)
         progressBar = fragmentView.findViewById<ProgressBar>(R.id.progressBar)
 
-        favoritesFragmentViewModel.favoritesList.observe(viewLifecycleOwner, Observer {
-            updateUI()
-        })
+        favoritesFragmentViewModel.favoritesList.observe(viewLifecycleOwner) {
+            updateUI(favoritesFragmentViewModel.provideFavoritesList() as ArrayList<Track>)
+        }
 
         return fragmentView
     }
 
-    private fun updateUI() {
+    private fun updateUI(favoritesList : ArrayList<Track>?) {
         noItemsFrame.isVisible = false
         recycler.isVisible = false
         progressBar.isVisible = false
 
-        when (favoritesFragmentViewModel.favoritesList.value) {
+        when (favoritesList) {
             null -> {
                 progressBar.isVisible = true
             }
@@ -96,8 +96,9 @@ class FavoritesFragment : Fragment() {
 
         }
         val favoritesAdapter =
-            FavoritesAdapter(
-                favoritesFragmentViewModel.provideFavoritesList(),
+            RecyclerAdapter(
+                favoritesFragmentViewModel.provideFavoritesList() as ArrayList<Track>,
+                favoritesFragmentViewModel,
                 itemClickCallback
             )
         recycler.adapter = favoritesAdapter
