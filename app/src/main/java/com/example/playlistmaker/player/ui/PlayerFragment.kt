@@ -67,14 +67,6 @@ class PlayerFragment : Fragment() {
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
             playerViewModel.releasePlayer()
         }
-
-        playerViewModel.isFavoriteLiveData.removeObserver( Observer {
-            favoritedTrack = playerViewModel.provideFavoriteStatus()
-            setFavoriteIndicator()
-        })
-        playerViewModel.stateLiveData.removeObserver(Observer {
-            updateUi(playerViewModel.providePlayerStatus())
-        })
     }
 
     override fun onCreateView(
@@ -94,11 +86,11 @@ class PlayerFragment : Fragment() {
         else backPress()
 
 
-        playerViewModel.stateLiveData.observe(viewLifecycleOwner, Observer {
-            updateUi(playerViewModel.providePlayerStatus())
+        playerViewModel.stateLiveData.observe(viewLifecycleOwner, Observer { state ->
+            updateUi(state)
         })
-        playerViewModel.isFavoriteLiveData.observe(viewLifecycleOwner, Observer {
-            favoritedTrack = playerViewModel.provideFavoriteStatus()
+        playerViewModel.isFavoriteLiveData.observe(viewLifecycleOwner, Observer { favoriteStatus ->
+            favoritedTrack = favoriteStatus
             setFavoriteIndicator()
         })
 
@@ -117,10 +109,8 @@ class PlayerFragment : Fragment() {
         favoriteButton.setOnClickListener {
             if (favoritedTrack) {
                 playerViewModel.removeFromFavorites(selectedTrack)
-                playerViewModel.updateFavoriteStatus(selectedTrack)
             } else {
                 playerViewModel.addToFavorites(selectedTrack)
-                playerViewModel.updateFavoriteStatus(selectedTrack)
             }
         }
         playerViewModel.updateFavoriteStatus(selectedTrack)

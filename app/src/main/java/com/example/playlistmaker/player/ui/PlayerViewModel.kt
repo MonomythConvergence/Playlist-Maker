@@ -101,19 +101,13 @@ class PlayerViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             favoritesInteractor.addTrackToFavorites(track)
         }
+        updateFavoriteStatus(track)
+
     }
 
     fun removeFromFavorites(track: Track) {
         viewModelScope.launch(Dispatchers.IO)
         { favoritesInteractor.deleteTrackFromFavorites(track) }
-
-    }
-
-    fun provideFavoriteStatus(): Boolean {
-        return isFavoriteLiveData.value!!
-    }
-
-    fun providePlayerStatus(): MediaPlayerState {
-        return stateLiveData.value!!
+        updateFavoriteStatus(track)
     }
 }

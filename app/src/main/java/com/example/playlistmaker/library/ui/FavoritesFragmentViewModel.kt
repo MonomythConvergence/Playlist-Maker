@@ -16,19 +16,15 @@ class FavoritesFragmentViewModel(private val interactor: FavoritesInteractor) : 
 
     private var clickDebounceState: Boolean = false
 
-    init {
-        loadFavorites()
-    }
 
-    private fun loadFavorites() {
+
+
+    fun loadFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
             interactor.getFavorites().collect { list -> _favoritesList.postValue(list) }
         }
     }
 
-    fun provideFavoritesList(): List<Track> {
-        return favoritesList.value!!
-    }
 
     fun setClickDebounce(state: Boolean) {
         clickDebounceState = state

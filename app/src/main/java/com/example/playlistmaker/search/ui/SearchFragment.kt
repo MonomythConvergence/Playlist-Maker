@@ -225,32 +225,47 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateUI() {
-        recentSearchFrame.isVisible = false
-        progressBar.isVisible = false
-        recyclerResultsView.isVisible = false
-        noConnectionError.isVisible = false
-        noResultsError.isVisible = false
 
         when (searchViewModel.state.value) {
 
             SearchState.LOADING -> {
+                recentSearchFrame.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
                 progressBar.isVisible = true
             }
 
             SearchState.NO_RESULTS -> {
+                recentSearchFrame.isVisible = false
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
                 noResultsError.isVisible = true
             }
 
             SearchState.SHOW_HISTORY -> {
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
                 recentSearchFrame.isVisible = true
             }
 
             SearchState.SHOW_RESULTS -> {
+                recentSearchFrame.isVisible = false
+                progressBar.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
                 recyclerResultsView.isVisible = true
 
             }
 
             SearchState.NETWORK_ERROR -> {
+                recentSearchFrame.isVisible = false
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noResultsError.isVisible = false
                 noConnectionError.isVisible = true
             }
 

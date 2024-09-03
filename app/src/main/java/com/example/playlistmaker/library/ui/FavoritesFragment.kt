@@ -28,6 +28,7 @@ class FavoritesFragment : Fragment() {
     private lateinit var noItemsFrame: ConstraintLayout
     private lateinit var recycler: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private var localFavoritesList: ArrayList<Track> = ArrayList<Track>()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     val debounceClick = debounce<Unit>(Constants.CLICK_DEBOUNCE_DELAY, coroutineScope, true) {
@@ -43,41 +44,46 @@ class FavoritesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val fragmentView: View = inflater.inflate(R.layout.fragment_library_favorites, container)
-
         noItemsFrame =
             fragmentView.findViewById<ConstraintLayout>(R.id.libraryFavoritesNoItemsFrame)
         recycler = fragmentView.findViewById<RecyclerView>(R.id.libraryFavoritesRecycler)
         progressBar = fragmentView.findViewById<ProgressBar>(R.id.progressBar)
 
-        favoritesFragmentViewModel.favoritesList.observe(viewLifecycleOwner) {
-            updateUI(favoritesFragmentViewModel.provideFavoritesList() as ArrayList<Track>)
-        }
+        setUpRecyclerAndAdapter()
 
+        favoritesFragmentViewModel.favoritesList.observe(viewLifecycleOwner) { favoriteTracks ->
+            updateUI(favoriteTracks as ArrayList<Track>)
+        }
+        favoritesFragmentViewModel.loadFavorites()
         return fragmentView
     }
 
-    private fun updateUI(favoritesList : ArrayList<Track>?) {
-        noItemsFrame.isVisible = false
-        recycler.isVisible = false
-        progressBar.isVisible = false
-
-        when (favoritesList) {
+    private fun updateUI(newFavoritesList: ArrayList<Track>?) {
+        when (newFavoritesList) {
             null -> {
+                noItemsFrame.isVisible = false
+                recycler.isVisible = false
                 progressBar.isVisible = true
             }
 
-            emptyList<Track>() -> {
+            ArrayList<Track>() -> {
                 noItemsFrame.isVisible = true
+                recycler.isVisible = false
+                progressBar.isVisible = false
             }
 
             else -> {
-                setUpRecycler()
+                localFavoritesList.clear()
+                localFavoritesList.addAll(newFavoritesList)
+                recycler.adapter!!.notifyDataSetChanged()
+                noItemsFrame.isVisible = false
                 recycler.isVisible = true
+                progressBar.isVisible = false
             }
         }
     }
 
-    private fun setUpRecycler() {
+    private fun setUpRecyclerAndAdapter() {
         val itemClickCallback = object : ItemClickCallback {
             override fun onClickCallback(track: Track) {
 
@@ -95,15 +101,18 @@ class FavoritesFragment : Fragment() {
             }
 
         }
+
+
         val favoritesAdapter =
             RecyclerAdapter(
-                favoritesFragmentViewModel.provideFavoritesList() as ArrayList<Track>,
+                localFavoritesList,
                 favoritesFragmentViewModel,
                 itemClickCallback
             )
         recycler.adapter = favoritesAdapter
         recycler.layoutManager = GridLayoutManager(requireContext(), 1)
     }
+
 
 
 }
