@@ -88,9 +88,6 @@ class SearchFragment : Fragment() {
 
         backPressedCallback.remove()
 
-        searchViewModel.state.removeObserver {
-            updateUI()
-        }
     }
 
     override fun onCreateView(
