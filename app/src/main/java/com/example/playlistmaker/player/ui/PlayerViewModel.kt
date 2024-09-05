@@ -11,7 +11,6 @@ import com.example.playlistmaker.player.domain.MediaPlayerState
 import com.example.playlistmaker.search.data.datamodels.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -30,10 +29,19 @@ class PlayerViewModel(
     private val _isFavoriteLiveData = MutableLiveData<Boolean>()
     val isFavoriteLiveData: LiveData<Boolean> = _isFavoriteLiveData
 
+    private var placeholderTrack: Track = Track("", "", "", "", 0, "", "", "", "", "")
+    private var track = placeholderTrack //да, да, неэлегантно. Но boilerplate всё равно меньше
+    // чем от 3+ let{}ов и/или проверок на null
+
     init {
         _stateLiveData.value = MediaPlayerState.PREPARED
         _timerLiveData.value = 0
 
+        viewModelScope.launch(Dispatchers.IO) {
+            favoritesInteractor.getFavoritesIDList().collect { list ->
+                _isFavoriteLiveData.postValue(list.contains(track.trackId))
+            }
+        }
     }
 
     fun updateState() {
@@ -71,8 +79,9 @@ class PlayerViewModel(
         return mediaPlayerInteractor.getIsPlaying()
     }
 
-    fun preparePlayer(url: String) {
-        mediaPlayerInteractor.preparePlayer(url)
+    fun preparePlayer(loadedTrack: Track) {
+        track = loadedTrack
+        mediaPlayerInteractor.preparePlayer(track.previewUrl ?: "")
     }
 
     fun releasePlayer() {
@@ -88,26 +97,13 @@ class PlayerViewModel(
         timerControl()
     }
 
-    fun updateFavoriteStatus(track: Track) {
-        viewModelScope.launch(Dispatchers.IO) {
-            favoritesInteractor.getFavoritesIDList().first().let { list ->
-                _isFavoriteLiveData.postValue(list.contains(track.trackId))
-            }
-
-        }
+    fun addToFavorites() {
+        viewModelScope.launch(Dispatchers.IO)
+        { favoritesInteractor.addTrackToFavorites(track) }
     }
 
-    fun addToFavorites(track: Track) {
-        viewModelScope.launch(Dispatchers.IO) {
-            favoritesInteractor.addTrackToFavorites(track)
-        }
-        updateFavoriteStatus(track)
-
-    }
-
-    fun removeFromFavorites(track: Track) {
+    fun removeFromFavorites() {
         viewModelScope.launch(Dispatchers.IO)
         { favoritesInteractor.deleteTrackFromFavorites(track) }
-        updateFavoriteStatus(track)
     }
 }

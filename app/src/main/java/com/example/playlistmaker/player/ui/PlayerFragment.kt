@@ -108,12 +108,11 @@ class PlayerFragment : Fragment() {
 
         favoriteButton.setOnClickListener {
             if (favoritedTrack) {
-                playerViewModel.removeFromFavorites(selectedTrack)
+                playerViewModel.removeFromFavorites()
             } else {
-                playerViewModel.addToFavorites(selectedTrack)
+                playerViewModel.addToFavorites()
             }
         }
-        playerViewModel.updateFavoriteStatus(selectedTrack)
 
         val playlistAddButton = view.findViewById<ImageButton>(R.id.playlistAddButton)
         playlistAddButton.setOnClickListener {
@@ -173,7 +172,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun initializeMediaPlayer() {
-        playerViewModel.preparePlayer(selectedTrack.previewUrl ?: "")
+        playerViewModel.preparePlayer(selectedTrack)
         playerViewModel.updateState()
     }
 

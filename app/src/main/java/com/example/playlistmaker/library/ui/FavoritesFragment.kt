@@ -52,13 +52,13 @@ class FavoritesFragment : Fragment() {
         setUpRecyclerAndAdapter()
 
         favoritesFragmentViewModel.favoritesList.observe(viewLifecycleOwner) { favoriteTracks ->
-            updateUI(favoriteTracks as ArrayList<Track>)
+            updateUI(favoriteTracks)
         }
         favoritesFragmentViewModel.loadFavorites()
         return fragmentView
     }
 
-    private fun updateUI(newFavoritesList: ArrayList<Track>?) {
+    private fun updateUI(newFavoritesList: List<Track>?) {
         when (newFavoritesList) {
             null -> {
                 noItemsFrame.isVisible = false
@@ -66,7 +66,7 @@ class FavoritesFragment : Fragment() {
                 progressBar.isVisible = true
             }
 
-            ArrayList<Track>() -> {
+            emptyList<Track>() -> {
                 noItemsFrame.isVisible = true
                 recycler.isVisible = false
                 progressBar.isVisible = false
@@ -75,7 +75,7 @@ class FavoritesFragment : Fragment() {
             else -> {
                 localFavoritesList.clear()
                 localFavoritesList.addAll(newFavoritesList)
-                recycler.adapter!!.notifyDataSetChanged()
+                recycler.adapter?.notifyDataSetChanged()
                 noItemsFrame.isVisible = false
                 recycler.isVisible = true
                 progressBar.isVisible = false
