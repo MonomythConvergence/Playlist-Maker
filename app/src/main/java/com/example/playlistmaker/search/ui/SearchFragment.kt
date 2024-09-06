@@ -47,8 +47,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var recyclerResultsView: RecyclerView
     private lateinit var recyclerRecentView: RecyclerView
-    private lateinit var searchAdapter: SearchAdapter
-    private lateinit var recentAdapter: SearchAdapter
+    private lateinit var searchAdapter: RecyclerAdapter
+    private lateinit var recentAdapter: RecyclerAdapter
     private lateinit var searchBarField: EditText
     private lateinit var recentSearchFrame: ConstraintLayout
     private lateinit var progressBar: ProgressBar
@@ -88,9 +88,6 @@ class SearchFragment : Fragment() {
 
         backPressedCallback.remove()
 
-        searchViewModel.state.removeObserver {
-            updateUI()
-        }
     }
 
     override fun onCreateView(
@@ -225,32 +222,47 @@ class SearchFragment : Fragment() {
     }
 
     private fun updateUI() {
-        recentSearchFrame.isVisible = false
-        progressBar.isVisible = false
-        recyclerResultsView.isVisible = false
-        noConnectionError.isVisible = false
-        noResultsError.isVisible = false
 
         when (searchViewModel.state.value) {
 
             SearchState.LOADING -> {
+                recentSearchFrame.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
                 progressBar.isVisible = true
             }
 
             SearchState.NO_RESULTS -> {
+                recentSearchFrame.isVisible = false
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
                 noResultsError.isVisible = true
             }
 
             SearchState.SHOW_HISTORY -> {
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
                 recentSearchFrame.isVisible = true
             }
 
             SearchState.SHOW_RESULTS -> {
+                recentSearchFrame.isVisible = false
+                progressBar.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
                 recyclerResultsView.isVisible = true
 
             }
 
             SearchState.NETWORK_ERROR -> {
+                recentSearchFrame.isVisible = false
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noResultsError.isVisible = false
                 noConnectionError.isVisible = true
             }
 
@@ -269,7 +281,7 @@ class SearchFragment : Fragment() {
                     debounceClick(Unit)
                     val bundle = Bundle()
                     bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, track)
-
+                    bundle.putString("source", "search")
                     findNavController().navigate(
                         R.id.action_navigation_search_to_player,
                         bundle
@@ -281,12 +293,12 @@ class SearchFragment : Fragment() {
 
         recyclerResultsView = fragmentView.findViewById(R.id.searchResultsRecycler)
         searchAdapter =
-            SearchAdapter(searchViewModel.provideTrackList(), searchViewModel, itemClickCallback)
+            RecyclerAdapter(searchViewModel.provideTrackList(), searchViewModel, itemClickCallback)
         recyclerResultsView.adapter = searchAdapter
         recyclerResultsView.layoutManager = GridLayoutManager(requireContext(), 1)
 
         recyclerRecentView = fragmentView.findViewById(R.id.recentRecycler)
-        recentAdapter = SearchAdapter(
+        recentAdapter = RecyclerAdapter(
             searchViewModel.provideRecentTrackList(),
             searchViewModel,
             itemClickCallback

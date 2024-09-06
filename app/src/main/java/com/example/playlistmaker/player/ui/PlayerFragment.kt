@@ -25,9 +25,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
 class PlayerFragment : Fragment() {
-
     private var playButtonPressed = false
+    private var favoritedTrack = false
+
     private lateinit var playAndPauseButton: ImageButton
+    private lateinit var favoriteButton: ImageButton
     private lateinit var playTimer: TextView
     private lateinit var selectedTrack: Track
     private val playerViewModel: PlayerViewModel by viewModel()
@@ -35,7 +37,7 @@ class PlayerFragment : Fragment() {
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            returnToSearch()
+            backPress()
             true
         }
     }
@@ -65,9 +67,6 @@ class PlayerFragment : Fragment() {
         if (!selectedTrack.previewUrl.isNullOrEmpty()) {
             playerViewModel.releasePlayer()
         }
-        playerViewModel.stateLiveData.removeObserver(Observer {
-            updateUi()
-        })
     }
 
     override fun onCreateView(
@@ -76,7 +75,6 @@ class PlayerFragment : Fragment() {
     ): View {
 
         view = inflater.inflate(R.layout.fragment_player, container, false)
-
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             backPressedCallback
@@ -85,11 +83,15 @@ class PlayerFragment : Fragment() {
         val trackFromExtra: Track? =
             arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
         if (trackFromExtra != null) selectedTrack = trackFromExtra
-        else returnToSearch()
+        else backPress()
 
 
-        playerViewModel.stateLiveData.observe(viewLifecycleOwner, Observer {
-            updateUi()
+        playerViewModel.stateLiveData.observe(viewLifecycleOwner, Observer { state ->
+            updateUi(state)
+        })
+        playerViewModel.isFavoriteLiveData.observe(viewLifecycleOwner, Observer { favoriteStatus ->
+            favoritedTrack = favoriteStatus
+            setFavoriteIndicator()
         })
 
         initializeMediaPlayer()
@@ -101,6 +103,16 @@ class PlayerFragment : Fragment() {
 
         val artistName = view.findViewById<TextView>(R.id.artistName)
         artistName.text = selectedTrack.artistName
+
+        favoriteButton = view.findViewById<ImageButton>(R.id.favoriteButton)
+
+        favoriteButton.setOnClickListener {
+            if (favoritedTrack) {
+                playerViewModel.removeFromFavorites()
+            } else {
+                playerViewModel.addToFavorites()
+            }
+        }
 
         val playlistAddButton = view.findViewById<ImageButton>(R.id.playlistAddButton)
         playlistAddButton.setOnClickListener {
@@ -129,12 +141,6 @@ class PlayerFragment : Fragment() {
         }
 
 
-        val favoriteButton = view.findViewById<ImageButton>(R.id.favoriteButton)
-        favoriteButton.setOnClickListener {
-            //TODO
-        }
-
-
         val trackTime = view.findViewById<TextView>(R.id.trackTime)
         trackTime.text = selectedTrack.trackTime
 
@@ -159,14 +165,14 @@ class PlayerFragment : Fragment() {
         val backButton = view.findViewById<View>(R.id.backButton)
 
         backButton.setOnClickListener {
-            returnToSearch()
+            backPress()
         }
 
         return view
     }
 
     private fun initializeMediaPlayer() {
-        playerViewModel.preparePlayer(selectedTrack.previewUrl ?: "")
+        playerViewModel.preparePlayer(selectedTrack)
         playerViewModel.updateState()
     }
 
@@ -186,9 +192,9 @@ class PlayerFragment : Fragment() {
         return artworkView
     }
 
-    private fun updateUi() {
+    private fun updateUi(state: MediaPlayerState) {
 
-        when (playerViewModel.stateLiveData.value) {
+        when (state) {
             MediaPlayerState.PREPARED -> {
                 playAndPauseButton.setImageResource(R.drawable.play_button)
                 playButtonPressed = false
@@ -212,8 +218,22 @@ class PlayerFragment : Fragment() {
         }
     }
 
-    private fun returnToSearch() {
-        findNavController().navigate(R.id.action_navigation_player_back_to_search)
+    private fun backPress() {
+        if (arguments?.getString("source") == "search") {
+            findNavController().navigate(R.id.action_navigation_player_back_to_search)
+        } else {
+            findNavController().navigate(R.id.action_navigation_player_back_to_library)
+        }
     }
 
-}
+
+    private fun setFavoriteIndicator() {
+        if (favoritedTrack) {
+            favoriteButton.setImageResource(R.drawable.active_like_button)
+        } else {
+            favoriteButton.setImageResource(R.drawable.inactive_like_button)
+
+        }
+    }}
+
+

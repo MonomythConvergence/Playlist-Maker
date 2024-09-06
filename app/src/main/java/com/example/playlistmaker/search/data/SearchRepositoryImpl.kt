@@ -15,13 +15,13 @@ import java.util.Locale
 
 
 class SearchRepositoryImpl(
-    val preferenceManger: PreferencesManager,
-    var apiClient: RetrofitApiClient,
+    private val preferenceManger: PreferencesManager,
+    private var apiClient: RetrofitApiClient,
     private val gson: Gson
 ) : SearchRepository {
 
-    var trackList = ArrayList<Track>()
-    var recentTrackList = ArrayList<Track>()
+    private var trackList = ArrayList<Track>()
+    private var recentTrackList = ArrayList<Track>()
 
 
     init {
@@ -98,7 +98,10 @@ class SearchRepositoryImpl(
                                     Track(
                                         result.trackName,
                                         result.artistName,
-                                        SimpleDateFormat("mm:ss", Locale.getDefault()).format(result.trackTimeMillis),
+                                        SimpleDateFormat(
+                                            "mm:ss",
+                                            Locale.getDefault()
+                                        ).format(result.trackTimeMillis),
                                         result.artworkUrl100,
                                         result.trackId,
                                         result.collectionName,

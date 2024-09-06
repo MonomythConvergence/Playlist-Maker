@@ -5,13 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.Constants
+import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerInteractor
 import com.example.playlistmaker.player.domain.MediaPlayerState
+import com.example.playlistmaker.search.data.datamodels.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
+class PlayerViewModel(
+    private val mediaPlayerInteractor: MediaPlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
+) : ViewModel() {
 
 
     private val _stateLiveData = MutableLiveData<MediaPlayerState>()
@@ -21,9 +26,22 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) 
     val timerLiveData: LiveData<Int> = _timerLiveData
     private var isTimerRunning = false
 
+    private val _isFavoriteLiveData = MutableLiveData<Boolean>()
+    val isFavoriteLiveData: LiveData<Boolean> = _isFavoriteLiveData
+
+    private var placeholderTrack: Track = Track("", "", "", "", 0, "", "", "", "", "")
+    private var track = placeholderTrack //да, да, неэлегантно. Но boilerplate всё равно меньше
+    // чем от 3+ let{}ов и/или проверок на null
+
     init {
         _stateLiveData.value = MediaPlayerState.PREPARED
         _timerLiveData.value = 0
+
+        viewModelScope.launch(Dispatchers.IO) {
+            favoritesInteractor.getFavoritesIDList().collect { list ->
+                _isFavoriteLiveData.postValue(list.contains(track.trackId))
+            }
+        }
     }
 
     fun updateState() {
@@ -61,8 +79,9 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) 
         return mediaPlayerInteractor.getIsPlaying()
     }
 
-    fun preparePlayer(url: String) {
-        mediaPlayerInteractor.preparePlayer(url)
+    fun preparePlayer(loadedTrack: Track) {
+        track = loadedTrack
+        mediaPlayerInteractor.preparePlayer(track.previewUrl ?: "")
     }
 
     fun releasePlayer() {
@@ -76,5 +95,15 @@ class PlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) 
     fun pausePlayer() {
         mediaPlayerInteractor.pausePlayer()
         timerControl()
+    }
+
+    fun addToFavorites() {
+        viewModelScope.launch(Dispatchers.IO)
+        { favoritesInteractor.addTrackToFavorites(track) }
+    }
+
+    fun removeFromFavorites() {
+        viewModelScope.launch(Dispatchers.IO)
+        { favoritesInteractor.deleteTrackFromFavorites(track) }
     }
 }
