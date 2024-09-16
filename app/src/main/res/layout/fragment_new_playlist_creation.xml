@@ -1,0 +1,161 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <!-- Guidelines -->
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/topBarGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="56dp"
+        />
+    <!-- Top bar -->
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_marginVertical="4dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/topBarGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/arrow_back"
+        tools:ignore="ContentDescription"
+        app:tint="@color/player_main_button"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/backButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/topBarGuideline"
+        android:paddingTop="10dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="31dp"
+        android:text="@string/new_playlist"
+        android:textSize="22sp"
+        android:fontFamily="@font/ys_display_medium"
+        />
+
+    <!-- Image placeholder -->
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+        app:layout_constraintDimensionRatio="W, 1:1"
+
+        android:padding="106dp"
+
+        android:layout_marginTop="26dp"
+        android:layout_marginHorizontal="24dp"
+
+        app:layout_constraintTop_toBottomOf="@+id/topBarGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:background="@drawable/new_playlist_perforated_outline_bg"
+        android:scaleType="center"
+        android:src="@drawable/add_image_icon"/>
+
+    <!-- Text Fields -->
+
+    <EditText
+        android:id="@+id/nameField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:paddingHorizontal="16dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="19dp"
+
+        android:layout_marginTop="32dp"
+        android:layout_marginHorizontal="16dp"
+
+        android:background="@drawable/new_playlist_outline_bg_empty"
+
+        android:hint="@string/new_playlist_name"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+
+        android:singleLine="true"
+        android:textSize="16sp"
+        android:textColor="@color/new_playlist_text"
+        android:textColorHint="@color/new_playlist_text"
+        android:textCursorDrawable="@drawable/blue_text_cursor_drawable"
+
+        app:layout_constraintTop_toBottomOf="@+id/image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        />
+
+    <EditText
+        android:id="@+id/descriptionField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:paddingHorizontal="16dp"
+
+        android:paddingTop="18dp"
+        android:paddingBottom="19dp"
+
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="16dp"
+
+        android:background="@drawable/new_playlist_outline_bg_empty"
+
+        android:hint="@string/new_playlist_description"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+
+        android:singleLine="true"
+        android:textSize="16sp"
+        android:textColor="@color/new_playlist_text"
+        android:textColorHint="@color/new_playlist_text"
+        android:textCursorDrawable="@drawable/blue_text_cursor_drawable"
+
+
+        app:layout_constraintTop_toBottomOf="@+id/nameField"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <!-- Confirmation button -->
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginBottom="32dp"
+        android:layout_marginHorizontal="17dp"
+
+
+        android:backgroundTint="@color/new_playlist_color_selector"
+        android:state_activated="false"
+        android:text="@string/create_button"
+        android:textColor="@color/white"
+
+        app:cornerRadius="8dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+

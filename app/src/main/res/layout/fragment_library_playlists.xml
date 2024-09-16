@@ -2,12 +2,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-
+    <!-- New playlist button-->
         <Button
-            android:id="@+id/newPlaylist"
+            android:id="@+id/newPlaylistButton"
             style="@style/SearchLibraryInvertedButton"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -15,8 +16,21 @@
             android:layout_marginTop="24dp"
             android:text="@string/new_playlist_button"
             app:cornerRadius="@dimen/Inverted_button_rounding" />
+    <!-- No playlist error-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/noPlaylistsError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:visibility="gone">
 
         <ImageView
+
+
             android:id="@+id/noResultsError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,5 +47,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:text="@string/no_playlists"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Playlist recycler-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newPlaylistButton"
+
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="1"
+        tools:listitem="@layout/item_playlist" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

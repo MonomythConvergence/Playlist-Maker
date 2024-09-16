@@ -3,9 +3,9 @@ package com.example.playlistmaker.db
 import com.example.playlistmaker.search.data.datamodels.Track
 import java.util.Date
 
-class FavoritesDBConverter {
-    fun map(track: Track): SongEntity {
-        return SongEntity(
+class TrackDBEntityConverter {
+    fun map(track: Track): FavoriteEntity {
+        return FavoriteEntity(
             track.trackId,
             track.trackName,
             track.artistName,
@@ -20,7 +20,7 @@ class FavoritesDBConverter {
         )
     }
 
-    fun map(song: SongEntity): Track {
+    fun map(song: FavoriteEntity): Track {
         return Track(
             song.trackName,
             song.artistName,

@@ -30,7 +30,6 @@ class LibraryFragment : Fragment() {
         }
     }
 
-
     companion object {
         fun newInstance() = LibraryFragment()
     }
@@ -53,18 +52,30 @@ class LibraryFragment : Fragment() {
             backPressedCallback
         )
 
+        val newPlaylistTitle = arguments?.getString("playlistTitleForToast", "") ?: ""
+        val canceledFromCreation = arguments?.getString("plainCancel", "")
+
         val tabLayout = view.findViewById<TabLayout>(R.id.libraryTabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.libraryViewPager)
-        val adapter = FragmentPagerAdapter(
+        val adapter = LibraryFragmentAdapter(
+            newPlaylistTitle,
             childFragmentManager, lifecycle
         )
-        setUpUI(tabLayout, viewPager, adapter)
+        setUpUI(
+            tabLayout,
+            viewPager,
+            adapter,
+            (newPlaylistTitle != "" || canceledFromCreation != "")
+        )
 
         return view
     }
 
     private fun setUpUI(
-        tabLayout: TabLayout, viewPager: ViewPager2, adapter: FragmentStateAdapter
+        tabLayout: TabLayout,
+        viewPager: ViewPager2,
+        adapter: FragmentStateAdapter,
+        switchToPlaylists: Boolean
     ) {
         viewPager.adapter = adapter
 
@@ -74,5 +85,9 @@ class LibraryFragment : Fragment() {
                 1 -> tab.text = getString(R.string.playlists)
             }
         }.attach()
+        if (switchToPlaylists) {
+            viewPager.currentItem = 1
+        }
+
     }
 }

@@ -6,21 +6,29 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
+import com.example.playlistmaker.library.data.dto.PlaylistDTO
 import com.example.playlistmaker.player.domain.MediaPlayerState
 import com.example.playlistmaker.search.data.datamodels.Track
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 
@@ -30,8 +38,15 @@ class PlayerFragment : Fragment() {
 
     private lateinit var playAndPauseButton: ImageButton
     private lateinit var favoriteButton: ImageButton
+    private lateinit var playlistButton: ImageButton
+    private lateinit var addNewPlaylistButton: Button
     private lateinit var playTimer: TextView
+    private lateinit var playlistRecycler: RecyclerView
+    private lateinit var bottomSheet: ConstraintLayout
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var selectedTrack: Track
+    private var localPlaylistList: ArrayList<PlaylistDTO> = ArrayList()
+    private var listOfPlaylistsContainingTrack: ArrayList<PlaylistDTO> = ArrayList()
     private val playerViewModel: PlayerViewModel by viewModel()
     private lateinit var view: View
 
@@ -94,6 +109,11 @@ class PlayerFragment : Fragment() {
             setFavoriteIndicator()
         })
 
+        playerViewModel.playlists.observe(viewLifecycleOwner, Observer { newList ->
+            updatePlayerlistList(newList)
+            updateLocalDb(newList, selectedTrack)
+        })
+
         initializeMediaPlayer()
 
         setArtworkThruGlide()
@@ -103,6 +123,28 @@ class PlayerFragment : Fragment() {
 
         val artistName = view.findViewById<TextView>(R.id.artistName)
         artistName.text = selectedTrack.artistName
+
+        bottomSheet = view.findViewById<ConstraintLayout>(R.id.bottomSheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = STATE_HIDDEN
+        bottomSheet.isVisible = false
+
+
+        playlistRecycler = view.findViewById<RecyclerView>(R.id.playerAddToPlaylistRecycler)
+
+        setUpPlaylistRecycler(view)
+
+        addNewPlaylistButton = view.findViewById<Button>(R.id.addToPlaylistButton)
+        addNewPlaylistButton.setOnClickListener {
+            val args = Bundle()
+            args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, selectedTrack)
+            args.putString("source","player")
+            findNavController().navigate(
+                R.id.action_navigation_player_to_new_playlist,
+                args
+            )
+        }
+
 
         favoriteButton = view.findViewById<ImageButton>(R.id.favoriteButton)
 
@@ -114,9 +156,13 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        val playlistAddButton = view.findViewById<ImageButton>(R.id.playlistAddButton)
-        playlistAddButton.setOnClickListener {
-            //TODO
+        playlistButton = view.findViewById<ImageButton>(R.id.playlistAddButton)
+        playlistButton.setOnClickListener {
+            if (localPlaylistList.isNotEmpty()) {
+                bottomSheet.isVisible = true
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+
         }
 
         playAndPauseButton = view.findViewById(R.id.playAndPauseButton)
@@ -170,6 +216,53 @@ class PlayerFragment : Fragment() {
 
         return view
     }
+
+    private fun setUpPlaylistRecycler(fragmentView: View) {
+        val clickBack = object : AddToPlaylistClickback {
+            override fun addSelectedTrackToPlaylist(playlist: PlaylistDTO, added: Boolean) {
+                if (added) {
+                    playerViewModel.addTrackToPlaylist(playlist, selectedTrack)
+                    Toast.makeText(
+                        requireContext(),
+                        "Добавлено в плейлист [${playlist.playlistTitle}].", Toast.LENGTH_SHORT
+                    ).show()
+                    bottomSheetBehavior.state = STATE_HIDDEN
+                    bottomSheet.isVisible = false
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Трек уже добавлен в плейлист [${playlist.playlistTitle}]",Toast.LENGTH_SHORT
+                    ).show()
+            }}}
+
+            val adapter = AddToPlaylistAdapter(
+            localPlaylistList,
+            listOfPlaylistsContainingTrack,
+            clickBack
+            )
+
+            playlistRecycler.adapter = adapter
+            playlistRecycler.layoutManager = GridLayoutManager(requireContext(), 1)
+        }
+
+
+    private fun updateLocalDb(newList: List<PlaylistDTO>, selectedTrack: Track) {
+        for (element in newList) {
+            if (!listOfPlaylistsContainingTrack.contains(element)) {
+                if (element.trackList.contains(selectedTrack.trackId)) {
+                    listOfPlaylistsContainingTrack.add(element)
+                }
+            }
+        }
+    }
+
+
+    private fun updatePlayerlistList(newList: List<PlaylistDTO>) {
+        localPlaylistList.clear()
+        localPlaylistList.addAll(newList)
+        playlistRecycler.adapter?.notifyDataSetChanged()
+    }
+
 
     private fun initializeMediaPlayer() {
         playerViewModel.preparePlayer(selectedTrack)
@@ -226,7 +319,6 @@ class PlayerFragment : Fragment() {
         }
     }
 
-
     private fun setFavoriteIndicator() {
         if (favoritedTrack) {
             favoriteButton.setImageResource(R.drawable.active_like_button)
@@ -234,6 +326,8 @@ class PlayerFragment : Fragment() {
             favoriteButton.setImageResource(R.drawable.inactive_like_button)
 
         }
-    }}
+    }
+}
+
 
 

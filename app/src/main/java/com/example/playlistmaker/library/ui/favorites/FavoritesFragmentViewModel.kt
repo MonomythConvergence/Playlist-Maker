@@ -1,10 +1,10 @@
-package com.example.playlistmaker.library.ui
+package com.example.playlistmaker.library.ui.favorites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.library.domain.FavoritesInteractor
+import com.example.playlistmaker.library.domain.favorites.FavoritesInteractor
 import com.example.playlistmaker.search.data.datamodels.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
