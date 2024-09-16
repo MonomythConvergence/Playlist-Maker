@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.library.data.dto.PlaylistDTO
-import com.example.playlistmaker.search.data.ItemClickCallback
 
 class AddToPlaylistAdapter(
     private val diplayedList: List<PlaylistDTO>,

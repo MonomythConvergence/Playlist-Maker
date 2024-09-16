@@ -81,6 +81,8 @@
         android:layout_marginTop="32dp"
         android:layout_marginHorizontal="16dp"
 
+        android:inputType="text"
+
         android:background="@drawable/new_playlist_outline_bg_empty"
 
         android:hint="@string/new_playlist_name"
@@ -114,6 +116,8 @@
         android:layout_marginHorizontal="16dp"
 
         android:background="@drawable/new_playlist_outline_bg_empty"
+
+        android:inputType="text"
 
         android:hint="@string/new_playlist_description"
         android:imeOptions="actionDone"

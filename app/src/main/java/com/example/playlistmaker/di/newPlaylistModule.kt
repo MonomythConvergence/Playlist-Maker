@@ -10,10 +10,6 @@ import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistInteracto
 import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistInteractorImpl
 import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistRepository
 import com.example.playlistmaker.newPlaylistCreation.ui.NewPlaylistViewModel
-import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.player.domain.MediaPlayerInteractor
-import com.example.playlistmaker.player.domain.MediaPlayerInteractorImpl
-import com.example.playlistmaker.player.domain.MediaPlayerRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

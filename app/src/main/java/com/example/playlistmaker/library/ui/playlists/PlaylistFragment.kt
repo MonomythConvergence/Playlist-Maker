@@ -7,9 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import android.widget.Adapter
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -70,7 +67,7 @@ class PlaylistFragment : Fragment() {
             updateUI(list)
         })
 
-        setUpAdapter(playlistsFragmentViewModel)
+        setUpAdapter()
 
 
         newPlaylistButton = view.findViewById(R.id.newPlaylistButton)
@@ -101,7 +98,7 @@ class PlaylistFragment : Fragment() {
         }
     }
 
-    private fun setUpAdapter(playlistsFragmentViewModel: PlaylistsFragmentViewModel) {
+    private fun setUpAdapter() {
         val playlistAdapter =
             PlaylistsAdapter(
                 requireContext(), localPlaylistList
