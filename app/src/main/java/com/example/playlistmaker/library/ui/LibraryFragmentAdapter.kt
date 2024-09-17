@@ -17,9 +17,7 @@ class LibraryFragmentAdapter(val playlistArgs: String, childFragmentManager : Fr
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> FavoritesFragment.newInstance()
-            else -> {
-                PlaylistFragment.newInstance(playlistArgs)
-            }
+            else -> {PlaylistFragment.newInstance()}
         }
 
     }

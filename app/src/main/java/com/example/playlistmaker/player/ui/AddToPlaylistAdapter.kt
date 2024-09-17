@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.data.dto.PlaylistDTO
+import com.example.playlistmaker.library.domain.playlist.Playlist
 
 class AddToPlaylistAdapter(
-    private val diplayedList: List<PlaylistDTO>,
-    private val listOfPlaylistsContainingTrack : ArrayList<PlaylistDTO>,
+    private val diplayedList: List<Playlist>,
+    private val listOfPlaylistsContainingTrack : ArrayList<Playlist>,
     private val onClick: AddToPlaylistClickback
 ) :
 

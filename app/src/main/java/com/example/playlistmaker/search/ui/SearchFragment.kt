@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.ItemClickCallback
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -266,7 +266,14 @@ class SearchFragment : Fragment() {
                 noConnectionError.isVisible = true
             }
 
-            else -> {}
+
+            else -> {
+                progressBar.isVisible = false
+                recyclerResultsView.isVisible = false
+                noConnectionError.isVisible = false
+                noResultsError.isVisible = false
+                recentSearchFrame.isVisible = false
+            }
         }
 
 
@@ -281,7 +288,7 @@ class SearchFragment : Fragment() {
                     debounceClick(Unit)
                     val bundle = Bundle()
                     bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, track)
-                    bundle.putString("source", "search")
+                    bundle.putString(Constants.SOURCE_FRAMENT_KEY, "search")
                     findNavController().navigate(
                         R.id.action_navigation_search_to_player,
                         bundle

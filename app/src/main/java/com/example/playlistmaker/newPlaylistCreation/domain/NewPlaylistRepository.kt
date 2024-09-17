@@ -1,8 +1,8 @@
 package com.example.playlistmaker.newPlaylistCreation.domain
 
-import android.graphics.Bitmap
+import android.net.Uri
 
 interface NewPlaylistRepository {
-    abstract fun saveAlbumCover(bitmap: Bitmap, fileName: String): String
+    abstract fun saveAlbumCover(uri: Uri, fileName: String): String
     abstract suspend fun addNewPlaylist(name: String, description: String?, path: String?)
 }

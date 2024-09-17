@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.data.dto.PlaylistDTO
+import com.example.playlistmaker.library.domain.playlist.Playlist
 
 class PlaylistsAdapter (
     private val context: Context,
-    private var displayedList: List<PlaylistDTO>
+    private var displayedList: List<Playlist>
     ) :
 
     RecyclerView.Adapter<PlaylistViewHolder>()

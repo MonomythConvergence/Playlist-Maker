@@ -6,12 +6,14 @@ import com.example.playlistmaker.db.FavoritesDatabase
 import com.example.playlistmaker.db.PlaylistDBEntityConverter
 import com.example.playlistmaker.library.domain.favorites.FavoritesRepository
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.data.PlaylistMapperImpl
 import com.example.playlistmaker.library.data.PlaylistRepositoryImpl
 import com.example.playlistmaker.library.domain.playlist.PlaylistInteractor
 import com.example.playlistmaker.library.domain.playlist.PlaylistInteractorImpl
 import com.example.playlistmaker.library.domain.playlist.PlaylistRepository
 import com.example.playlistmaker.library.domain.favorites.FavoritesInteractor
 import com.example.playlistmaker.library.domain.favorites.FavoritesInteractorImpl
+import com.example.playlistmaker.library.domain.playlist.PlaylistMapper
 import com.example.playlistmaker.library.ui.favorites.FavoritesFragmentViewModel
 import com.example.playlistmaker.library.ui.playlists.PlaylistsFragmentViewModel
 import org.koin.android.ext.koin.androidContext
@@ -25,8 +27,9 @@ val libraryModule = module {
     single<FavoritesRepository> { FavoritesRepositoryImpl(get(), get()) }
     single<TrackDBEntityConverter> { TrackDBEntityConverter() }
     single<PlaylistInteractor> { PlaylistInteractorImpl(get()) }
-    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get()) }
+    single<PlaylistRepository> { PlaylistRepositoryImpl(get(), get(),get()) }
     single<PlaylistDBEntityConverter> { PlaylistDBEntityConverter() }
+    single<PlaylistMapper> { PlaylistMapperImpl() }
 
     single {
         Room.databaseBuilder(androidContext(), FavoritesDatabase::class.java, "favorites.db")

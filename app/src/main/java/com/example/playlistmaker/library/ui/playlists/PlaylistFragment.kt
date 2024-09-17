@@ -2,15 +2,14 @@ package com.example.playlistmaker.library.ui.playlists
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -18,33 +17,29 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.data.dto.PlaylistDTO
+import com.example.playlistmaker.library.domain.playlist.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment : Fragment() {
 
     private val playlistsFragmentViewModel: PlaylistsFragmentViewModel by viewModel()
 
-    private lateinit var newPlaylistToast: TextView
     private lateinit var playlistRecycler: RecyclerView
     private lateinit var newPlaylistButton: Button
     private lateinit var noPlaylistsError: View
 
-    private var localPlaylistList: ArrayList<PlaylistDTO> = ArrayList()
+    private var permissionGranted: Boolean = false
+    val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            permissionGranted = isGranted
+        }
 
-    val REQUEST_CODE_PERMISSIONS = 2
+    private var localPlaylistList: ArrayList<Playlist> = ArrayList()
 
     companion object {
-        private const val ARG_NAME = "newTitle"
-
-        fun newInstance(name: String): PlaylistFragment {
-            val fragment = PlaylistFragment()
-            val args = Bundle()
-            args.putString(ARG_NAME, name)
-            fragment.arguments = args
-            return fragment
-        }
+        fun newInstance() = PlaylistFragment()
     }
 
     override fun onCreateView(
@@ -57,11 +52,10 @@ class PlaylistFragment : Fragment() {
         playlistRecycler = view.findViewById(R.id.playlistRecycler)
         noPlaylistsError = view.findViewById(R.id.noPlaylistsError)
 
-        val newPlaylistTitle = arguments?.getString(ARG_NAME) ?: ""
-        if (newPlaylistTitle != "") {
-            displayToast(newPlaylistTitle)
+        if (!permissionGranted) {
+            readPermissionCheck()
         }
-        checkPermission()
+
 
         playlistsFragmentViewModel.playlists.observe(viewLifecycleOwner, Observer { list ->
             updateUI(list)
@@ -73,18 +67,18 @@ class PlaylistFragment : Fragment() {
         newPlaylistButton = view.findViewById(R.id.newPlaylistButton)
         newPlaylistButton.setOnClickListener {
             val arg = Bundle()
-            arg.putString("source", "playlist")
+            arg.putString(Constants.SOURCE_FRAMENT_KEY, "playlists")
             findNavController().navigate(R.id.navigation_new_playlist, arg)
         }
 
         return view
     }
 
-    private fun updateUI(newList: List<PlaylistDTO>) {
+    private fun updateUI(newList: List<Playlist>) {
         localPlaylistList.clear()
         localPlaylistList.addAll(newList)
         when (localPlaylistList) {
-            emptyList<PlaylistDTO>() -> {
+            emptyList<Playlist>() -> {
                 playlistRecycler.isVisible = false
                 noPlaylistsError.isVisible = true
             }
@@ -93,7 +87,6 @@ class PlaylistFragment : Fragment() {
                 playlistRecycler.isVisible = true
                 noPlaylistsError.isVisible = false
                 playlistRecycler.adapter?.notifyDataSetChanged()
-                Log.d("MyTag", localPlaylistList[0].playlistTitle)
             }
         }
     }
@@ -107,27 +100,35 @@ class PlaylistFragment : Fragment() {
         playlistRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
     }
 
+    private fun readPermissionCheck(): Boolean {
+        when (Build.VERSION.SDK_INT) {
+            0 - 28 -> {
+                if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    return false
+                } else {
+                    return true
+                }
+            }
 
-    private fun displayToast(newPlaylistTitle: String) {
-        Toast.makeText(
-            requireContext(),
-            "${getString(R.string.playlist_toast_text, newPlaylistTitle)}",
-            Toast.LENGTH_SHORT
-        ).show()
+            else -> {
+                if (checkPermission(Manifest.permission.READ_MEDIA_IMAGES)
+                ) {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                    return (checkPermission(Manifest.permission.READ_MEDIA_IMAGES))
+                } else {
+                    return true
+                }
+            }
+        }
     }
 
-    private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_PERMISSIONS
-            )
-        }
+
+    fun checkPermission(permission: String): Boolean {
+        return (ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED)
     }
 
 

@@ -1,7 +1,7 @@
 package com.example.playlistmaker.newPlaylistCreation.ui
 
 
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistInteractor
@@ -18,7 +18,7 @@ class NewPlaylistViewModel(
         }
     }
 
-    fun saveAlbumCover(bitmap: Bitmap, fileName : String): String {
-        return newPlaylistInteractor.saveAlbumCover(bitmap, fileName)
+    fun saveAlbumCover(uri: Uri, fileName : String): String {
+        return newPlaylistInteractor.saveAlbumCover(uri, fileName)
     }
 }

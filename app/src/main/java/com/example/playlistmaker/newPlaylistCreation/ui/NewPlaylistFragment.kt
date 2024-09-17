@@ -17,13 +17,15 @@ import androidx.navigation.fragment.findNavController
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.InputStream
@@ -49,21 +51,21 @@ class NewPlaylistFragment : Fragment() {
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     private var preConfirmBitmap: Bitmap? = null
+    private var preConfirmBitmapUri : Uri? = null
 
     private val photoPickerLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 val bmp = uriToBitmap(requireContext(), uri)
+                preConfirmBitmapUri=uri
                 setAlbumImage(bmp)
             }
+
         }
 
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                openPhotoPicker()
-            }
-        }
+        registerForActivityResult(ActivityResultContracts.RequestPermission())
+        { isGranted: Boolean -> if (isGranted) {openPhotoPicker()} }
 
 
     companion object {
@@ -93,10 +95,9 @@ class NewPlaylistFragment : Fragment() {
         confirmButton.setOnClickListener {
             if (!nameField.text.isNullOrEmpty()) {
                 var filePath: String? = null
-                if (preConfirmBitmap != null) {
-                    writePermissionCheck()
+                if (preConfirmBitmap != null && writePermissionCheck()) {
                     filePath = newPlaylistViewModel.saveAlbumCover(
-                        preConfirmBitmap!!,
+                        preConfirmBitmapUri!!,
                         nameField.text.toString()
                     )
                 }
@@ -105,16 +106,27 @@ class NewPlaylistFragment : Fragment() {
                     descriptionField.text.toString(),
                     filePath
                 )
-                when (arguments?.getString("source")){
-                    "player" -> {val trackFromExtra: Track? =
-                        arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
+                when (arguments?.getString(Constants.SOURCE_FRAMENT_KEY)) {
+                    "player" -> {
+                        val trackFromExtra: Track? =
+                            arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
                         val args = Bundle()
                         args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
-                        args.putString("source","new_playlist")
-                        findNavController().navigate(R.id.action_navigation_new_playlist_to_player,args)}
-                    "library" -> {val arg = Bundle()
-                        arg.putString("playlistTitleForToast", nameField.text.toString())
-                        findNavController().navigate(R.id.action_navigation_new_playlist_to_playlists, arg)}
+                        args.putString(Constants.SOURCE_FRAMENT_KEY, "new_playlist")
+                        findNavController().navigate(
+                            R.id.action_navigation_new_playlist_to_player,
+                            args
+                        )
+                    }
+
+                    "playlists" -> {
+                        val arg = Bundle()
+                        arg.putString(Constants.TITLE_TOAST_KEY, nameField.text.toString())
+                        findNavController().navigate(
+                            R.id.action_navigation_new_playlist_to_playlists,
+                            arg
+                        )
+                    }
                 }
 
             }
@@ -142,16 +154,6 @@ class NewPlaylistFragment : Fragment() {
         return view
     }
 
-
-    private fun writePermissionCheck() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-    }
 
     private fun highlightsSetup() {
         nameField.addTextChangedListener(object : TextWatcher {
@@ -217,14 +219,9 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun photoPicker() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
+        if (readPermissionCheck()
         ) {
             openPhotoPicker()
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }
 
@@ -247,20 +244,20 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun popUp() {
-        when (arguments?.getString("source")) {
+        when (arguments?.getString(Constants.SOURCE_FRAMENT_KEY)) {
             "player" -> {
                 val trackFromExtra: Track? =
                     arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
                 val args = Bundle()
                 args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
-                args.putString("source","new_playlist")
-                findNavController().navigate(R.id.action_navigation_new_playlist_to_player,args)
+                args.putString(Constants.SOURCE_FRAMENT_KEY, "new_playlist")
+                findNavController().navigate(R.id.action_navigation_new_playlist_to_player, args)
 
             }
 
             else -> {
                 val bundle = Bundle()
-                bundle.putString("plainCancel", "yes")
+                bundle.putString(Constants.NEW_PLATLIST_CANCEL_KEY, "yes")
                 findNavController().navigate(
                     R.id.action_navigation_new_playlist_to_playlists,
                     bundle
@@ -269,4 +266,63 @@ class NewPlaylistFragment : Fragment() {
         }
 
     }
+
+
+    private fun writePermissionCheck(): Boolean {
+        when (Build.VERSION.SDK_INT) {
+            0 - 28 -> {
+
+                if (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                ) {
+                    requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    return (checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                } else {
+                    return true
+                }
+            }
+
+            else -> {
+                if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                ) {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    return (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+                } else {
+                    return true
+                }
+            }
+        }
+    }
+
+    private fun readPermissionCheck(): Boolean {
+        when (Build.VERSION.SDK_INT) {
+            0 - 28 -> {
+                if (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                ) {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    return (checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE))
+                } else {
+                    return true
+                }
+            }
+
+            else -> {
+                if (checkPermission(Manifest.permission.READ_MEDIA_IMAGES)
+                ) {
+                    requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                    return (checkPermission(Manifest.permission.READ_MEDIA_IMAGES))
+                } else {
+                    return true
+                }
+            }
+        }
+    }
+
+    fun checkPermission(permission: String): Boolean {
+        return (ContextCompat.checkSelfPermission(
+            requireContext(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED)
+    }
 }
+
+

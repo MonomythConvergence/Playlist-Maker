@@ -16,7 +16,7 @@
             app:popUpTo="@id/navigation_search">
             <argument
                 android:name="track"
-                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+                app:argType="com.example.playlistmaker.search.domain.Track" />
         </action>
     </fragment>
 
@@ -35,7 +35,7 @@
             app:popUpTo="@id/navigation_library">
             <argument
                 android:name="track"
-                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+                app:argType="com.example.playlistmaker.search.domain.Track" />
         </action>
         <action
             android:id="@+id/action_navigation_library_to_new_playlist"
@@ -59,7 +59,7 @@
         tools:layout="@layout/fragment_player">
         <argument
             android:name="track"
-            app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+            app:argType="com.example.playlistmaker.search.domain.Track" />
         <argument
             android:name="source"
             app:argType="string" />
@@ -70,7 +70,7 @@
             app:popUpToInclusive="true">
             <argument
                 android:name="track"
-                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+                app:argType="com.example.playlistmaker.search.domain.Track" />
         </action>
         <action
             android:id="@+id/action_navigation_player_back_to_search"
@@ -96,7 +96,7 @@
             app:popUpToInclusive="true">
             <argument
                 android:name="Non-null track"
-                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+                app:argType="com.example.playlistmaker.search.domain.Track" />
         </action>
         <action
             android:id="@+id/action_navigation_new_playlist_to_player"
@@ -105,7 +105,7 @@
             app:popUpToInclusive="true">
             <argument
                 android:name="plainCancel"
-                app:argType="com.example.playlistmaker.search.data.datamodels.Track" />
+                app:argType="com.example.playlistmaker.search.domain.Track" />
 
         </action>
     </fragment>

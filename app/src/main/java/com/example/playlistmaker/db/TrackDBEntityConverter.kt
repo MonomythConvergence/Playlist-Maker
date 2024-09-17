@@ -1,6 +1,6 @@
 package com.example.playlistmaker.db
 
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import java.util.Date
 
 class TrackDBEntityConverter {

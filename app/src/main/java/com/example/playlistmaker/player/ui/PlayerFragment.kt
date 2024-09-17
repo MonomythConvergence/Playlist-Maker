@@ -24,9 +24,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.data.dto.PlaylistDTO
+import com.example.playlistmaker.library.domain.playlist.Playlist
 import com.example.playlistmaker.player.domain.MediaPlayerState
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,8 +45,8 @@ class PlayerFragment : Fragment() {
     private lateinit var bottomSheet: ConstraintLayout
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var selectedTrack: Track
-    private var localPlaylistList: ArrayList<PlaylistDTO> = ArrayList()
-    private var listOfPlaylistsContainingTrack: ArrayList<PlaylistDTO> = ArrayList()
+    private var localPlaylistList: ArrayList<Playlist> = ArrayList()
+    private var listOfPlaylistsContainingTrack: ArrayList<Playlist> = ArrayList()
     private val playerViewModel: PlayerViewModel by viewModel()
     private lateinit var view: View
 
@@ -138,7 +138,7 @@ class PlayerFragment : Fragment() {
         addNewPlaylistButton.setOnClickListener {
             val args = Bundle()
             args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, selectedTrack)
-            args.putString("source","player")
+            args.putString(Constants.SOURCE_FRAMENT_KEY,"player")
             findNavController().navigate(
                 R.id.action_navigation_player_to_new_playlist,
                 args
@@ -219,7 +219,7 @@ class PlayerFragment : Fragment() {
 
     private fun setUpPlaylistRecycler(fragmentView: View) {
         val clickBack = object : AddToPlaylistClickback {
-            override fun addSelectedTrackToPlaylist(playlist: PlaylistDTO, added: Boolean) {
+            override fun addSelectedTrackToPlaylist(playlist: Playlist, added: Boolean) {
                 if (added) {
                     playerViewModel.addTrackToPlaylist(playlist, selectedTrack)
                     Toast.makeText(
@@ -246,7 +246,7 @@ class PlayerFragment : Fragment() {
         }
 
 
-    private fun updateLocalDb(newList: List<PlaylistDTO>, selectedTrack: Track) {
+    private fun updateLocalDb(newList: List<Playlist>, selectedTrack: Track) {
         for (element in newList) {
             if (!listOfPlaylistsContainingTrack.contains(element)) {
                 if (element.trackList.contains(selectedTrack.trackId)) {
@@ -257,7 +257,7 @@ class PlayerFragment : Fragment() {
     }
 
 
-    private fun updatePlayerlistList(newList: List<PlaylistDTO>) {
+    private fun updatePlayerlistList(newList: List<Playlist>) {
         localPlaylistList.clear()
         localPlaylistList.addAll(newList)
         playlistRecycler.adapter?.notifyDataSetChanged()
@@ -312,7 +312,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun backPress() {
-        if (arguments?.getString("source") == "search") {
+        if (arguments?.getString(Constants.SOURCE_FRAMENT_KEY) == "search") {
             findNavController().navigate(R.id.action_navigation_player_back_to_search)
         } else {
             findNavController().navigate(R.id.action_navigation_player_back_to_library)

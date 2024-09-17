@@ -1,11 +1,11 @@
-package com.example.playlistmaker.library.data.dto
+package com.example.playlistmaker.library.domain.playlist
 
-data class PlaylistDTO(
+data class Playlist(
     val playlistId: Long,
     val playlistTitle: String,
     val playlistDescriptor: String,
     val coverImagePath: String,
     var trackList: List<Long>,
     var trackCount: Int,
-    val entryTime: Long
+    val entryTime: Long = 0
 )

@@ -1,7 +1,7 @@
 package com.example.playlistmaker.player.ui
 
-import com.example.playlistmaker.library.data.dto.PlaylistDTO
+import com.example.playlistmaker.library.domain.playlist.Playlist
 
 interface AddToPlaylistClickback {
-    abstract fun addSelectedTrackToPlaylist(playlist : PlaylistDTO, added : Boolean)
+    abstract fun addSelectedTrackToPlaylist(playlist : Playlist, added : Boolean)
 }

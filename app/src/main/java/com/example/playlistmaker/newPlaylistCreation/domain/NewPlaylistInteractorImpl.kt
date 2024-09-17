@@ -1,10 +1,10 @@
 package com.example.playlistmaker.newPlaylistCreation.domain
 
-import android.graphics.Bitmap
+import android.net.Uri
 
 class NewPlaylistInteractorImpl(val newPlaylistRepository : NewPlaylistRepository): NewPlaylistInteractor {
 
-    override fun saveAlbumCover(bitmap: Bitmap, fileName: String): String {
+    override fun saveAlbumCover(bitmap: Uri, fileName: String): String {
         return newPlaylistRepository.saveAlbumCover(bitmap, fileName)
     }
 

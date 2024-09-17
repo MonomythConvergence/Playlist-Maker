@@ -1,8 +1,6 @@
 package com.example.playlistmaker.di
 
-import android.content.Context
 import androidx.room.Room
-import com.example.playlistmaker.db.FavoritesDatabase
 import com.example.playlistmaker.db.PlaylistDao
 import com.example.playlistmaker.db.PlaylistsDatabase
 import com.example.playlistmaker.newPlaylistCreation.data.NewPlaylistRepositoryImpl
@@ -16,7 +14,7 @@ import org.koin.dsl.module
 
 
 val newPlaylistModule = module {
-    single<NewPlaylistRepository> { NewPlaylistRepositoryImpl(get<PlaylistDao>()) }
+    single<NewPlaylistRepository> { NewPlaylistRepositoryImpl(get(),get<PlaylistDao>()) }
     single<NewPlaylistInteractor> { NewPlaylistInteractorImpl(get<NewPlaylistRepository>()) }
     viewModel<NewPlaylistViewModel> { NewPlaylistViewModel(get<NewPlaylistInteractor>()) }
 
