@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import com.example.playlistmaker.db.PlaylistDao
 import com.example.playlistmaker.db.PlaylistEntity
 import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistRepository

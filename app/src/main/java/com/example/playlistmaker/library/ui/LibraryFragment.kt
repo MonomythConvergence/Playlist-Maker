@@ -60,7 +60,6 @@ class LibraryFragment : Fragment() {
         val tabLayout = view.findViewById<TabLayout>(R.id.libraryTabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.libraryViewPager)
         val adapter = LibraryFragmentAdapter(
-            newPlaylistTitle,
             childFragmentManager, lifecycle
         )
         setUpUI(

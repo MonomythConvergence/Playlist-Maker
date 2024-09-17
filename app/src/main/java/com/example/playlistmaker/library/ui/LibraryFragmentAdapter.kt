@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.playlistmaker.library.ui.favorites.FavoritesFragment
 import com.example.playlistmaker.library.ui.playlists.PlaylistFragment
 
-class LibraryFragmentAdapter(val playlistArgs: String, childFragmentManager : FragmentManager, lifecycle : Lifecycle) :
+class LibraryFragmentAdapter(childFragmentManager : FragmentManager, lifecycle : Lifecycle) :
     FragmentStateAdapter(childFragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
