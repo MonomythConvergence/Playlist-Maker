@@ -15,7 +15,7 @@ import java.io.InputStream
 class NewPlaylistRepositoryImpl(val context: Context, private val playlistDao: PlaylistDao) :
     NewPlaylistRepository {
 
-    override fun saveAlbumCover(uri: Uri, fileName: String): String {
+    override fun saveAlbumCover(uri: String, fileName: String): String {
 
         val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -27,7 +27,7 @@ class NewPlaylistRepositoryImpl(val context: Context, private val playlistDao: P
         val file = File(directory, "${fileName}.png")
 
         val outputStream = FileOutputStream(file)
-        uriToBitmap(uri).compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        uriToBitmap(Uri.parse(uri)).compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         outputStream.flush()
         outputStream.close()
         return file.absolutePath

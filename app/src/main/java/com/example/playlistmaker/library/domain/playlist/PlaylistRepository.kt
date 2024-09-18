@@ -5,7 +5,7 @@ import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistRepository {
-    abstract fun getPlaylists(): Flow<List<Playlist>>
-    abstract suspend fun addTrackToPlaylist(playList: Playlist, track: Track)
+    fun getPlaylists(): Flow<List<Playlist>>
+    suspend fun addTrackToPlaylist(playList: Playlist, track: Track)
 
 }

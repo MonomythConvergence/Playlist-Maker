@@ -19,6 +19,7 @@ class NewPlaylistViewModel(
     }
 
     fun saveAlbumCover(uri: Uri, fileName : String): String {
-        return newPlaylistInteractor.saveAlbumCover(uri, fileName)
+        return newPlaylistInteractor.saveAlbumCover(uri.toString(), fileName)
     }
+
 }

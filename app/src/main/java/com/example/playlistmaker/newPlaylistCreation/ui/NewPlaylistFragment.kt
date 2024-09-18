@@ -105,20 +105,20 @@ class NewPlaylistFragment : Fragment() {
                     descriptionField.text.toString(),
                     filePath
                 )
-                when (arguments?.getString(Constants.SOURCE_FRAMENT_KEY)) {
-                    "player" -> {
+                when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
+                    Constants.SOURCE_PLAYER -> {
                         val trackFromExtra: Track? =
                             arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
                         val args = Bundle()
                         args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
-                        args.putString(Constants.SOURCE_FRAMENT_KEY, "new_playlist")
+                        args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST)
                         findNavController().navigate(
                             R.id.action_navigation_new_playlist_to_player,
                             args
                         )
                     }
 
-                    "playlists" -> {
+                    Constants.SOURCE_PLAYLIST -> {
                         val arg = Bundle()
                         arg.putString(Constants.TITLE_TOAST_KEY, nameField.text.toString())
                         findNavController().navigate(
@@ -243,20 +243,20 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun popUp() {
-        when (arguments?.getString(Constants.SOURCE_FRAMENT_KEY)) {
-            "player" -> {
+        when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
+            Constants.SOURCE_PLAYLIST  -> {
                 val trackFromExtra: Track? =
                     arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
                 val args = Bundle()
                 args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
-                args.putString(Constants.SOURCE_FRAMENT_KEY, "new_playlist")
+                args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST )
                 findNavController().navigate(R.id.action_navigation_new_playlist_to_player, args)
 
             }
 
             else -> {
                 val bundle = Bundle()
-                bundle.putString(Constants.NEW_PLATLIST_CANCEL_KEY, "yes")
+                bundle.putString(Constants.NEW_PLAYLIST_CANCEL_KEY, Constants.CANCEL_KEY_ARG)
                 findNavController().navigate(
                     R.id.action_navigation_new_playlist_to_playlists,
                     bundle
@@ -316,7 +316,7 @@ class NewPlaylistFragment : Fragment() {
         }
     }
 
-    fun checkPermission(permission: String): Boolean {
+    private fun checkPermission(permission: String): Boolean {
         return (ContextCompat.checkSelfPermission(
             requireContext(),
             permission

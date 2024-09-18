@@ -55,7 +55,7 @@ class LibraryFragment : Fragment() {
         )
 
         val newPlaylistTitle = arguments?.getString(Constants.TITLE_TOAST_KEY, "") ?: ""
-        val canceledFromCreation = arguments?.getString(Constants.NEW_PLATLIST_CANCEL_KEY, "")
+        val canceledFromCreation = arguments?.getString(Constants.NEW_PLAYLIST_CANCEL_KEY, "")
 
         val tabLayout = view.findViewById<TabLayout>(R.id.libraryTabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.libraryViewPager)
