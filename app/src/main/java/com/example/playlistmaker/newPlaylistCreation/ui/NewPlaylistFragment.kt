@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import com.example.playlistmaker.Constants
@@ -244,12 +245,12 @@ class NewPlaylistFragment : Fragment() {
 
     private fun popUp() {
         when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
-            Constants.SOURCE_PLAYLIST  -> {
+            Constants.SOURCE_PLAYER  -> {
                 val trackFromExtra: Track? =
                     arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
                 val args = Bundle()
                 args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
-                args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST )
+                args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYER )
                 findNavController().navigate(R.id.action_navigation_new_playlist_to_player, args)
 
             }

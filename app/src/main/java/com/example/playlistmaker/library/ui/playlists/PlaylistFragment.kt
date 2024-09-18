@@ -66,7 +66,7 @@ class PlaylistFragment : Fragment() {
         newPlaylistButton = view.findViewById(R.id.newPlaylistButton)
         newPlaylistButton.setOnClickListener {
             val arg = Bundle()
-            arg.putString(Constants.SOURCE_FRAGMENT_KEY, "playlists")
+            arg.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYLIST)
             findNavController().navigate(R.id.navigation_new_playlist, arg)
         }
 
