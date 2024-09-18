@@ -288,7 +288,7 @@ class SearchFragment : Fragment() {
                     debounceClick(Unit)
                     val bundle = Bundle()
                     bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, track)
-                    bundle.putString(Constants.SOURCE_FRAMENT_KEY, "search")
+                    bundle.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_SEARCH)
                     findNavController().navigate(
                         R.id.action_navigation_search_to_player,
                         bundle

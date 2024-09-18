@@ -138,7 +138,7 @@ class PlayerFragment : Fragment() {
         addNewPlaylistButton.setOnClickListener {
             val args = Bundle()
             args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, selectedTrack)
-            args.putString(Constants.SOURCE_FRAMENT_KEY,"player")
+            args.putString(Constants.SOURCE_FRAGMENT_KEY,"player")
             findNavController().navigate(
                 R.id.action_navigation_player_to_new_playlist,
                 args
@@ -312,7 +312,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun backPress() {
-        if (arguments?.getString(Constants.SOURCE_FRAMENT_KEY) == "search") {
+        if (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY) == "search") {
             findNavController().navigate(R.id.action_navigation_player_back_to_search)
         } else {
             findNavController().navigate(R.id.action_navigation_player_back_to_library)
