@@ -12,5 +12,5 @@ import org.koin.dsl.module
 val playerModule = module {
     single<MediaPlayerRepository> { MediaPlayerRepositoryImpl() }
     single<MediaPlayerInteractor> { MediaPlayerInteractorImpl(get()) }
-    viewModel<PlayerViewModel> { PlayerViewModel(get(), get())}
+    viewModel<PlayerViewModel> { PlayerViewModel(get(), get(), get())}
 }

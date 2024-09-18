@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.data
 
 import android.icu.text.SimpleDateFormat
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.data.datamodels.SearchServerResonse
 import com.example.playlistmaker.search.data.network.RetrofitApiClient
 import com.example.playlistmaker.search.domain.SearchRepository

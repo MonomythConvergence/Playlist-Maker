@@ -22,6 +22,9 @@
     <color name="player_secondary_text">#AEAFB4</color>
     <color name="player_main_button">#FFFFFF</color>
     <color name="player_secondary_button">#FFFFFF</color>
+    <color name="bottomsheet_rectangle">#FFFFFF</color>
+
+    <color name="new_playlist_text">#FFFFFF</color>
 
     <color name="library_bg">#1A1B22</color>
     <color name="library_main_text">#FFFFFF</color>

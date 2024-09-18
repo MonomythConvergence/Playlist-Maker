@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.data.ItemClickCallback
 import java.util.ArrayList
 

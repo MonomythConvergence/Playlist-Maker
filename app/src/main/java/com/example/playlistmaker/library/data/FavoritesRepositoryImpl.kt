@@ -1,37 +1,37 @@
 package com.example.playlistmaker.library.data
 
-import com.example.playlistmaker.db.FavoritesDBConverter
-import com.example.playlistmaker.db.SongDao
-import com.example.playlistmaker.db.SongEntity
-import com.example.playlistmaker.library.domain.FavoritesRepository
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.db.TrackDBEntityConverter
+import com.example.playlistmaker.db.FavoritesDao
+import com.example.playlistmaker.db.FavoriteEntity
+import com.example.playlistmaker.library.domain.favorites.FavoritesRepository
+import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl(
-    private val songDao: SongDao,
-    private val favoritesDBConverter: FavoritesDBConverter
+    private val favoritesDao: FavoritesDao,
+    private val trackDBEntityConverter: TrackDBEntityConverter
 ) : FavoritesRepository {
 
     override suspend fun addTrackToFavorites(track: Track) {
-        val song = favoritesDBConverter.map(track)
-        songDao.insertSongIntoFavorites(song)
+        val song = trackDBEntityConverter.map(track)
+        favoritesDao.insertSongIntoFavorites(song)
     }
 
 
     override fun getFavorites(): Flow<List<Track>> {
-        return songDao.getFavorites().map { songList: List<SongEntity> ->
-            songList.map { favoritesDBConverter.map(it) }
+        return favoritesDao.getFavorites().map { songList: List<FavoriteEntity> ->
+            songList.map { trackDBEntityConverter.map(it) }
         }
     }
 
     override suspend fun deleteTrackFromFavorites(track: Track) {
-        val song = favoritesDBConverter.map(track)
-        songDao.deleteSongFromFavorites(song)
+        val song = trackDBEntityConverter.map(track)
+        favoritesDao.deleteSongFromFavorites(song)
     }
 
     override fun getFavoritesIDList(): Flow<List<Long>> {
-        return songDao.getFavoritesIDList()
+        return favoritesDao.getFavoritesIDList()
     }
 
 }

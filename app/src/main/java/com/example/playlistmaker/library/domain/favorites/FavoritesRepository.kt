@@ -1,9 +1,9 @@
-package com.example.playlistmaker.library.domain
+package com.example.playlistmaker.library.domain.favorites
 
-import com.example.playlistmaker.search.data.datamodels.Track
+import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 
-interface FavoritesInteractor {
+interface FavoritesRepository {
     suspend fun addTrackToFavorites(track: Track)
 
     fun getFavorites(): Flow<List<Track>>
