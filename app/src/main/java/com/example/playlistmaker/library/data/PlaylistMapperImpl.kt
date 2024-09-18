@@ -21,7 +21,7 @@ class PlaylistMapperImpl : PlaylistMapper {
     }
 
     override fun toDTO(domainModel: Playlist): PlaylistDTO {
-        val entryTime = if (domainModel.entryTime.toInt() ==0)
+        val entryTime = if (domainModel.entryTime.toInt() ==-1)
         {Date().time}
         else {domainModel.entryTime}
         return PlaylistDTO(

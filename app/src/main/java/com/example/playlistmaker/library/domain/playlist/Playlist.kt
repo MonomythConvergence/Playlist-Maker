@@ -7,5 +7,5 @@ data class Playlist(
     val coverImagePath: String,
     var trackList: List<Long>,
     var trackCount: Int,
-    val entryTime: Long = 0
+    val entryTime: Long = -1
 )

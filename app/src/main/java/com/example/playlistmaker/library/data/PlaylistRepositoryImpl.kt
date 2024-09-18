@@ -22,6 +22,7 @@ class PlaylistRepositoryImpl(
             playlistEntities.map { playlistMapper.toDomainModel(playlistDBEntityConverter.map(it)) }
         }
     }
+
     override suspend fun addTrackToPlaylist(playList: Playlist, track: Track) {
         if (!playList.trackList.contains(track.trackId)){
             val mutableTrackList = playList.trackList.toMutableList()
@@ -30,4 +31,16 @@ class PlaylistRepositoryImpl(
             playlistDao.updatePlaylist(playlistDBEntityConverter.map(playlistMapper.toDTO(updatedPlayList) as PlaylistDTO))
     }
     }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        playlistDao.updatePlaylist(playlistDBEntityConverter.map(playlistMapper.toDTO(playlist) as PlaylistDTO))
+    }
+
+    override fun getPlaylistByID(playlistID: Long): Flow<Playlist> {
+        return playlistDao.getPlaylists().map { playlistEntities ->
+            playlistEntities.find { it.playlistId == playlistID }?.let {
+                playlistMapper.toDomainModel(playlistDBEntityConverter.map(it))
+            }!!
+        }}
+
 }

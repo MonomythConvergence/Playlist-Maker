@@ -138,21 +138,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recentRecycler"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="24dp"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/clearSearchHistory"
-            tools:listitem="@layout/item_search_result_item" />
+            tools:listitem="@layout/item_search_result_item"
+            tools:itemCount="2"/>
 
         <Button
             android:id="@+id/clearSearchHistory"
@@ -165,16 +161,18 @@
             android:paddingStart="8dp"
             android:paddingEnd="6dp"
             android:text="@string/clear_recent"
+            app:layout_constraintVertical_bias="0"
             android:textColor="@color/search_inverted_button_text"
             android:textSize="14sp"
-            app:layout_constraintVertical_bias="0"
             android:gravity="center"
             app:cornerRadius="@dimen/Inverted_button_rounding"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-
+            app:layout_constraintTop_toBottomOf="@+id/recentRecycler"
             tools:ignore="SpeakableTextPresentCheck" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

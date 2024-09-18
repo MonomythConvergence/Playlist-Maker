@@ -30,5 +30,6 @@
     <color name="library_main_text">#FFFFFF</color>
     <color name="library_ui_main">#FFFFFF</color>
     <color name="library_ui_inverted">#1A1B22</color>
+    <color name="bottomsheet_bg_fade">#99000000</color>
 
 </resources>

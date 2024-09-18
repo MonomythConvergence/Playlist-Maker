@@ -7,7 +7,7 @@ import java.util.Date
 @Entity(tableName = "playlists_table")
 data class PlaylistEntity(
     @PrimaryKey(autoGenerate = true)
-    val playlistId: Long = 0,
+    val playlistId: Long = -1,
     val playlistTitle: String,
     val playlistDescriptor: String,
     val coverImagePath: String,
