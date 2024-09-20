@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
+import com.example.playlistmaker.library.domain.PlaylistClickCallback
 import com.example.playlistmaker.library.domain.playlist.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -67,7 +69,8 @@ class PlaylistFragment : Fragment() {
         newPlaylistButton.setOnClickListener {
             val arg = Bundle()
             arg.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYLIST)
-            findNavController().navigate(R.id.navigation_new_playlist, arg)
+            Log.d("","")//todo del
+            findNavController().navigate(R.id.action_navigation_library_to_new_playlist, arg)
         }
 
         return view
@@ -91,9 +94,26 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun setUpAdapter() {
+        val playlistClickCallback = object : PlaylistClickCallback {
+            override fun onClickCallback(playlist: Playlist) {
+                val bundle = Bundle()
+                bundle.putParcelable(Constants.PARCELABLE_PLAYLIST_TO_EDIT_PLAYLIST_KEY, playlist)
+                findNavController().navigate(
+                    R.id.action_navigation_library_to_edit_playlist,
+                    bundle
+                )
+            }
+
+            override fun onLongClickCallback(playlist: Playlist) {
+                //nothing
+            }
+        }
+
+        //todo fucked up covers name overlap?
+
         val playlistAdapter =
             PlaylistsAdapter(
-                requireContext(), localPlaylistList
+                requireContext(), localPlaylistList, playlistClickCallback
             )
         playlistRecycler.adapter = playlistAdapter
         playlistRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -123,7 +143,7 @@ class PlaylistFragment : Fragment() {
     }
 
 
-    fun checkPermission(permission: String): Boolean {
+    private fun checkPermission(permission: String): Boolean {
         return (ContextCompat.checkSelfPermission(
             requireContext(),
             permission

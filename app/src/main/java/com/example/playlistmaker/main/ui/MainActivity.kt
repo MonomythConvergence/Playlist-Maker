@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
+        //deleteDatabase("playlists.db") //todo delete
 
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
         val navHostFragment =
@@ -47,11 +48,16 @@ class MainActivity : AppCompatActivity() {
 
         val separatorDivider: View = findViewById(R.id.panelSeparatorDivider)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id){
-                R.id.navigation_player,R.id.navigation_new_playlist -> {bottomNavigationView.isVisible = false
-                    separatorDivider.isVisible = false}
-                else -> {bottomNavigationView.isVisible = true
-                    separatorDivider.isVisible = true}
+            when (destination.id) {
+                R.id.navigation_player, R.id.navigation_new_playlist, R.id.navigation_edit_playlist -> {
+                    bottomNavigationView.isVisible = false
+                    separatorDivider.isVisible = false
+                }
+
+                else -> {
+                    bottomNavigationView.isVisible = true
+                    separatorDivider.isVisible = true
+                }
             }
 
         }

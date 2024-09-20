@@ -7,13 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.Track
-import com.example.playlistmaker.search.data.ItemClickCallback
+import com.example.playlistmaker.search.domain.TrackClickCallback
 import java.util.ArrayList
 
 class RecyclerAdapter(
-    private val diplayedList: ArrayList<Track>,
+    private val diplayedList: List<Track>,
     private val viewModel: ViewModel,
-    private val itemClickCallback: ItemClickCallback
+    private val trackClickCallback: TrackClickCallback
 ) :
 
     RecyclerView.Adapter<TrackViewHolder>() {
@@ -21,6 +21,7 @@ class RecyclerAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_search_result_item, parent, false)
         val holder = TrackViewHolder(view)
+
         holder.itemView.setOnClickListener {
             val position = holder.absoluteAdapterPosition
             if (position != RecyclerView.NO_POSITION) {
@@ -28,9 +29,19 @@ class RecyclerAdapter(
                 if (viewModel is SearchViewModel) {
                     viewModel.addTrackToRecent(track)
                 }
-                itemClickCallback.onClickCallback(track)
+                trackClickCallback.onClickCallback(track)
             }
         }
+
+        holder.itemView.setOnLongClickListener {
+            val position = holder.absoluteAdapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val track = diplayedList[position]
+                trackClickCallback.onLongClickCallback(track)
+            }
+            true
+        }
+
         return holder
     }
 

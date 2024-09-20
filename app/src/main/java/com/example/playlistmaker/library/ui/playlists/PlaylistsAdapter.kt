@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.library.domain.PlaylistClickCallback
 import com.example.playlistmaker.library.domain.playlist.Playlist
+import com.example.playlistmaker.search.domain.TrackClickCallback
 
 class PlaylistsAdapter (
     private val context: Context,
-    private var displayedList: List<Playlist>
+    private var displayedList: List<Playlist>,
+    private val trackClickCallback: PlaylistClickCallback
     ) :
 
     RecyclerView.Adapter<PlaylistViewHolder>()
@@ -19,7 +22,13 @@ class PlaylistsAdapter (
                 .inflate(R.layout.item_playlist, parent, false)
             val holder = PlaylistViewHolder(view)
 
-            //todo next sprint?
+            holder.itemView.setOnClickListener {
+                val position = holder.absoluteAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val playlist = displayedList[position]
+                    trackClickCallback.onClickCallback(playlist)
+                }
+            }
 
             return holder
         }
