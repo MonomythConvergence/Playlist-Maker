@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackClickCallback
-import java.util.ArrayList
 
 class RecyclerAdapter(
     private val diplayedList: List<Track>,

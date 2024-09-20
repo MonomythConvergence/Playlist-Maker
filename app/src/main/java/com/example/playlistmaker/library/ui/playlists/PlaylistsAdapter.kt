@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.library.domain.PlaylistClickCallback
 import com.example.playlistmaker.library.domain.playlist.Playlist
-import com.example.playlistmaker.search.domain.TrackClickCallback
 
 class PlaylistsAdapter (
     private val context: Context,

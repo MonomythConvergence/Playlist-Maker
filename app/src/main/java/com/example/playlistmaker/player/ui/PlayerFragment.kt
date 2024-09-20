@@ -2,7 +2,6 @@ package com.example.playlistmaker.player.ui
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -133,7 +132,7 @@ class PlayerFragment : Fragment() {
 
         playlistRecycler = view.findViewById<RecyclerView>(R.id.playerAddToPlaylistRecycler)
 
-        setUpPlaylistRecycler(view)
+        setUpPlaylistRecycler()
 
         addNewPlaylistButton = view.findViewById<Button>(R.id.addToPlaylistButton)
         addNewPlaylistButton.setOnClickListener {
@@ -218,7 +217,7 @@ class PlayerFragment : Fragment() {
         return view
     }
 
-    private fun setUpPlaylistRecycler(fragmentView: View) {
+    private fun setUpPlaylistRecycler() {
         val clickBack = object : AddToPlaylistClickback {
             override fun addSelectedTrackToPlaylist(playlist: Playlist, added: Boolean) {
                 if (added) {
@@ -325,7 +324,6 @@ class PlayerFragment : Fragment() {
                 val args = Bundle()
                 val playlist=arguments?.getParcelable<Playlist>(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST)
                 args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST,playlist)
-                Log.d("mytag","${playlist?.trackCount}")//todo delete
                 findNavController().navigate(R.id.action_navigation_player_to_edit_playlist,args)
             }
 

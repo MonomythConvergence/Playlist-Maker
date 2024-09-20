@@ -91,7 +91,6 @@ class PlaylistRepositoryImpl(
         val timestamp = dateFormat.format(Date())
 
         val file = File(directory, "${fileName}_${timestamp}.png")
-        Log.d("MyTag","${fileName}_${timestamp}.png")//todo del
 
         val outputStream = FileOutputStream(file)
         uriToBitmap(Uri.parse(uri)).compress(Bitmap.CompressFormat.PNG, 100, outputStream)

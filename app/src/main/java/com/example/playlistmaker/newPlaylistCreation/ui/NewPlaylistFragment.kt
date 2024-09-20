@@ -20,7 +20,6 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
@@ -117,18 +116,15 @@ class NewPlaylistFragment : Fragment() {
         confirmButton.setOnClickListener {
             if (!nameField.text.isNullOrEmpty()) {
                 var filePath: String? = null
-                Log.d("mytag","${preConfirmBitmap != null},${writePermissionCheck()},${preConfirmBitmapUri!=null},")//todo delete
                 if (preConfirmBitmap != null && writePermissionCheck() && preConfirmBitmapUri!=null) {
                     filePath = newPlaylistViewModel.saveAlbumCover(
                         preConfirmBitmapUri!!,
                         nameField.text.toString()
                     )
                 }
-                Log.d("mytag","${arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)}???")//todo delete
                 when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
 
                     Constants.SOURCE_PLAYER -> {
-                        Log.d("mytag","SOURCE_PLAYER?")//todo delete
                         newPlaylistViewModel.addNewPlaylist(
                             nameField.text.toString(),
                             descriptionField.text.toString(),
@@ -146,7 +142,6 @@ class NewPlaylistFragment : Fragment() {
                     }
 
                     Constants.SOURCE_PLAYLIST -> {
-                        Log.d("mytag","SOURCE_PLAYLIST?")//todo delete
                         newPlaylistViewModel.addNewPlaylist(
                             nameField.text.toString(),
                             descriptionField.text.toString(),
@@ -162,7 +157,6 @@ class NewPlaylistFragment : Fragment() {
                     }
 
                     Constants.SOURCE_EDIT_PLAYLIST -> {
-                        Log.d("mytag","SOURCE_EDIT_PLAYLIST?")//todo delete
                         modifiedEditPlaylist.playlistTitle = nameField.text.toString()
                         modifiedEditPlaylist.playlistDescriptor = descriptionField.text.toString()
                         if (preConfirmBitmapUri!=null){
@@ -224,7 +218,6 @@ class NewPlaylistFragment : Fragment() {
                         imageView.setImageBitmap(bitmap as Bitmap)
                     }
                     preConfirmBitmap = bitmap as Bitmap
-                    Log.d("mytag", "Triggered! ${preConfirmBitmap}") //todo
                 }
             }
             newPlaylistViewModel.getBitmap(unmodifiedEditPlaylist.coverImagePath, bitmapCallback)
@@ -338,7 +331,6 @@ class NewPlaylistFragment : Fragment() {
             )
             args.putString(Constants.SOURCE_FRAGMENT_KEY,Constants.SOURCE_NEW_PLAYLIST)
             findNavController().navigate(R.id.action_navigation_new_playlist_to_edit_playlist,args)
-            Log.d("mytag", "Triggered! ${unmodifiedEditPlaylist.playlistTitle}") //todo
             return
         }
         when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {

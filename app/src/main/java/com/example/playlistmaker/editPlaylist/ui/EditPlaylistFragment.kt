@@ -2,7 +2,6 @@ package com.example.playlistmaker.editPlaylist.ui
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,7 +132,6 @@ class EditPlaylistFragment : Fragment() {
         passedPlaylist =
             arguments?.getParcelable<Playlist>(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST)
                 ?: passedPlaylist
-        Log.d("mytag","${arguments?.getParcelable<Playlist>(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST)}???")
 
 
         if (passedPlaylist != null) {
@@ -217,7 +215,6 @@ class EditPlaylistFragment : Fragment() {
                 val args = Bundle()
                 args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, track)
                 args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST, localPlaylist)
-                Log.d("mytag","${localPlaylist.trackCount}")//todo delete
                 args.putString(Constants.SOURCE_FRAGMENT_KEY,Constants.SOURCE_EDIT_PLAYLIST)
                 findNavController().navigate(R.id.action_navigation_edit_playlist_to_player, args)
             }

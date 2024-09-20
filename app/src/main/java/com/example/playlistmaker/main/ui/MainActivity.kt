@@ -27,8 +27,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        //deleteDatabase("playlists.db") //todo delete
-
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.bottomNavigation)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment

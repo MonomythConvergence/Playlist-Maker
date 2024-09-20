@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,7 +68,6 @@ class PlaylistFragment : Fragment() {
         newPlaylistButton.setOnClickListener {
             val arg = Bundle()
             arg.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYLIST)
-            Log.d("","")//todo del
             findNavController().navigate(R.id.action_navigation_library_to_new_playlist, arg)
         }
 
@@ -108,8 +106,6 @@ class PlaylistFragment : Fragment() {
                 //nothing
             }
         }
-
-        //todo fucked up covers name overlap?
 
         val playlistAdapter =
             PlaylistsAdapter(
