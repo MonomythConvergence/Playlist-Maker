@@ -91,7 +91,7 @@ class FavoritesFragment : Fragment() {
                     favoritesFragmentViewModel.setClickDebounce(false)
                     debounceClick(Unit)
                     val bundle = Bundle()
-                    bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, track)
+                    bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, favoritesFragmentViewModel.mapTrackToParcelable(track))
                     bundle.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_LIBRARY)
                     findNavController().navigate(
                         R.id.action_navigation_library_to_player,

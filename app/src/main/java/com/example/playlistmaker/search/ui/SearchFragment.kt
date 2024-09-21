@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -192,17 +191,6 @@ class SearchFragment : Fragment() {
         }
 
 
-        searchBarField.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handleSearch()
-                true
-            } else {
-                false
-            }
-
-
-        }
-
 
         searchRefresh.setOnClickListener {
             handleSearch()
@@ -287,7 +275,10 @@ class SearchFragment : Fragment() {
                     searchViewModel.setClickDebounce(false)
                     debounceClick(Unit)
                     val bundle = Bundle()
-                    bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, track)
+                    bundle.putParcelable(
+                        Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                        searchViewModel.mapTrackToParcelable(track)
+                    )
                     bundle.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_SEARCH)
                     findNavController().navigate(
                         R.id.action_navigation_search_to_player,

@@ -96,7 +96,8 @@ class PlayerFragment : Fragment() {
         )
 
         val trackFromExtra: Track? =
-            arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+            playerViewModel.mapParcelableToTrack(arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK))
+
         if (trackFromExtra != null) selectedTrack = trackFromExtra
         else backPress()
 
@@ -137,7 +138,10 @@ class PlayerFragment : Fragment() {
         addNewPlaylistButton = view.findViewById<Button>(R.id.addToPlaylistButton)
         addNewPlaylistButton.setOnClickListener {
             val args = Bundle()
-            args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, selectedTrack)
+            args.putParcelable(
+                Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                playerViewModel.mapTrackToParcelable(selectedTrack)
+            )
             args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYER)
             findNavController().navigate(
                 R.id.action_navigation_player_to_new_playlist,
@@ -322,9 +326,10 @@ class PlayerFragment : Fragment() {
 
             Constants.SOURCE_EDIT_PLAYLIST -> {
                 val args = Bundle()
-                val playlist=arguments?.getParcelable<Playlist>(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST)
-                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST,playlist)
-                findNavController().navigate(R.id.action_navigation_player_to_edit_playlist,args)
+                val playlist =
+                    playerViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST))
+                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST, playerViewModel.mapPlaylistToParcelable(playlist))
+                findNavController().navigate(R.id.action_navigation_player_to_edit_playlist, args)
             }
 
             else -> {

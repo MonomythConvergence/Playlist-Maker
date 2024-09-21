@@ -55,7 +55,6 @@
     <string name="cancel_button">Отмена</string>
     <string name="exit_button">Завершить</string>
     <string name="playlist_toast_text">Плейлист [%1$s] создан</string>
-    <string name="track_count">%1$s треков</string>
 
 
 

@@ -124,14 +124,10 @@ class EditPlaylistFragment : Fragment() {
             }
         })
 
-        var passedPlaylist: Playlist? =
-            arguments?.getParcelable(Constants.PARCELABLE_PLAYLIST_TO_EDIT_PLAYLIST_KEY)
-        passedPlaylist =
-            arguments?.getParcelable(Constants.PARCELABLE_NEW_PLAYLIST_TO_EDIT_PLAYLIST_KEY)
-                ?: passedPlaylist
-        passedPlaylist =
-            arguments?.getParcelable<Playlist>(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST)
-                ?: passedPlaylist
+        var passedPlaylist: Playlist? = editPlaylistFragmentViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_PLAYLIST_TO_EDIT_PLAYLIST_KEY))
+        passedPlaylist = editPlaylistFragmentViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_NEW_PLAYLIST_TO_EDIT_PLAYLIST_KEY)) ?: passedPlaylist
+        passedPlaylist = editPlaylistFragmentViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST)) ?: passedPlaylist
+
 
 
         if (passedPlaylist != null) {
@@ -163,7 +159,7 @@ class EditPlaylistFragment : Fragment() {
 
         playlistEditMenuEdit.setOnClickListener {
             val args = Bundle()
-            args.putParcelable(Constants.PARCELABLE_PLAYLIST_TO_NEW_PLAYLIST_KEY, localPlaylist)
+            args.putParcelable(Constants.PARCELABLE_PLAYLIST_TO_NEW_PLAYLIST_KEY, editPlaylistFragmentViewModel.mapPlaylistToParcelable(localPlaylist))
             args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_EDIT_PLAYLIST)
             findNavController().navigate(R.id.action_navigation_edit_playlist_to_new_playlist, args)
         }
@@ -213,8 +209,8 @@ class EditPlaylistFragment : Fragment() {
 
             override fun onClickCallback(track: Track) {
                 val args = Bundle()
-                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, track)
-                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST, localPlaylist)
+                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, editPlaylistFragmentViewModel.mapTrackToParcelable(track))
+                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST, editPlaylistFragmentViewModel.mapPlaylistToParcelable(localPlaylist))
                 args.putString(Constants.SOURCE_FRAGMENT_KEY,Constants.SOURCE_EDIT_PLAYLIST)
                 findNavController().navigate(R.id.action_navigation_edit_playlist_to_player, args)
             }

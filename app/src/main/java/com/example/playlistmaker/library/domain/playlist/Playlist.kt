@@ -1,10 +1,7 @@
 package com.example.playlistmaker.library.domain.playlist
 
-import android.os.Parcelable
 import com.example.playlistmaker.search.domain.Track
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
+//todo check imports from android. in other domain classes and refactor
 data class Playlist(
     val playlistId: Long,
     var playlistTitle: String,
@@ -14,4 +11,4 @@ data class Playlist(
     var trackList: List<Track>,
     var trackCount: Int,
     val entryTime: Long = -1
-): Parcelable
+)

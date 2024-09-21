@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,12 +17,24 @@ class PlaylistViewHolder(itemView: View) :
 
     fun bind(playlist: Playlist) {
         playlistTitle.text = playlist.playlistTitle
-        playlistTrackCount.text = playlist.trackCount.toString()
+        playlistTrackCount.text = countUpTracks(playlist.trackCount)
 
         Glide.with(playlistCover)
             .load(playlist.coverImagePath)
             .placeholder(R.drawable.placeholder)
             .into(playlistCover)
     }
+
+    private fun countUpTracks(trackCount: Int): String {
+        val result = when {
+            (trackCount % 10 == 1 && trackCount % 100 != 11) -> "${trackCount} трек"
+            trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> "${trackCount} трека"
+            else -> "${trackCount} треков"
+        }
+        Log.d("mytag",result) //todo delete
+        return result
+
+    }
+
 
 }

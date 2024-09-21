@@ -1,5 +1,6 @@
 package com.example.playlistmaker.editPlaylist.ui
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,15 +9,20 @@ import com.example.playlistmaker.editPlaylist.domain.ConvertBitmapInteractor
 import com.example.playlistmaker.editPlaylist.domain.PathToBitmapConverterCallback
 import com.example.playlistmaker.library.domain.playlist.Playlist
 import com.example.playlistmaker.library.domain.playlist.PlaylistInteractor
+import com.example.playlistmaker.library.ui.playlists.PlaylistMapper
+import com.example.playlistmaker.library.ui.playlists.PlaylistParcelable
 import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.search.ui.TrackMapper
 import com.example.playlistmaker.sharing.domain.ExternalInteractionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EditPlaylistViewModel(
-    val playlistInteractor: PlaylistInteractor,
-    val convertBitmapInteractor: ConvertBitmapInteractor,
-    val externalInteractionHandler: ExternalInteractionHandler
+    private val playlistInteractor: PlaylistInteractor,
+    private val convertBitmapInteractor: ConvertBitmapInteractor,
+    private val externalInteractionHandler: ExternalInteractionHandler,
+    private val playlistMapper: PlaylistMapper,
+    private val trackMapper: TrackMapper
 ) : ViewModel() {
 
     private val _playlistLiveData = MutableLiveData<Playlist>()
@@ -105,6 +111,31 @@ class EditPlaylistViewModel(
 
     fun handleShare(s: String) {
         externalInteractionHandler.openShareMenu(s)
+    }
+
+
+    fun mapParcelableToPlaylist(parcelable: Parcelable?): Playlist? {
+        return if (parcelable != null) {
+            playlistMapper.toDomain(parcelable as PlaylistParcelable)
+        } else {
+            null
+        }
+    }
+
+    fun mapPlaylistToParcelable(playlist: Playlist?): Parcelable? {
+        return if (playlist != null) {
+            playlistMapper.toParcelable(playlist)
+        } else {
+            null
+        }
+    }
+
+    fun mapTrackToParcelable(track: Track?): Parcelable? {
+        return if (track != null) {
+            trackMapper.toParcelable(track)
+        } else {
+            null
+        }
     }
 
 

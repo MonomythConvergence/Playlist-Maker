@@ -95,7 +95,7 @@ class PlaylistFragment : Fragment() {
         val playlistClickCallback = object : PlaylistClickCallback {
             override fun onClickCallback(playlist: Playlist) {
                 val bundle = Bundle()
-                bundle.putParcelable(Constants.PARCELABLE_PLAYLIST_TO_EDIT_PLAYLIST_KEY, playlist)
+                bundle.putParcelable(Constants.PARCELABLE_PLAYLIST_TO_EDIT_PLAYLIST_KEY, playlistsFragmentViewModel.mapPlaylistToParcelable(playlist))
                 findNavController().navigate(
                     R.id.action_navigation_library_to_edit_playlist,
                     bundle

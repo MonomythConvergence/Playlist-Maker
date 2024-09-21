@@ -1,6 +1,7 @@
 package com.example.playlistmaker.library.ui.playlists
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -32,9 +33,21 @@ class PlaylistsAdapter (
             return holder
         }
 
+        private fun countUpTracks(trackCount: Int): String {
+            val result = when {
+                (trackCount % 10 == 1 && trackCount % 100 != 11) -> "${trackCount} трек"
+                trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> "${trackCount} трека"
+                else -> "${trackCount} треков"
+            }
+            Log.d("mytag",result) //todo delete
+            return result
+
+        }
+
         override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
             val playlist = displayedList[position]
-            val trackCount = context.getString(R.string.track_count, playlist.trackCount.toString())
+
+            val trackCount = countUpTracks(playlist.trackCount)
             holder.bind(playlist.playlistTitle,trackCount, playlist.coverImagePath)
         }
 

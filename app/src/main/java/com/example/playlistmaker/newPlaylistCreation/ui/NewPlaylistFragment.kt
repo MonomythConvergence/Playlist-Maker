@@ -116,7 +116,7 @@ class NewPlaylistFragment : Fragment() {
         confirmButton.setOnClickListener {
             if (!nameField.text.isNullOrEmpty()) {
                 var filePath: String? = null
-                if (preConfirmBitmap != null && writePermissionCheck() && preConfirmBitmapUri!=null) {
+                if (preConfirmBitmap != null && writePermissionCheck() && preConfirmBitmapUri != null) {
                     filePath = newPlaylistViewModel.saveAlbumCover(
                         preConfirmBitmapUri!!,
                         nameField.text.toString()
@@ -130,10 +130,14 @@ class NewPlaylistFragment : Fragment() {
                             descriptionField.text.toString(),
                             filePath
                         )
-                        val trackFromExtra: Track? =
-                            arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+                        val trackFromExtra: Track? = newPlaylistViewModel.mapParcelableToTrack(
+                            arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+                        )
                         val args = Bundle()
-                        args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, trackFromExtra)
+                        args.putParcelable(
+                            Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                            newPlaylistViewModel.mapTrackToParcelable(trackFromExtra)
+                        )
                         args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST)
                         findNavController().navigate(
                             R.id.action_navigation_new_playlist_to_player,
@@ -159,7 +163,7 @@ class NewPlaylistFragment : Fragment() {
                     Constants.SOURCE_EDIT_PLAYLIST -> {
                         modifiedEditPlaylist.playlistTitle = nameField.text.toString()
                         modifiedEditPlaylist.playlistDescriptor = descriptionField.text.toString()
-                        if (preConfirmBitmapUri!=null){
+                        if (preConfirmBitmapUri != null) {
                             modifiedEditPlaylist.coverImagePath = filePath ?: ""
                         }
                         newPlaylistViewModel.updatePlaylist(modifiedEditPlaylist)
@@ -167,10 +171,10 @@ class NewPlaylistFragment : Fragment() {
                         val arg = Bundle()
                         arg.putParcelable(
                             Constants.PARCELABLE_NEW_PLAYLIST_TO_EDIT_PLAYLIST_KEY,
-                            modifiedEditPlaylist
+                            newPlaylistViewModel.mapPlaylistToParcelable(modifiedEditPlaylist)
                         )
                         findNavController().navigate(
-                            R.id.action_navigation_new_playlist_to_edit_playlist,arg
+                            R.id.action_navigation_new_playlist_to_edit_playlist, arg
                         )
                     }
                 }
@@ -199,8 +203,9 @@ class NewPlaylistFragment : Fragment() {
 
 
         unmodifiedEditPlaylist =
-            arguments?.getParcelable<Playlist>(Constants.PARCELABLE_PLAYLIST_TO_NEW_PLAYLIST_KEY)
+            newPlaylistViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_PLAYLIST_TO_NEW_PLAYLIST_KEY))
                 ?: unmodifiedEditPlaylist
+
         if (unmodifiedEditPlaylist.playlistTitle != "") {
             changeSetUpForModification(unmodifiedEditPlaylist)
             modifiedEditPlaylist = unmodifiedEditPlaylist
@@ -327,18 +332,22 @@ class NewPlaylistFragment : Fragment() {
             val args = Bundle()
             args.putParcelable(
                 Constants.PARCELABLE_NEW_PLAYLIST_TO_EDIT_PLAYLIST_KEY,
-                unmodifiedEditPlaylist
+                newPlaylistViewModel.mapPlaylistToParcelable(unmodifiedEditPlaylist)
             )
-            args.putString(Constants.SOURCE_FRAGMENT_KEY,Constants.SOURCE_NEW_PLAYLIST)
-            findNavController().navigate(R.id.action_navigation_new_playlist_to_edit_playlist,args)
+            args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST)
+            findNavController().navigate(R.id.action_navigation_new_playlist_to_edit_playlist, args)
             return
         }
         when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
             Constants.SOURCE_PLAYER -> {
-                val trackFromExtra: Track? =
-                    arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+                val trackFromExtra: Track? = newPlaylistViewModel.mapParcelableToTrack(
+                    arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+                )
                 val args = Bundle()
-                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK, trackFromExtra)
+                args.putParcelable(
+                    Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                    newPlaylistViewModel.mapTrackToParcelable(trackFromExtra)
+                )
                 args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYER)
                 findNavController().navigate(R.id.action_navigation_new_playlist_to_player, args)
 
