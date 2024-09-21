@@ -1,7 +1,6 @@
 package com.example.playlistmaker.library.ui.playlists
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +38,6 @@ class PlaylistsAdapter (
                 trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> "${trackCount} трека"
                 else -> "${trackCount} треков"
             }
-            Log.d("mytag",result) //todo delete
             return result
 
         }

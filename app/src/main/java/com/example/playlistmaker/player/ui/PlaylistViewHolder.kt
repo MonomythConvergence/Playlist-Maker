@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -31,7 +30,6 @@ class PlaylistViewHolder(itemView: View) :
             trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> "${trackCount} трека"
             else -> "${trackCount} треков"
         }
-        Log.d("mytag",result) //todo delete
         return result
 
     }

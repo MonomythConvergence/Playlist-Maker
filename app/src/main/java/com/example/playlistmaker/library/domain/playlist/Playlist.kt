@@ -1,7 +1,6 @@
 package com.example.playlistmaker.library.domain.playlist
 
 import com.example.playlistmaker.search.domain.Track
-//todo check imports from android. in other domain classes and refactor
 data class Playlist(
     val playlistId: Long,
     var playlistTitle: String,
