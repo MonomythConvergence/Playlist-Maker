@@ -26,9 +26,15 @@ class PlaylistViewHolder(itemView: View) :
 
     private fun countUpTracks(trackCount: Int): String {
         val result = when {
-            (trackCount % 10 == 1 && trackCount % 100 != 11) -> "${trackCount} трек"
-            trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> "${trackCount} трека"
-            else -> "${trackCount} треков"
+            (trackCount % 10 == 1 && trackCount % 100 != 11) -> itemView.context.getString(
+                R.string.russian_track_conjugation_1,
+                trackCount.toString()
+            )
+            trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> itemView.context.getString(
+                R.string.russian_track_conjugation_2,
+                trackCount.toString()
+            )
+            else -> itemView.context.getString(R.string.russian_track_conjugation_3, trackCount.toString())
         }
         return result
 

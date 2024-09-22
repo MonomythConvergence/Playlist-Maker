@@ -381,9 +381,15 @@ class EditPlaylistFragment : Fragment() {
 
     private fun countUpMinutes(minutes: Int): String {
         val result = when {
-            (minutes % 10 == 1 && minutes % 100 != 11) -> "$minutes минута"
-            minutes % 10 in 2..4 && minutes % 100 !in 12..14 -> "$minutes минуты"
-            else -> "$minutes минут"
+            (minutes % 10 == 1 && minutes % 100 != 11) -> getString(
+                R.string.russian_minute_conjugation_1,
+                minutes.toString()
+            )
+            minutes % 10 in 2..4 && minutes % 100 !in 12..14 -> getString(
+                R.string.russian_minute_conjugation_2,
+                minutes.toString()
+            )
+            else -> getString(R.string.russian_minute_conjugation_3, minutes.toString())
         }
         return result
     }
@@ -391,9 +397,16 @@ class EditPlaylistFragment : Fragment() {
     private fun countUpTracks(list: List<Track>): String {
 
         val result = when {
-            (list.size % 10 == 1 && list.size % 100 != 11) -> "${list.size} трек"
-            list.size % 10 in 2..4 && list.size % 100 !in 12..14 -> "${list.size} трека"
-            else -> "${list.size} треков"
+            (list.size % 10 == 1 && list.size % 100 != 11) -> requireContext().getString(
+                R.string.russian_track_conjugation_1,
+                list.size.toString()
+            )
+            list.size % 10 in 2..4 && list.size % 100 !in 12..14 -> requireContext().getString(
+                R.string.russian_track_conjugation_2,
+                list.size.toString())
+            else -> requireContext().getString(
+                R.string.russian_track_conjugation_3,
+                list.size.toString())
         }
         return result
     }

@@ -107,5 +107,11 @@
     <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
     <string name="make_edits">Редактировать</string>
     <string name="save">Сохранить</string>
+    <string name="russian_track_conjugation_1">%1$s трек</string>
+    <string name="russian_track_conjugation_2">%1$s трека</string>
+    <string name="russian_track_conjugation_3">%1$s треков</string>
+    <string name="russian_minute_conjugation_1">%1$s минута</string>
+    <string name="russian_minute_conjugation_2">%1$s минуты</string>
+    <string name="russian_minute_conjugation_3">%1$s минут</string>
 
 </resources>
