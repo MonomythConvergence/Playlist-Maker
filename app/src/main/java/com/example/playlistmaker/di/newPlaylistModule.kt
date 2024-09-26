@@ -1,22 +1,16 @@
 package com.example.playlistmaker.di
 
 import androidx.room.Room
-import com.example.playlistmaker.db.PlaylistDao
 import com.example.playlistmaker.db.PlaylistsDatabase
-import com.example.playlistmaker.newPlaylistCreation.data.NewPlaylistRepositoryImpl
-import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistInteractor
-import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistInteractorImpl
-import com.example.playlistmaker.newPlaylistCreation.domain.NewPlaylistRepository
 import com.example.playlistmaker.newPlaylistCreation.ui.NewPlaylistViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 
 val newPlaylistModule = module {
-    single<NewPlaylistRepository> { NewPlaylistRepositoryImpl(get(),get<PlaylistDao>()) }
-    single<NewPlaylistInteractor> { NewPlaylistInteractorImpl(get<NewPlaylistRepository>()) }
-    viewModel<NewPlaylistViewModel> { NewPlaylistViewModel(get<NewPlaylistInteractor>()) }
+
+    viewModelOf(::NewPlaylistViewModel)
 
     single {
         Room.databaseBuilder(androidContext(), PlaylistsDatabase::class.java, "playlists.db")

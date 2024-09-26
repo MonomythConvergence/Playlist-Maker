@@ -10,15 +10,17 @@ import com.example.playlistmaker.search.domain.SearchInteractor
 import com.example.playlistmaker.search.domain.SearchInteractorImpl
 import com.example.playlistmaker.search.ui.SearchViewModel
 import com.google.gson.Gson
-import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val searchModule = module {
-    viewModel<SearchViewModel> { SearchViewModel(get()) }
-    single<SearchInteractor> { SearchInteractorImpl(get()) }
-    single<SearchRepository> { SearchRepositoryImpl(get(), get(),get()) }
-    single<PreferencesManager> { PreferencesManagerImpl(androidContext()) }
-    single<RetrofitApiClient> { APICLientProvider.provideApiClient() }
-    single<Gson> { Gson() }
+    viewModelOf(::SearchViewModel)
+    singleOf(::SearchInteractorImpl) bind SearchInteractor::class
+    singleOf(::SearchRepositoryImpl) bind SearchRepository::class
+    singleOf(::PreferencesManagerImpl) bind PreferencesManager::class
+    single<RetrofitApiClient> { APICLientProvider.provideApiClient() } //тут наверное тоже как-то можно, но времени не особо было
+    singleOf(::Gson)
+
 }

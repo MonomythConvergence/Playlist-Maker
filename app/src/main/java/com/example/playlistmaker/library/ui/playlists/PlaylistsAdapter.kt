@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.library.domain.PlaylistClickCallback
 import com.example.playlistmaker.library.domain.playlist.Playlist
 
 class PlaylistsAdapter (
     private val context: Context,
-    private var displayedList: List<Playlist>
+    private var displayedList: List<Playlist>,
+    private val trackClickCallback: PlaylistClickCallback
     ) :
 
     RecyclerView.Adapter<PlaylistViewHolder>()
@@ -19,14 +21,37 @@ class PlaylistsAdapter (
                 .inflate(R.layout.item_playlist, parent, false)
             val holder = PlaylistViewHolder(view)
 
-            //todo next sprint?
+            holder.itemView.setOnClickListener {
+                val position = holder.absoluteAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val playlist = displayedList[position]
+                    trackClickCallback.onClickCallback(playlist)
+                }
+            }
 
             return holder
         }
 
+        private fun countUpTracks(trackCount: Int): String {
+            val result = when {
+                (trackCount % 10 == 1 && trackCount % 100 != 11) -> context.getString(
+                    R.string.russian_track_conjugation_1,
+                    trackCount.toString()
+                )
+                trackCount % 10 in 2..4 && trackCount % 100 !in 12..14 -> context.getString(
+                    R.string.russian_track_conjugation_2,
+                    trackCount.toString()
+                )
+                else -> context.getString(R.string.russian_track_conjugation_3, trackCount.toString())
+            }
+            return result
+
+        }
+
         override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
             val playlist = displayedList[position]
-            val trackCount = context.getString(R.string.track_count, playlist.trackCount.toString())
+
+            val trackCount = countUpTracks(playlist.trackCount)
             holder.bind(playlist.playlistTitle,trackCount, playlist.coverImagePath)
         }
 

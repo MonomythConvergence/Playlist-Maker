@@ -36,6 +36,11 @@ class LibraryFragment : Fragment() {
         fun newInstance() = LibraryFragment()
     }
 
+    override fun onStop() {
+        super.onStop()
+        arguments?.clear()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         backPressedCallback.remove()
@@ -55,8 +60,10 @@ class LibraryFragment : Fragment() {
         )
 
         val newPlaylistTitle = arguments?.getString(Constants.TITLE_TOAST_KEY, "") ?: ""
-        val canceledFromCreation = arguments?.getString(Constants.NEW_PLAYLIST_CANCEL_KEY, "")
-
+        var cameFromNewPlaylist = (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY, "")
+            ?: "") == Constants.SOURCE_NEW_PLAYLIST
+        val cameFromEditing = (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY, "")
+            ?: "") == Constants.SOURCE_EDIT_PLAYLIST
         val tabLayout = view.findViewById<TabLayout>(R.id.libraryTabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.libraryViewPager)
         val adapter = LibraryFragmentAdapter(
@@ -66,10 +73,10 @@ class LibraryFragment : Fragment() {
             tabLayout,
             viewPager,
             adapter,
-            (newPlaylistTitle != "" || canceledFromCreation != "")
+            (cameFromNewPlaylist || cameFromEditing)
         )
 
-        if (newPlaylistTitle != "") {
+        if (cameFromNewPlaylist && newPlaylistTitle != "") {
             displayToast(newPlaylistTitle)
         }
 
@@ -102,5 +109,5 @@ class LibraryFragment : Fragment() {
                 1 -> tab.text = getString(R.string.playlists)
             }
         }.attach()
-        }
     }
+}

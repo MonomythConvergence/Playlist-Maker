@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -24,7 +23,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.ItemClickCallback
+import com.example.playlistmaker.search.domain.TrackClickCallback
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.CoroutineScope
@@ -192,17 +191,6 @@ class SearchFragment : Fragment() {
         }
 
 
-        searchBarField.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handleSearch()
-                true
-            } else {
-                false
-            }
-
-
-        }
-
 
         searchRefresh.setOnClickListener {
             handleSearch()
@@ -280,14 +268,17 @@ class SearchFragment : Fragment() {
     }
 
     private fun recyclerSetup(fragmentView: View) {
-        val itemClickCallback = object : ItemClickCallback {
+        val trackClickCallback = object : TrackClickCallback {
             override fun onClickCallback(track: Track) {
 
                 if (!searchViewModel.getClickDebounceState()) {
                     searchViewModel.setClickDebounce(false)
                     debounceClick(Unit)
                     val bundle = Bundle()
-                    bundle.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, track)
+                    bundle.putParcelable(
+                        Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                        searchViewModel.mapTrackToParcelable(track)
+                    )
                     bundle.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_SEARCH)
                     findNavController().navigate(
                         R.id.action_navigation_search_to_player,
@@ -296,11 +287,15 @@ class SearchFragment : Fragment() {
                 }
             }
 
+            override fun onLongClickCallback(track: Track) {
+                //nothing
+            }
+
         }
 
         recyclerResultsView = fragmentView.findViewById(R.id.searchResultsRecycler)
         searchAdapter =
-            RecyclerAdapter(searchViewModel.provideTrackList(), searchViewModel, itemClickCallback)
+            RecyclerAdapter(searchViewModel.provideTrackList(), searchViewModel, trackClickCallback)
         recyclerResultsView.adapter = searchAdapter
         recyclerResultsView.layoutManager = GridLayoutManager(requireContext(), 1)
 
@@ -308,7 +303,7 @@ class SearchFragment : Fragment() {
         recentAdapter = RecyclerAdapter(
             searchViewModel.provideRecentTrackList(),
             searchViewModel,
-            itemClickCallback
+            trackClickCallback
         )
         recyclerRecentView.adapter = recentAdapter
         recyclerRecentView.layoutManager = GridLayoutManager(requireContext(), 1)

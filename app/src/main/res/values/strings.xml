@@ -55,7 +55,6 @@
     <string name="cancel_button">Отмена</string>
     <string name="exit_button">Завершить</string>
     <string name="playlist_toast_text">Плейлист [%1$s] создан</string>
-    <string name="track_count">%1$s треков</string>
 
 
 
@@ -97,5 +96,22 @@
     </string>
     <string name="add_to_playlist">Добавить в плейлист</string>
     <string name="all_unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
+    <string name="no_tracks_added">В этом плейлисте нет треков</string>
+    <string name="share">Поделиться</string>
+    <string name="edit">Редактировать информацию</string>
+    <string name="delete">Удалить плейлист</string>
+    <string name="confirm_track_deletion">Хотите удалить трек?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
+    <string name="confirm_playlist_deletion">Хотите удалить плейлист %1$s</string>
+    <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="make_edits">Редактировать</string>
+    <string name="save">Сохранить</string>
+    <string name="russian_track_conjugation_1">%1$s трек</string>
+    <string name="russian_track_conjugation_2">%1$s трека</string>
+    <string name="russian_track_conjugation_3">%1$s треков</string>
+    <string name="russian_minute_conjugation_1">%1$s минута</string>
+    <string name="russian_minute_conjugation_2">%1$s минуты</string>
+    <string name="russian_minute_conjugation_3">%1$s минут</string>
 
 </resources>

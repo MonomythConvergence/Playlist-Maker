@@ -7,7 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.library.domain.playlist.Playlist
 
 class AddToPlaylistAdapter(
-    private val diplayedList: List<Playlist>,
+    private val displayedList: List<Playlist>,
     private val listOfPlaylistsContainingTrack : ArrayList<Playlist>,
     private val onClick: AddToPlaylistClickback
 ) :
@@ -20,7 +20,7 @@ class AddToPlaylistAdapter(
         holder.itemView.setOnClickListener {
             val position = holder.absoluteAdapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                val playlist = diplayedList[position]
+                val playlist = displayedList[position]
                 if (!listOfPlaylistsContainingTrack.contains(playlist)) {
                     listOfPlaylistsContainingTrack.add(playlist)
                     onClick.addSelectedTrackToPlaylist(playlist, true)
@@ -34,10 +34,10 @@ class AddToPlaylistAdapter(
 
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        val playlist = diplayedList[position]
+        val playlist = displayedList[position]
         holder.bind(playlist)
     }
 
-    override fun getItemCount(): Int = diplayedList.size
+    override fun getItemCount(): Int = displayedList.size
 
 }

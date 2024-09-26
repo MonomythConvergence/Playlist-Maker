@@ -15,8 +15,8 @@
             app:destination="@id/navigation_player"
             app:popUpTo="@id/navigation_search">
             <argument
-                android:name="track"
-                app:argType="com.example.playlistmaker.search.domain.Track" />
+                android:name="TrackParcelable"
+                app:argType="com.example.playlistmaker.search.ui.TrackParcelable" />
         </action>
     </fragment>
 
@@ -34,16 +34,24 @@
             app:destination="@id/navigation_player"
             app:popUpTo="@id/navigation_library">
             <argument
-                android:name="track"
-                app:argType="com.example.playlistmaker.search.domain.Track" />
+                android:name="TrackParcelable"
+                app:argType="com.example.playlistmaker.search.ui.TrackParcelable" />
         </action>
         <action
             android:id="@+id/action_navigation_library_to_new_playlist"
             app:destination="@id/navigation_new_playlist"
-            app:popUpTo="@id/navigation_library" >
-        <argument
-            android:name="source"
-            app:argType="string" />
+            app:popUpTo="@id/navigation_new_playlist">
+            <argument
+                android:name="source"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_navigation_library_to_edit_playlist"
+            app:destination="@id/navigation_edit_playlist"
+            app:popUpTo="@id/navigation_edit_playlist">
+            <argument
+                android:name="playlist"
+                app:argType="com.example.playlistmaker.library.ui.playlists.PlaylistParcelable" />
         </action>
     </fragment>
 
@@ -52,14 +60,15 @@
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
+
     <fragment
         android:id="@+id/navigation_player"
         android:name="com.example.playlistmaker.player.ui.PlayerFragment"
         android:label="PlayerFragment"
         tools:layout="@layout/fragment_player">
         <argument
-            android:name="track"
-            app:argType="com.example.playlistmaker.search.domain.Track" />
+            android:name="TrackParcelable"
+            app:argType="com.example.playlistmaker.search.ui.TrackParcelable" />
         <argument
             android:name="source"
             app:argType="string" />
@@ -69,8 +78,18 @@
             app:popUpTo="@id/navigation_player"
             app:popUpToInclusive="true">
             <argument
-                android:name="track"
-                app:argType="com.example.playlistmaker.search.domain.Track" />
+                android:name="source"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_navigation_player_to_edit_playlist"
+            app:destination="@id/navigation_edit_playlist"
+            app:popUpTo="@id/navigation_edit_playlist"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="playlist"
+                app:argType="com.example.playlistmaker.library.ui.playlists.PlaylistParcelable" />
         </action>
         <action
             android:id="@+id/action_navigation_player_back_to_search"
@@ -95,8 +114,11 @@
             app:popUpTo="@id/navigation_library"
             app:popUpToInclusive="true">
             <argument
-                android:name="Non-null track"
-                app:argType="com.example.playlistmaker.search.domain.Track" />
+                android:name="TrackParcelable"
+                app:argType="com.example.playlistmaker.search.ui.TrackParcelable" />
+            <argument
+                android:name="source"
+                app:argType="string" />
         </action>
         <action
             android:id="@+id/action_navigation_new_playlist_to_player"
@@ -105,9 +127,65 @@
             app:popUpToInclusive="true">
             <argument
                 android:name="plainCancel"
-                app:argType="com.example.playlistmaker.search.domain.Track" />
-
+                app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_navigation_new_playlist_to_edit_playlist"
+            app:destination="@id/navigation_edit_playlist"
+            app:popUpTo="@id/navigation_edit_playlist"
+            app:popUpToInclusive="true">
+            <argument
+                android:name="source"
+                app:argType="string" />
+            <argument
+                android:name="playlist"
+                app:argType="com.example.playlistmaker.library.ui.playlists.PlaylistParcelable" />
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_edit_playlist"
+        android:name="com.example.playlistmaker.editPlaylist.ui.EditPlaylistFragment"
+        android:label="EditFragment"
+        tools:layout="@layout/fragment_playlist_edit">
+        <action
+            android:id="@+id/action_navigation_edit_playlist_to_playlist"
+            app:destination="@id/navigation_library"
+            app:popUpTo="@id/navigation_library">
+            <argument
+                android:name="source"
+                app:argType="string" />
+            <argument
+                android:name="playlist"
+                app:argType="com.example.playlistmaker.library.ui.playlists.PlaylistParcelable" />
+        </action>
+        <action
+            android:id="@+id/action_navigation_edit_playlist_to_player"
+            app:destination="@id/navigation_player"
+            app:popUpTo="@id/navigation_player">
+            <argument
+                android:name="TrackParcelable"
+                app:argType="com.example.playlistmaker.search.ui.TrackParcelable" />
+            <argument
+                android:name="source"
+                app:argType="string" />
+            <argument
+                android:name="playlist"
+                app:argType="com.example.playlistmaker.library.ui.playlists.PlaylistParcelable" />
+        </action>
+        <action
+            android:id="@+id/action_navigation_edit_playlist_to_new_playlist"
+            app:destination="@id/navigation_new_playlist"
+            app:popUpTo="@id/navigation_new_playlist">
+            <argument
+                android:name="source"
+                app:argType="string" />
+            <argument
+                android:name="playlist"
+                app:argType="com.example.playlistmaker.library.ui.playlists.PlaylistParcelable" />
+        </action>
+
     </fragment>
 
 </navigation>

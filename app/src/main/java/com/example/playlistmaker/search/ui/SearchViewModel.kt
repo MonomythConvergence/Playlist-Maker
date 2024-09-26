@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +10,10 @@ import com.example.playlistmaker.search.domain.SearchInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
+class SearchViewModel(
+    private val searchInteractor: SearchInteractor,
+    private val trackMapper: TrackMapper
+) : ViewModel() {
 
     val recentTrackListLiveData = MutableLiveData<ArrayList<Track>>()
 
@@ -99,6 +103,14 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun getClickDebounceState(): Boolean {
         return clickDebounceState
+    }
+
+    fun mapTrackToParcelable(track: Track?): Parcelable? {
+        return if (track != null) {
+            trackMapper.toParcelable(track)
+        } else {
+            null
+        }
     }
 
 }

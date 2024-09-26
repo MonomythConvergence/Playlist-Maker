@@ -96,7 +96,8 @@ class PlayerFragment : Fragment() {
         )
 
         val trackFromExtra: Track? =
-            arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
+            playerViewModel.mapParcelableToTrack(arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK))
+
         if (trackFromExtra != null) selectedTrack = trackFromExtra
         else backPress()
 
@@ -132,13 +133,16 @@ class PlayerFragment : Fragment() {
 
         playlistRecycler = view.findViewById<RecyclerView>(R.id.playerAddToPlaylistRecycler)
 
-        setUpPlaylistRecycler(view)
+        setUpPlaylistRecycler()
 
         addNewPlaylistButton = view.findViewById<Button>(R.id.addToPlaylistButton)
         addNewPlaylistButton.setOnClickListener {
             val args = Bundle()
-            args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, selectedTrack)
-            args.putString(Constants.SOURCE_FRAGMENT_KEY,"player")
+            args.putParcelable(
+                Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                playerViewModel.mapTrackToParcelable(selectedTrack)
+            )
+            args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYER)
             findNavController().navigate(
                 R.id.action_navigation_player_to_new_playlist,
                 args
@@ -217,7 +221,7 @@ class PlayerFragment : Fragment() {
         return view
     }
 
-    private fun setUpPlaylistRecycler(fragmentView: View) {
+    private fun setUpPlaylistRecycler() {
         val clickBack = object : AddToPlaylistClickback {
             override fun addSelectedTrackToPlaylist(playlist: Playlist, added: Boolean) {
                 if (added) {
@@ -231,25 +235,28 @@ class PlayerFragment : Fragment() {
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Трек уже добавлен в плейлист [${playlist.playlistTitle}]",Toast.LENGTH_SHORT
+                        "Трек уже добавлен в плейлист [${playlist.playlistTitle}]",
+                        Toast.LENGTH_SHORT
                     ).show()
-            }}}
+                }
+            }
+        }
 
-            val adapter = AddToPlaylistAdapter(
+        val adapter = AddToPlaylistAdapter(
             localPlaylistList,
             listOfPlaylistsContainingTrack,
             clickBack
-            )
+        )
 
-            playlistRecycler.adapter = adapter
-            playlistRecycler.layoutManager = GridLayoutManager(requireContext(), 1)
-        }
+        playlistRecycler.adapter = adapter
+        playlistRecycler.layoutManager = GridLayoutManager(requireContext(), 1)
+    }
 
 
     private fun updateLocalDb(newList: List<Playlist>, selectedTrack: Track) {
         for (element in newList) {
             if (!listOfPlaylistsContainingTrack.contains(element)) {
-                if (element.trackList.contains(selectedTrack.trackId)) {
+                if (element.trackIDlist.contains(selectedTrack.trackId)) {
                     listOfPlaylistsContainingTrack.add(element)
                 }
             }
@@ -304,7 +311,7 @@ class PlayerFragment : Fragment() {
             }
 
             MediaPlayerState.ERROR -> {
-                //TODO?
+                //Tnothing
             }
 
             else -> {}
@@ -312,10 +319,23 @@ class PlayerFragment : Fragment() {
     }
 
     private fun backPress() {
-        if (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY) == "search") {
-            findNavController().navigate(R.id.action_navigation_player_back_to_search)
-        } else {
-            findNavController().navigate(R.id.action_navigation_player_back_to_library)
+        when ((arguments?.getString(Constants.SOURCE_FRAGMENT_KEY))) {
+            Constants.SOURCE_SEARCH -> {
+                findNavController().navigate(R.id.action_navigation_player_back_to_search)
+            }
+
+            Constants.SOURCE_EDIT_PLAYLIST -> {
+                val args = Bundle()
+                val playlist =
+                    playerViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST))
+                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_PLAYLIST, playerViewModel.mapPlaylistToParcelable(playlist))
+                findNavController().navigate(R.id.action_navigation_player_to_edit_playlist, args)
+            }
+
+            else -> {
+                findNavController().navigate(R.id.action_navigation_player_back_to_library)
+            }
+
         }
     }
 

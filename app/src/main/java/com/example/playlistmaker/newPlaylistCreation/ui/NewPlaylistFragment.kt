@@ -20,12 +20,17 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import com.example.playlistmaker.Constants
 import com.example.playlistmaker.R
+import com.example.playlistmaker.editPlaylist.domain.PathToBitmapConverterCallback
+import com.example.playlistmaker.library.domain.playlist.Playlist
 import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.InputStream
 
@@ -50,13 +55,19 @@ class NewPlaylistFragment : Fragment() {
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     private var preConfirmBitmap: Bitmap? = null
-    private var preConfirmBitmapUri : Uri? = null
+    private var preConfirmBitmapUri: Uri? = null
+
+    private lateinit var fragmentTitle: TextView
+
+    var modifiedEditPlaylist: Playlist = Playlist(-1, "", "", "", emptyList(), emptyList(), -1, -1)
+    var unmodifiedEditPlaylist: Playlist =
+        Playlist(-1, "", "", "", emptyList(), emptyList(), -1, -1)
 
     private val photoPickerLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 val bmp = uriToBitmap(requireContext(), uri)
-                preConfirmBitmapUri=uri
+                preConfirmBitmapUri = uri
                 setAlbumImage(bmp)
             }
 
@@ -64,11 +75,20 @@ class NewPlaylistFragment : Fragment() {
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission())
-        { isGranted: Boolean -> if (isGranted) {openPhotoPicker()} }
+        { isGranted: Boolean ->
+            if (isGranted) {
+                openPhotoPicker()
+            }
+        }
 
 
     companion object {
         fun newInstance() = NewPlaylistFragment()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        arguments?.clear()
     }
 
     override fun onDestroyView() {
@@ -88,29 +108,36 @@ class NewPlaylistFragment : Fragment() {
             backPressedCallback
         )
 
+
+
         setUpExitConfirmationPopUp()
 
         confirmButton = view.findViewById<Button>(R.id.confirmButton)
         confirmButton.setOnClickListener {
             if (!nameField.text.isNullOrEmpty()) {
                 var filePath: String? = null
-                if (preConfirmBitmap != null && writePermissionCheck()) {
+                if (preConfirmBitmap != null && writePermissionCheck() && preConfirmBitmapUri != null) {
                     filePath = newPlaylistViewModel.saveAlbumCover(
                         preConfirmBitmapUri!!,
                         nameField.text.toString()
                     )
                 }
-                newPlaylistViewModel.addNewPlaylist(
-                    nameField.text.toString(),
-                    descriptionField.text.toString(),
-                    filePath
-                )
                 when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
+
                     Constants.SOURCE_PLAYER -> {
-                        val trackFromExtra: Track? =
-                            arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
+                        newPlaylistViewModel.addNewPlaylist(
+                            nameField.text.toString(),
+                            descriptionField.text.toString(),
+                            filePath
+                        )
+                        val trackFromExtra: Track? = newPlaylistViewModel.mapParcelableToTrack(
+                            arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+                        )
                         val args = Bundle()
-                        args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
+                        args.putParcelable(
+                            Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                            newPlaylistViewModel.mapTrackToParcelable(trackFromExtra)
+                        )
                         args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST)
                         findNavController().navigate(
                             R.id.action_navigation_new_playlist_to_player,
@@ -119,11 +146,35 @@ class NewPlaylistFragment : Fragment() {
                     }
 
                     Constants.SOURCE_PLAYLIST -> {
+                        newPlaylistViewModel.addNewPlaylist(
+                            nameField.text.toString(),
+                            descriptionField.text.toString(),
+                            filePath
+                        )
                         val arg = Bundle()
                         arg.putString(Constants.TITLE_TOAST_KEY, nameField.text.toString())
+                        arg.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST)
                         findNavController().navigate(
                             R.id.action_navigation_new_playlist_to_playlists,
                             arg
+                        )
+                    }
+
+                    Constants.SOURCE_EDIT_PLAYLIST -> {
+                        modifiedEditPlaylist.playlistTitle = nameField.text.toString()
+                        modifiedEditPlaylist.playlistDescriptor = descriptionField.text.toString()
+                        if (preConfirmBitmapUri != null) {
+                            modifiedEditPlaylist.coverImagePath = filePath ?: ""
+                        }
+                        newPlaylistViewModel.updatePlaylist(modifiedEditPlaylist)
+
+                        val arg = Bundle()
+                        arg.putParcelable(
+                            Constants.PARCELABLE_NEW_PLAYLIST_TO_EDIT_PLAYLIST_KEY,
+                            newPlaylistViewModel.mapPlaylistToParcelable(modifiedEditPlaylist)
+                        )
+                        findNavController().navigate(
+                            R.id.action_navigation_new_playlist_to_edit_playlist, arg
                         )
                     }
                 }
@@ -141,7 +192,7 @@ class NewPlaylistFragment : Fragment() {
             }
 
         }
-
+        fragmentTitle = view.findViewById<TextView>(R.id.fragmentTitle)
         highlightsSetup()
 
         val backButton = view.findViewById<View>(R.id.backButton)
@@ -150,7 +201,41 @@ class NewPlaylistFragment : Fragment() {
             backPress()
         }
 
+
+        unmodifiedEditPlaylist =
+            newPlaylistViewModel.mapParcelableToPlaylist(arguments?.getParcelable(Constants.PARCELABLE_PLAYLIST_TO_NEW_PLAYLIST_KEY))
+                ?: unmodifiedEditPlaylist
+
+        if (unmodifiedEditPlaylist.playlistTitle != "") {
+            changeSetUpForModification(unmodifiedEditPlaylist)
+            modifiedEditPlaylist = unmodifiedEditPlaylist
+        }
+
         return view
+    }
+
+    private fun changeSetUpForModification(unmodifiedEditPlaylist: Playlist) {
+        if (unmodifiedEditPlaylist.coverImagePath != "") {
+            val bitmapCallback = object : PathToBitmapConverterCallback {
+                override suspend fun convertPathToBitmap(bitmap: Any) {
+
+                    withContext(Dispatchers.Main) {
+                        imageView.setImageBitmap(bitmap as Bitmap)
+                    }
+                    preConfirmBitmap = bitmap as Bitmap
+                }
+            }
+            newPlaylistViewModel.getBitmap(unmodifiedEditPlaylist.coverImagePath, bitmapCallback)
+
+        }
+
+        descriptionField.text =
+            Editable.Factory.getInstance().newEditable(unmodifiedEditPlaylist.playlistDescriptor)
+        nameField.text =
+            Editable.Factory.getInstance().newEditable(unmodifiedEditPlaylist.playlistTitle)
+        fragmentTitle.text = getString(R.string.make_edits)
+        confirmButton.text = getString(R.string.save)
+
     }
 
 
@@ -243,13 +328,27 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun popUp() {
+        if (fragmentTitle.text != getString(R.string.new_playlist)) {
+            val args = Bundle()
+            args.putParcelable(
+                Constants.PARCELABLE_NEW_PLAYLIST_TO_EDIT_PLAYLIST_KEY,
+                newPlaylistViewModel.mapPlaylistToParcelable(unmodifiedEditPlaylist)
+            )
+            args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_NEW_PLAYLIST)
+            findNavController().navigate(R.id.action_navigation_new_playlist_to_edit_playlist, args)
+            return
+        }
         when (arguments?.getString(Constants.SOURCE_FRAGMENT_KEY)) {
-            Constants.SOURCE_PLAYER  -> {
-                val trackFromExtra: Track? =
-                    arguments?.getParcelable<Track>(Constants.PARCELABLE_TO_PLAYER_KEY)
+            Constants.SOURCE_PLAYER -> {
+                val trackFromExtra: Track? = newPlaylistViewModel.mapParcelableToTrack(
+                    arguments?.getParcelable(Constants.PARCELABLE_TO_PLAYER_KEY_TRACK)
+                )
                 val args = Bundle()
-                args.putParcelable(Constants.PARCELABLE_TO_PLAYER_KEY, trackFromExtra)
-                args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYER )
+                args.putParcelable(
+                    Constants.PARCELABLE_TO_PLAYER_KEY_TRACK,
+                    newPlaylistViewModel.mapTrackToParcelable(trackFromExtra)
+                )
+                args.putString(Constants.SOURCE_FRAGMENT_KEY, Constants.SOURCE_PLAYER)
                 findNavController().navigate(R.id.action_navigation_new_playlist_to_player, args)
 
             }

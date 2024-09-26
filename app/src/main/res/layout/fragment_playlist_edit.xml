@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray">
+
+    <!-- Non-BottomSheet layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Guidelines -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/topBarGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="56dp" />
+
+        <!-- Cover -->
+        <ImageView
+            android:id="@+id/playlistEditCover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_marginBottom="440dp"
+            android:scaleType="centerCrop"
+
+            android:src="@drawable/placeholder"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="W, 1:1"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
+        <!-- Info display -->
+        <TextView
+            android:id="@+id/playlistEditTitle"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="24dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            tools:text="Название"
+            android:textColor="@color/black"
+
+            android:textSize="24sp"
+            app:fontFamily="@font/ys_display_bold"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/playlistEditCover" />
+
+        <TextView
+            android:id="@+id/playlistEditDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            style="@style/EditPlaylistSubInfo"
+            tools:text="Описание"
+
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playlistEditTitle" />
+
+        <TextView
+            android:id="@+id/playlistEditTotalPlaytime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            style="@style/EditPlaylistSubInfo"
+
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playlistEditDescription"
+            tools:text="X минут" />
+
+        <ImageView
+            android:id="@+id/bufferDot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="4dp"
+            android:src="@drawable/ic"
+            app:layout_constraintBottom_toBottomOf="@id/playlistEditTotalPlaytime"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/playlistEditTotalPlaytime"
+            app:layout_constraintTop_toTopOf="@id/playlistEditTotalPlaytime"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription,ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/playlistEditTrackCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            style="@style/EditPlaylistSubInfo"
+
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/bufferDot"
+            app:layout_constraintTop_toTopOf="@id/playlistEditTotalPlaytime"
+            app:layout_goneMarginEnd="16dp"
+            tools:text="X треков" />
+
+        <!-- Controls -->
+        <ImageView
+            android:id="@+id/playlistEditOpenShareMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/share"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/playlistEditTotalPlaytime"
+            app:tint="@color/black" />
+
+        <ImageView
+            android:id="@+id/playlistEditOpenOptionsMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:src="@drawable/options_menu"
+            app:layout_constraintStart_toEndOf="@id/playlistEditOpenShareMenu"
+            app:layout_constraintTop_toBottomOf="@id/playlistEditTotalPlaytime"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+
+
+        <!-- Back button-->
+        <ImageView
+            android:id="@+id/playlistEditBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_marginEnd="256dp"
+            android:padding="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/topBarGuideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/arrow_back"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- BottomSheet fade tint -->
+    <View
+        android:id="@+id/playlistEditBottomsheetFadeOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bottomsheet_bg_fade"
+        android:visibility="visible" />
+
+    <!-- BottomSheet -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/playlistEditBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_bg_16dp_bottomsheet"
+        android:visibility="visible"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="266dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="4dp"
+            android:layout_marginHorizontal="155dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/bottomsheet_rectangle"
+            app:cornerRadius="44dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- BottomSheet Tracks Recycler-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlistEditTrackListRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="24dp"
+
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0"
+            tools:listitem="@layout/item_search_result_item" />
+
+        <TextView
+            android:id="@+id/playlistEditNoTracksInPlaylistError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginHorizontal="10dp"
+            android:text="@string/no_tracks_added"
+            android:textColor="@color/text_gray"
+
+            android:layout_marginTop="30dp"
+            android:textSize="20sp"
+            android:visibility="gone"
+            android:textAlignment="center"
+            app:fontFamily="@font/ys_display_bold"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+        <!-- BottomSheet playlist options menu -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/playlistEditMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/playlistEditBottomSheet"
+            app:layout_constraintTop_toTopOf="@id/playlistEditBottomSheet"
+            app:layout_constraintVertical_bias="0">
+
+            <ImageView
+                android:id="@+id/playlistEditMenuCover"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginVertical="8dp"
+                android:layout_marginStart="13dp"
+                app:layout_constraintDimensionRatio="W,1:1"
+                app:layout_constraintHorizontal_bias="0"
+
+                android:scaleType="centerCrop"
+
+                android:src="@drawable/placeholder"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/playlistEditMenuTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:fontFamily="@font/ys_text_regular"
+                android:textColor="@color/search_item_title"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="28dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/playlistEditMenuCover"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Название" />
+
+            <TextView
+                android:id="@+id/playlistEditMenuCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:textSize="11sp"
+                android:fontFamily="@font/ys_display_medium"
+                android:textColor="@color/search_item_etc"
+                android:ellipsize="end"
+                android:lines="1"
+
+                android:layout_marginTop="1dp"
+                android:layout_marginStart="8dp"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/playlistEditMenuCover"
+                app:layout_constraintTop_toBottomOf="@id/playlistEditMenuTitle"
+                tools:ignore="TextContrastCheck"
+                tools:text="X Треков" />
+
+            <TextView
+                android:id="@+id/playlistEditMenuShare"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                style="@style/EditPlaylistFragmentMenuButtons"
+                android:text="@string/share"
+
+                app:layout_constraintTop_toBottomOf="@id/playlistEditMenuCover" />
+
+            <TextView
+                android:id="@+id/playlistEditMenuEdit"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                style="@style/EditPlaylistFragmentMenuButtons"
+                android:text="@string/edit"
+                app:layout_constraintTop_toBottomOf="@id/playlistEditMenuShare" />
+
+            <TextView
+                android:id="@+id/playlistEditMenuDelete"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                style="@style/EditPlaylistFragmentMenuButtons"
+                android:text="@string/delete"
+                app:layout_constraintTop_toBottomOf="@id/playlistEditMenuEdit" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
